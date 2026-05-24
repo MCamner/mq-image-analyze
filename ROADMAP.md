@@ -19,12 +19,15 @@
 - [x] docs/architecture.md
 - [x] docs/mcp-tools.md
 - [x] examples/sample-analysis.json
-- [ ] `mq-image --version`
-- [ ] `mq-image doctor`
+- [x] `mq-image --version`
+- [x] `mq-image doctor`
+- [x] `mq-image analyze --exhaustive --conf` (high-recall mode)
+- [x] JSON schema contract doc (`docs/json-schema.md`)
+- [x] scripts/validate.sh
+- [x] release-check.sh
+- [x] No Silent Omission Rule in MCP docs
+- [x] `limitations` field in all JSON output
 - [ ] Fallback behavior when model file is missing
-- [ ] JSON schema contract doc
-- [ ] scripts/validate.sh
-- [ ] release-check.sh
 
 ## v0.2.0 — Image Comparison — Planned
 

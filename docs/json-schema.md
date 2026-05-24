@@ -6,7 +6,30 @@ Produced by `mq-image analyze <image> --json`
 
 ---
 
-## Shape
+## Two modes
+
+### Summary mode (default)
+
+```bash
+mq-image analyze image.jpg --json
+```
+
+Unique object labels, no raw detections.
+Confidence threshold: 0.25.
+
+### Exhaustive mode
+
+```bash
+mq-image analyze image.jpg --exhaustive --json
+mq-image analyze image.jpg --exhaustive --conf 0.05 --json
+```
+
+All detections preserved — duplicates, confidence, bbox, area.
+Confidence threshold: 0.05 (unless `--conf` overrides).
+
+---
+
+## Summary shape
 
 ```json
 {
@@ -18,7 +41,41 @@ Produced by `mq-image analyze <image> --json`
   "composition": "string",
   "symmetry": 0.0,
   "rule_of_thirds": 0.0,
-  "prompt": "string"
+  "prompt": "string",
+  "mode": "summary",
+  "detections": [],
+  "limitations": ["string"],
+  "text_regions": [],
+  "unclassified_regions": []
+}
+```
+
+## Exhaustive shape
+
+```json
+{
+  "objects": ["string"],
+  "palette": ["#rrggbb"],
+  "brightness": "dark | mid-tone | bright",
+  "contrast": "low contrast | moderate contrast | high contrast",
+  "depth": "shallow depth of field | moderate depth | deep / sharp throughout",
+  "composition": "string",
+  "symmetry": 0.0,
+  "rule_of_thirds": 0.0,
+  "prompt": "string",
+  "mode": "exhaustive",
+  "detections": [
+    {
+      "label": "string",
+      "confidence": 0.0,
+      "bbox": [0.0, 0.0, 0.0, 0.0],
+      "area_percent": 0.0,
+      "source_model": "yolov8n"
+    }
+  ],
+  "limitations": ["string"],
+  "text_regions": [],
+  "unclassified_regions": []
 }
 ```
 
@@ -26,40 +83,35 @@ Produced by `mq-image analyze <image> --json`
 
 ## Field reference
 
-| Field | Type | Values |
-| ----- | ---- | ------ |
-| `objects` | string[] | YOLOv8n class labels, sorted by confidence |
+| Field | Type | Notes |
+| ----- | ---- | ----- |
+| `objects` | string[] | Unique labels; summary: highest-conf only; exhaustive: deduped from detections |
 | `palette` | string[] | Hex colors, most dominant first |
 | `brightness` | string | `dark` / `mid-tone` / `bright` |
 | `contrast` | string | `low contrast` / `moderate contrast` / `high contrast` |
 | `depth` | string | `shallow depth of field` / `moderate depth` / `deep / sharp throughout` |
 | `composition` | string | Human-readable composition description |
-| `symmetry` | float | 0.0–1.0, horizontal symmetry score |
-| `rule_of_thirds` | float | 0.0–1.0, rule-of-thirds alignment score |
+| `symmetry` | float | 0.0–1.0 horizontal symmetry |
+| `rule_of_thirds` | float | 0.0–1.0 alignment score |
 | `prompt` | string | Reverse prompt string |
+| `mode` | string | `summary` or `exhaustive` |
+| `detections` | object[] | Raw detections; empty in summary mode |
+| `detections[].confidence` | float | YOLOv8n confidence score |
+| `detections[].bbox` | float[4] | `[x1, y1, x2, y2]` in pixels |
+| `detections[].area_percent` | float | Detection area as % of image area |
+| `detections[].source_model` | string | Model that produced the detection |
+| `limitations` | string[] | Always present; describes what the tool cannot see |
+| `text_regions` | object[] | OCR output — not yet implemented |
+| `unclassified_regions` | object[] | Regions outside model classes — not yet implemented |
 
 ---
 
-## Example
+## No silent omission
 
-```json
-{
-  "objects": ["person", "monitor", "terminal"],
-  "palette": ["#0a0a0f", "#1c1f2e", "#3a4a6b", "#c8d4e8", "#f0f4ff", "#2a3550"],
-  "brightness": "dark",
-  "contrast": "moderate contrast",
-  "depth": "shallow depth of field",
-  "composition": "centered, rule-of-thirds alignment",
-  "symmetry": 0.871,
-  "rule_of_thirds": 0.453,
-  "prompt": "person, monitor, terminal, dark scene, moderate contrast, shallow depth of field, color palette: #0a0a0f, #1c1f2e, #3a4a6b, centered, rule-of-thirds alignment"
-}
-```
+`limitations` is always present. It explicitly states what the tool cannot see or did not analyze.
 
 ---
 
-## Stability guarantee
+## Stability
 
-Fields in this schema are stable from v0.1.0 onward.
-New fields may be added in minor versions.
-Field removals require a major version bump.
+Fields stable from v0.1.0. New fields may be added in minor versions. Field removals require major version bump.

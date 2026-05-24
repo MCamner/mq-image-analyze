@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
-from mq_image_analyze.vision.detection.detector import detect_labels
+from mq_image_analyze.vision.detection.detector import detect_all, detect_labels
 from mq_image_analyze.vision.palette.extractor import (
     brightness_label,
     contrast_label,
@@ -15,6 +15,22 @@ from mq_image_analyze.vision.composition.analyzer import (
     symmetry_score,
     visual_weight,
 )
+
+_SUMMARY_LIMITATIONS = [
+    "Object detection limited to YOLOv8n COCO classes (80 categories).",
+    "Low-confidence detections excluded (default conf < 0.25).",
+    "Duplicate objects collapsed — count and position not preserved.",
+    "OCR not active — visible text not analyzed.",
+    "Semantic meaning and emotional context not inferred.",
+]
+
+_EXHAUSTIVE_LIMITATIONS = [
+    "Object detection limited to YOLOv8n COCO classes (80 categories).",
+    "Low-confidence detections included (conf >= 0.05) — verify before acting.",
+    "Unclassified regions not yet implemented — non-COCO content not reported.",
+    "OCR not active — visible text not analyzed.",
+    "Semantic meaning and emotional context not inferred.",
+]
 
 
 @dataclass
@@ -28,12 +44,41 @@ class ReversePromptResult:
     symmetry: float
     rule_of_thirds: float
     prompt: str
+    mode: str = "summary"
+    detections: list[dict] = field(default_factory=list)
+    limitations: list[str] = field(default_factory=list)
+    text_regions: list[dict] = field(default_factory=list)
+    unclassified_regions: list[dict] = field(default_factory=list)
 
 
-def build(image_path: str | Path) -> ReversePromptResult:
+def build(
+    image_path: str | Path,
+    mode: str = "summary",
+    conf: float | None = None,
+) -> ReversePromptResult:
     path = Path(image_path)
 
-    objects = detect_labels(path)
+    effective_conf = conf if conf is not None else (0.05 if mode == "exhaustive" else 0.25)
+
+    if mode == "exhaustive":
+        raw = detect_all(path, conf=effective_conf)
+        objects = list(dict.fromkeys(d.label for d in raw))
+        detections = [
+            {
+                "label": d.label,
+                "confidence": d.confidence,
+                "bbox": list(d.bbox),
+                "area_percent": d.area_percent,
+                "source_model": d.source_model,
+            }
+            for d in raw
+        ]
+        limitations = list(_EXHAUSTIVE_LIMITATIONS)
+    else:
+        objects = detect_labels(path, conf=effective_conf)
+        detections = []
+        limitations = list(_SUMMARY_LIMITATIONS)
+
     palette = extract(path)
     brightness = brightness_label(path)
     contrast = contrast_label(path)
@@ -70,4 +115,9 @@ def build(image_path: str | Path) -> ReversePromptResult:
         symmetry=sym,
         rule_of_thirds=rot,
         prompt=", ".join(p for p in prompt_parts if p),
+        mode=mode,
+        detections=detections,
+        limitations=limitations,
+        text_regions=[],
+        unclassified_regions=[],
     )

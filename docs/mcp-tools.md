@@ -4,6 +4,21 @@ All tools are deterministic, explainable, structured, and composable.
 
 ---
 
+## No Silent Omission Rule
+
+MCP tools must not silently drop visual evidence.
+
+- If something is detected but uncertain, include it with its confidence score.
+- If something cannot be classified, include it as an `unclassified_region`.
+- If the model cannot inspect part of the image, report that as a limitation.
+- Summary mode may compress output, but exhaustive mode must preserve all raw detections.
+- The `limitations` field must always be present in all tool outputs.
+
+The goal is **high-recall, honest analysis** — not a polished interpretation.
+Raw detector output is always preserved regardless of downstream LLM behavior.
+
+---
+
 ## analyze_image
 
 Full image analysis pipeline.
