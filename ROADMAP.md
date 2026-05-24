@@ -1,43 +1,69 @@
 # Roadmap
 
-## Phase 1 — Vision Intelligence MVP
+## v0.1.0 — Vision Intelligence MVP — Done
 
-- [x] Repository scaffold
-- [x] `mq-image analyze <file>` CLI command
-- [x] JSON output mode (`--json`)
-- [x] Palette extraction (dominant colors, brightness, contrast)
+- [x] Project scaffold (vision, reasoning, mcp, cli, adapters, pipelines)
+- [x] `mq-image analyze <image>` CLI command
+- [x] Rich terminal output
+- [x] `--json` output mode
 - [x] Object detection (YOLOv8n)
+- [x] Palette extraction (dominant colors, brightness, contrast)
 - [x] Composition heuristics (rule-of-thirds, symmetry, visual weight, depth)
-- [x] Reverse prompt generator
-- [ ] Example image fixtures
-- [ ] Test suite
-- [ ] GitHub Actions CI
-- [ ] `docs/architecture.md`
-- [ ] `docs/mcp-tools.md`
-- [ ] First release `v0.1.0`
+- [x] Reverse prompt builder
 
-## Phase 2 — Visual Reasoning
+## v0.1.1 — Hardening — In progress
 
-- [ ] `mq-image compare a.jpg b.jpg`
-- [ ] `mq-image score image.jpg`
-- [ ] Composition scoring with numeric output
-- [ ] Cinematic analysis (lighting style, color grading)
-- [ ] Style drift detection
-- [ ] AI-look detection heuristics
+- [x] MIT LICENSE
+- [x] Tests — palette, composition, CLI (13 passing)
+- [x] GitHub Actions CI (Python 3.11 / 3.12)
+- [x] docs/architecture.md
+- [x] docs/mcp-tools.md
+- [x] examples/sample-analysis.json
+- [ ] `mq-image --version`
+- [ ] `mq-image doctor`
+- [ ] Fallback behavior when model file is missing
+- [ ] JSON schema contract doc
+- [ ] scripts/validate.sh
+- [ ] release-check.sh
 
-## Phase 3 — Screenshot Intelligence
+## v0.2.0 — Image Comparison — Planned
+
+- [ ] `mq-image compare before.jpg after.jpg`
+- [ ] Style drift score
+- [ ] Composition difference
+- [ ] Palette difference
+- [ ] AI-look detection baseline
+
+## v0.3.0 — Screenshot Intelligence — Planned
 
 - [ ] `mq-image analyze-ui screenshot.png`
-- [ ] UI layout extraction
-- [ ] Design language detection
-- [ ] Accessibility heuristics
-- [ ] UI description generator
-- [ ] Integration with mq-agent
+- [ ] UI layout detection
+- [ ] Hierarchy / spacing / contrast review
+- [ ] Terminal screenshot analysis
+- [ ] GitHub README screenshot analysis
 
-## Phase 4 — Generation (optional)
+## v0.4.0 — MCP Integration — Planned
 
-Generation is secondary and will never dominate the product.
+- [ ] MCP server (`mq_image_analyze/mcp/server.py`)
+- [ ] `analyze_image` tool
+- [ ] `extract_palette` tool
+- [ ] `reverse_prompt` tool
+- [ ] `compare_images` tool
+- [ ] `analyze_ui` tool
+- [ ] Tool safety classification
 
-- [ ] Style transfer pipeline
-- [ ] `mq-image transform image.jpg --style cinematic`
-- [ ] Adapter integrations (SDXL, Flux)
+## v0.5.0 — MQ Ecosystem Integration — Planned
+
+- [ ] mq-agent skill integration
+- [ ] mqlaunch bridge
+- [ ] repo-signal readiness profile
+- [ ] GitHub Pages docs
+- [ ] Examples generated in CI
+
+## v1.0.0 — Stable Visual Reasoning Toolkit — Future
+
+- [ ] Stable CLI surface
+- [ ] Stable JSON schemas
+- [ ] Stable MCP tool contracts
+- [ ] Full documentation
+- [ ] Release workflow
