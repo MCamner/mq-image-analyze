@@ -18,6 +18,13 @@ dependencies = [
 [project.scripts]
 mq-image = "mq_image_analyze.cli:app"
 
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "pytest-cov"]
+
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["mq_image_analyze*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v"

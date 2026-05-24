@@ -28,6 +28,7 @@ Vision → Reasoning → Experience
 ```
 
 Three layers only. Generation is optional and secondary.
+→ [docs/architecture.md](docs/architecture.md)
 
 ---
 
@@ -50,6 +51,9 @@ Composition:    left-heavy, rule-of-thirds alignment
 Reverse prompt: person, monitor, dark scene, moderate contrast, ...
 ```
 
+→ [examples/sample-cli-output.txt](examples/sample-cli-output.txt)
+→ [examples/sample-analysis.json](examples/sample-analysis.json)
+
 ---
 
 ## Setup
@@ -64,6 +68,15 @@ Models are not committed. Place `yolov8n.pt` in `models/`.
 
 ---
 
+## Tests
+
+```bash
+pip install -e ".[dev]"
+pytest
+```
+
+---
+
 ## Roadmap
 
 | Phase | Focus |
@@ -72,6 +85,8 @@ Models are not committed. Place `yolov8n.pt` in `models/`.
 | 2 | compare, score, style-drift, AI-look detection |
 | 3 | screenshot intelligence, UI analysis, layout |
 | 4 | generation (optional, never dominant) |
+
+→ [ROADMAP.md](ROADMAP.md)
 
 ---
 
@@ -91,7 +106,7 @@ docs/            architecture and decisions
 
 ---
 
-## MCP Tools (planned)
+## MCP Tools
 
 ```text
 analyze_image()     reverse_prompt()    extract_palette()
@@ -100,3 +115,4 @@ analyze_ui()        ocr_image()
 ```
 
 All tools are deterministic, explainable, structured, composable.
+→ [docs/mcp-tools.md](docs/mcp-tools.md)

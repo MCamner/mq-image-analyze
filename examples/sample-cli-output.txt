@@ -1,0 +1,19 @@
+$ mq-image analyze screenshot.png
+
+╭──────────────────╮
+│ screenshot.png   │
+╰──────────────────╯
+
+  Objects           person, monitor, terminal
+  Palette           #0a0a0f #1c1f2e #3a4a6b #c8d4e8 #f0f4ff
+  Brightness        dark
+  Contrast          moderate contrast
+  Depth             shallow depth of field
+  Composition       centered, rule-of-thirds alignment
+  Symmetry          0.871
+  Rule of thirds    0.453
+
+Reverse prompt:
+  person, monitor, terminal, dark scene, moderate contrast, shallow depth of
+  field, color palette: #0a0a0f, #1c1f2e, #3a4a6b, centered, rule-of-thirds
+  alignment
