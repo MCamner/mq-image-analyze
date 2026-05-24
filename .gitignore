@@ -25,3 +25,20 @@ settings.local.json
 # Logs
 *.log
 logs/
+
+# Models — replaceable dependencies, not source
+models/
+*.pt
+*.ckpt
+*.safetensors
+*.bin
+*.gguf
+*.onnx
+
+# AI runtime artifacts
+.cache/
+outputs/
+datasets/
+runs/
+checkpoints/
+experiments/
