@@ -46,7 +46,14 @@ Confidence threshold: 0.05 (unless `--conf` overrides).
   "detections": [],
   "limitations": ["string"],
   "text_regions": [],
-  "unclassified_regions": []
+  "unclassified_regions": [],
+  "content_flags": {
+    "nudity":          { "detected": false, "confidence": null },
+    "full_nudity":     { "detected": false, "confidence": null },
+    "sexual_activity": { "detected": false, "confidence": null },
+    "source": "not_implemented",
+    "note": "string"
+  }
 }
 ```
 
@@ -75,7 +82,14 @@ Confidence threshold: 0.05 (unless `--conf` overrides).
   ],
   "limitations": ["string"],
   "text_regions": [],
-  "unclassified_regions": []
+  "unclassified_regions": [],
+  "content_flags": {
+    "nudity":          { "detected": false, "confidence": null },
+    "full_nudity":     { "detected": false, "confidence": null },
+    "sexual_activity": { "detected": false, "confidence": null },
+    "source": "not_implemented",
+    "note": "string"
+  }
 }
 ```
 

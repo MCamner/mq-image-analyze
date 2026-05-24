@@ -22,6 +22,7 @@ _SUMMARY_LIMITATIONS = [
     "Duplicate objects collapsed — count and position not preserved.",
     "OCR not active — visible text not analyzed.",
     "Semantic meaning and emotional context not inferred.",
+    "content_flags require a specialized model — not active with YOLOv8n.",
 ]
 
 _EXHAUSTIVE_LIMITATIONS = [
@@ -30,7 +31,20 @@ _EXHAUSTIVE_LIMITATIONS = [
     "Unclassified regions not yet implemented — non-COCO content not reported.",
     "OCR not active — visible text not analyzed.",
     "Semantic meaning and emotional context not inferred.",
+    "content_flags require a specialized model — not active with YOLOv8n.",
 ]
+
+_DEFAULT_CONTENT_FLAGS: dict = {
+    "nudity": {"detected": False, "confidence": None},
+    "full_nudity": {"detected": False, "confidence": None},
+    "sexual_activity": {"detected": False, "confidence": None},
+    "source": "not_implemented",
+    "note": (
+        "YOLOv8n does not classify explicit content. "
+        "Attach a specialized content-classification model to populate these fields. "
+        "This tool applies no suppression — all detector output is reported as-is."
+    ),
+}
 
 
 @dataclass
@@ -49,6 +63,7 @@ class ReversePromptResult:
     limitations: list[str] = field(default_factory=list)
     text_regions: list[dict] = field(default_factory=list)
     unclassified_regions: list[dict] = field(default_factory=list)
+    content_flags: dict = field(default_factory=lambda: dict(_DEFAULT_CONTENT_FLAGS))
 
 
 def build(

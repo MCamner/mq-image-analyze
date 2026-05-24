@@ -76,3 +76,23 @@ def test_prompt_is_string(tmp_path: Path) -> None:
 def test_brightness_enum(tmp_path: Path) -> None:
     data = _analyze_json(tmp_path)
     assert data["brightness"] in {"dark", "mid-tone", "bright"}
+
+
+def test_content_flags_always_present(tmp_path: Path) -> None:
+    data = _analyze_json(tmp_path)
+    assert "content_flags" in data
+    flags = data["content_flags"]
+    for key in ("nudity", "full_nudity", "sexual_activity"):
+        assert key in flags
+        assert "detected" in flags[key]
+        assert "confidence" in flags[key]
+    assert "source" in flags
+
+
+def test_content_flags_schema_when_not_implemented(tmp_path: Path) -> None:
+    data = _analyze_json(tmp_path)
+    flags = data["content_flags"]
+    assert flags["source"] == "not_implemented"
+    for key in ("nudity", "full_nudity", "sexual_activity"):
+        assert flags[key]["detected"] is False
+        assert flags[key]["confidence"] is None

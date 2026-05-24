@@ -17,6 +17,15 @@ MCP tools must not silently drop visual evidence.
 The goal is **high-recall, honest analysis** — not a polished interpretation.
 Raw detector output is always preserved regardless of downstream LLM behavior.
 
+Exhaustive mode (`mode: "exhaustive"`) must:
+
+- Return every detection, including low-confidence and duplicate objects
+- Include `confidence`, `bbox`, `area_percent`, and `source_model` per detection
+- Include `content_flags` with raw classifier output — no suppression
+- Include `limitations` describing what the active models cannot see
+
+See [content-policy.md](content-policy.md) for the full no-suppression principle.
+
 ---
 
 ## analyze_image
