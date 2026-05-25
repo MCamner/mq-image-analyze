@@ -57,13 +57,13 @@
 - [x] `mq-image mcp` CLI command (stdio + sse transport)
 - [x] `[mcp]` optional dependency group in pyproject.toml
 
-## v0.5.0 — MQ Ecosystem Integration — Planned
+## v0.5.0 — MQ Ecosystem Integration — Done
 
-- [ ] mq-agent skill integration
-- [ ] mqlaunch bridge
-- [ ] repo-signal readiness profile
-- [ ] GitHub Pages docs
-- [ ] Examples generated in CI
+- [x] mq-agent skill integration (`skills/visual-analysis/SKILL.md` in mq-agent)
+- [x] mqlaunch bridge (`scripts/mqlaunch-bridge.sh`)
+- [x] repo-signal readiness profile (`repo-signal.yml`)
+- [x] GitHub Pages docs (`docs/index.md` + `docs/_config.yml`)
+- [x] Examples generated in CI (`.github/workflows/examples.yml`)
 
 ## v1.0.0 — Stable Visual Reasoning Toolkit — Future
 

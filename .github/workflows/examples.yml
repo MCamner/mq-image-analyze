@@ -1,0 +1,62 @@
+name: Generate Examples
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  examples:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -e ".[dev]"
+
+      - name: Download YOLO model
+        run: |
+          mkdir -p models
+          python -c "from ultralytics import YOLO; YOLO('yolov8n.pt')"
+          cp ~/.config/Ultralytics/yolov8n.pt models/yolov8n.pt 2>/dev/null || \
+          find / -name "yolov8n.pt" -exec cp {} models/yolov8n.pt \; 2>/dev/null || true
+
+      - name: Generate sample image
+        run: |
+          python - <<'EOF'
+          from PIL import Image, ImageDraw
+          import os
+          os.makedirs("examples/generated", exist_ok=True)
+          img = Image.new("RGB", (640, 480), color=(70, 130, 180))
+          draw = ImageDraw.Draw(img)
+          draw.rectangle([100, 100, 300, 300], fill=(255, 200, 50))
+          draw.ellipse([350, 150, 550, 350], fill=(220, 80, 80))
+          img.save("examples/generated/sample.jpg")
+          EOF
+
+      - name: Run analyze (summary)
+        run: |
+          mq-image analyze examples/generated/sample.jpg --json \
+            > examples/generated/analyze-summary.json 2>/dev/null || echo '{"error":"model unavailable"}' > examples/generated/analyze-summary.json
+
+      - name: Run analyze-ui
+        run: |
+          mq-image analyze-ui examples/generated/sample.jpg --json \
+            > examples/generated/analyze-ui.json 2>/dev/null || echo '{"error":"model unavailable"}' > examples/generated/analyze-ui.json
+
+      - name: Run compare (same image)
+        run: |
+          mq-image compare examples/generated/sample.jpg examples/generated/sample.jpg --json \
+            > examples/generated/compare.json 2>/dev/null || echo '{"error":"model unavailable"}' > examples/generated/compare.json
+
+      - name: Commit examples
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "ci: regenerate examples [skip ci]"
+          file_pattern: examples/generated/*.json

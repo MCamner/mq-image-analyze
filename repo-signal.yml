@@ -1,0 +1,5 @@
+portfolio:
+  repos:
+    - name: mq-image-analyze
+      path: ~/mq-image-analyze
+      fail_under: 14
