@@ -679,30 +679,49 @@ function render(d, fname) {
   // Content flags
   const cf = document.getElementById('contentFlags');
   const flags = d.content_flags;
-  const flagKeys = ['nudity', 'full_nudity', 'sexual_activity'];
-  cf.innerHTML = flagKeys.map(k => {
-    const f = flags[k];
+  const na = flags.source === 'not_implemented';
+
+  function flagItem(key, f) {
     let cls, label;
-    if (flags.source === 'not_implemented') {
-      cls = 'na'; label = 'n/a';
-    } else if (f.detected) {
-      cls = 'detected';
-      label = f.confidence != null ? `${Math.round(f.confidence * 100)}%` : 'yes';
-    } else {
-      cls = 'clear'; label = 'clear';
-    }
-    return `<div class="flag-item">
-      <div class="flag-label">${k.replace(/_/g,' ')}</div>
-      <div class="flag-status ${cls}">${label}</div>
-    </div>`;
-  }).join('') + (flags.raw_classes && flags.raw_classes.length
-    ? `<div style="grid-column:1/-1;margin-top:4px">
-        <div class="section-title" style="margin-bottom:4px">Detected classes</div>
-        <div class="tags">${flags.raw_classes.map(c =>
-          `<span class="tag-item" style="font-size:11px;color:var(--red)">${c.toLowerCase().replace(/_/g,' ')}</span>`
-        ).join('')}</div>
-      </div>`
-    : '');
+    if (na) { cls = 'na'; label = 'n/a'; }
+    else if (f.detected) { cls = 'detected'; label = f.confidence != null ? `${Math.round(f.confidence * 100)}%` : 'yes'; }
+    else { cls = 'clear'; label = 'clear'; }
+    return `<div class="flag-item"><div class="flag-label">${key.replace(/_/g,' ')}</div><div class="flag-status ${cls}">${label}</div></div>`;
+  }
+
+  let html = ['nudity', 'full_nudity', 'sexual_activity'].map(k => flagItem(k, flags[k])).join('');
+
+  // Faces
+  if (flags.faces && !na) {
+    const ff = flags.faces;
+    ['female','male'].forEach(g => {
+      const f = ff[g];
+      let cls, label;
+      if (f.detected) { cls = 'detected'; label = f.confidence != null ? `${Math.round(f.confidence * 100)}%` : 'yes'; }
+      else { cls = 'clear'; label = 'clear'; }
+      html += `<div class="flag-item"><div class="flag-label">face ${g}</div><div class="flag-status ${cls}">${label}</div></div>`;
+    });
+  }
+
+  // Covered parts
+  if (flags.covered_parts && flags.covered_parts.length) {
+    html += `<div style="grid-column:1/-1;margin-top:6px">
+      <div class="section-title" style="margin-bottom:4px">Covered parts</div>
+      <div class="tags">${flags.covered_parts.map(c =>
+        `<span class="tag-item" style="font-size:11px;color:#aaa">${c.toLowerCase().replace(/_covered/,'').replace(/_/g,' ')}</span>`
+      ).join('')}</div></div>`;
+  }
+
+  // Raw classes
+  if (flags.raw_classes && flags.raw_classes.length) {
+    html += `<div style="grid-column:1/-1;margin-top:4px">
+      <div class="section-title" style="margin-bottom:4px">All detected classes</div>
+      <div class="tags">${flags.raw_classes.map(c =>
+        `<span class="tag-item" style="font-size:11px;color:var(--red)">${c.toLowerCase().replace(/_/g,' ')}</span>`
+      ).join('')}</div></div>`;
+  }
+
+  cf.innerHTML = html;
 
   // Limitations
   const lb = document.getElementById('limBody');
