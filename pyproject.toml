@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mq-image-analyze"
-version = "0.5.0"
+version = "1.0.0"
 description = "Visual reasoning infrastructure for image analysis"
 requires-python = ">=3.11"
 dependencies = [
@@ -27,6 +27,9 @@ mcp = ["mcp>=1.0"]
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["mq_image_analyze*"]
+
+[tool.setuptools.package-data]
+"mq_image_analyze.web" = ["*.html"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

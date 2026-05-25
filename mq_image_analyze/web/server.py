@@ -11,7 +11,7 @@ from mq_image_analyze.reasoning.prompts.reverse_prompt import build
 
 app = FastAPI(title="mq-image-analyze", docs_url=None, redoc_url=None)
 
-_WEB_DIR = Path(__file__).parents[2] / "web"
+_WEB_DIR = Path(__file__).parent
 
 
 @app.get("/")

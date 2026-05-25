@@ -66,10 +66,10 @@
 - [x] GitHub Pages docs (`docs/index.md` + `docs/_config.yml`)
 - [x] Examples generated in CI (`.github/workflows/examples.yml`)
 
-## v1.0.0 — Stable Visual Reasoning Toolkit — Future
+## v1.0.0 — Stable Visual Reasoning Toolkit — Done
 
-- [ ] Stable CLI surface
-- [ ] Stable JSON schemas
-- [ ] Stable MCP tool contracts
-- [ ] Full documentation
-- [ ] Release workflow
+- [x] Stable CLI surface
+- [x] Stable JSON schemas
+- [x] Stable MCP tool contracts
+- [x] Full documentation
+- [x] Release workflow

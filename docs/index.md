@@ -7,7 +7,7 @@ title: mq-image-analyze
 
 Visual reasoning infrastructure for image analysis.
 
-**v0.5.0** — Object detection · Palette extraction · Composition analysis · Content flags · Semantic captions · UI analysis · Image comparison · MCP tools
+**v1.0.0** — Object detection · Palette extraction · Composition analysis · Content flags · Semantic captions · UI analysis · Image comparison · MCP tools
 
 ---
 

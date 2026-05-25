@@ -12,10 +12,10 @@ bash release-check.sh
 
 Manual checks:
 
-- [ ] `VERSION` updated
-- [ ] `CHANGELOG.md` has entry for this version
-- [ ] `ROADMAP.md` items checked accurately
-- [ ] All tests pass: `pytest`
+- [ ] `VERSION` and `pyproject.toml` match
+- [ ] `CHANGELOG.md` has an entry for this version
+- [ ] `ROADMAP.md` items are checked accurately
+- [ ] All tests pass: `python -m pytest`
 - [ ] CLI works: `mq-image --help`, `mq-image --version`, `mq-image doctor`
 - [ ] No model files staged: `git status`
 - [ ] No `.env` or secrets staged
@@ -25,8 +25,8 @@ Manual checks:
 ## Tagging
 
 ```bash
-git tag v0.1.1
-git push origin v0.1.1
+git tag v1.0.0
+git push origin v1.0.0
 ```
 
 ---
@@ -34,8 +34,10 @@ git push origin v0.1.1
 ## GitHub release
 
 ```bash
-gh release create v0.1.1 --title "v0.1.1 — Hardening" --notes-file CHANGELOG.md
+gh release create v1.0.0 --title "v1.0.0 — Stable Visual Reasoning Toolkit" --notes-file CHANGELOG.md
 ```
+
+Pushing a `v*` tag also triggers the GitHub Actions release workflow.
 
 ---
 
@@ -51,6 +53,6 @@ gh release create v0.1.1 --title "v0.1.1 — Hardening" --notes-file CHANGELOG.m
 
 ## Branch policy
 
-- `main` is always release-ready
-- Feature work in branches, merged via PR
-- No direct commits to main for feature work
+- `main` should stay release-ready
+- Feature work should happen in branches and merge via PR where practical
+- Releases are cut from signed-off clean working trees

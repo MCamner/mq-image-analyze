@@ -3,7 +3,7 @@
 [![Tests](https://github.com/MCamner/mq-image-analyze/actions/workflows/tests.yml/badge.svg)](https://github.com/MCamner/mq-image-analyze/actions/workflows/tests.yml)
 [![Python](https://img.shields.io/badge/python-3.11%2B-blue)](https://www.python.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.1.0-blue)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.0.0-blue)](CHANGELOG.md)
 
 Visual reasoning and image intelligence for AI agents,
 creative workflows, screenshots, and cinematic analysis.
@@ -25,7 +25,7 @@ It is the **perception layer** for [mq-agent](https://github.com/MCamner/mq-agen
 
 ```bash
 $ mq-image --version
-mq-image 0.1.0
+mq-image 1.0.0
 
 $ mq-image doctor
   Python >= 3.11     ok   3.14.5
@@ -69,6 +69,10 @@ mq-image analyze <image> --json   # structured JSON output
 mq-image analyze <image> --mode local-fast
 mq-image analyze <image> --mode local-deep
 mq-image analyze <image> --mode cloud-verify --vision-model gpt-4.1
+mq-image analyze-ui <screenshot>
+mq-image compare <before> <after>
+mq-image serve --port 8000
+mq-image mcp
 mq-image doctor                   # system readiness check
 mq-image doctor --json            # doctor output as JSON
 mq-image --version                # print version
@@ -83,17 +87,6 @@ Vision backend modes:
 | `cloud-verify` | `gpt-4.1` via OpenAI | Quality gate for critical architecture diagrams, risk review, trust boundaries, and YAML drafts |
 
 Use `--vision-model gpt-4o` when you specifically want GPT-4o. There is no `gpt-4.0` vision model name in the OpenAI API; use `gpt-4o` or `gpt-4.1`.
-
-Planned (v0.2+):
-
-```bash
-mq-image compare before.jpg after.jpg
-mq-image score image.jpg
-mq-image reverse-prompt image.jpg
-mq-image analyze-ui screenshot.png
-```
-
----
 
 ## Architecture
 
@@ -143,7 +136,7 @@ mq-image analyze image.jpg --json
 
 ```bash
 pip install -e ".[dev]"
-pytest                    # 28 tests
+python -m pytest          # full test suite
 bash scripts/validate.sh  # compile + test + CLI check
 bash release-check.sh     # full release gate
 ```
@@ -158,8 +151,8 @@ Visual reasoning skills for mq-agent and MCP workflows:
 | ----- | ----- |
 | [visual-reasoning](skills/visual-reasoning/SKILL.md) | 1 — available |
 | [reverse-prompt](skills/reverse-prompt/SKILL.md) | 1 — available |
-| [image-quality-audit](skills/image-quality-audit/SKILL.md) | 2 — planned |
-| [screenshot-ui-review](skills/screenshot-ui-review/SKILL.md) | 3 — planned |
+| [image-quality-audit](skills/image-quality-audit/SKILL.md) | available |
+| [screenshot-ui-review](skills/screenshot-ui-review/SKILL.md) | available |
 
 → [SKILLS.md](SKILLS.md)
 
@@ -210,8 +203,9 @@ Part of the MQ ecosystem:
 | Version | Focus | Status |
 | ------- | ----- | ------ |
 | v0.1.0 | Vision Intelligence MVP | Done |
-| v0.1.1 | Hardening | In progress |
-| v0.2.0 | Image comparison | Planned |
-| v0.3.0 | Screenshot intelligence | Planned |
-| v0.4.0 | MCP integration | Planned |
-| v1.0.0 | Stable toolkit | Future |
+| v0.1.1 | Hardening | Done |
+| v0.2.0 | Image comparison | Done |
+| v0.3.0 | Screenshot intelligence | Done |
+| v0.4.0 | MCP integration | Done |
+| v0.5.0 | MQ ecosystem integration | Done |
+| v1.0.0 | Stable toolkit | Done |

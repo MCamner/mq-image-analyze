@@ -31,6 +31,21 @@ else
   ok "CHANGELOG.md mentions $VERSION"
 fi
 
+# pyproject version matches VERSION
+PYPROJECT_VERSION=$(python - <<'PY'
+import tomllib
+from pathlib import Path
+
+data = tomllib.loads(Path("pyproject.toml").read_text())
+print(data["project"]["version"])
+PY
+)
+if [[ "$PYPROJECT_VERSION" != "$VERSION" ]]; then
+  fail "pyproject.toml version $PYPROJECT_VERSION does not match VERSION $VERSION"
+else
+  ok "pyproject.toml version matches VERSION"
+fi
+
 # README exists and is non-empty
 if [[ ! -s README.md ]]; then
   fail "README.md missing or empty"
