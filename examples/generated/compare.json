@@ -1,0 +1,60 @@
+{
+  "before": "examples/generated/sample.jpg",
+  "after": "examples/generated/sample.jpg",
+  "palette_drift": 0.013,
+  "style_drift": 0.0043,
+  "objects_added": [],
+  "objects_removed": [],
+  "brightness_changed": false,
+  "contrast_changed": false,
+  "depth_changed": false,
+  "composition_diff": {
+    "symmetry_delta": 0.0,
+    "rule_of_thirds_delta": 0.0,
+    "depth_changed": false,
+    "composition_changed": false
+  },
+  "ai_look": {
+    "before": 0.6695,
+    "after": 0.6695,
+    "note": "Score 0\u20131: higher = more AI-generated characteristics (heuristic baseline)."
+  },
+  "before_result": {
+    "prompt": "frisbee, mid-tone scene, low contrast, shallow depth of field, color palette: #4682b3, #fec732, #db504f, left-heavy, strong symmetry",
+    "objects": [
+      "frisbee"
+    ],
+    "palette": [
+      "#4682b3",
+      "#fec732",
+      "#db504f",
+      "#76747c",
+      "#e34c53",
+      "#e2cc78"
+    ],
+    "brightness": "mid-tone",
+    "contrast": "low contrast",
+    "depth": "shallow depth of field",
+    "symmetry": 0.918,
+    "rule_of_thirds": 0.341
+  },
+  "after_result": {
+    "prompt": "frisbee, mid-tone scene, low contrast, shallow depth of field, color palette: #4682b3, #fec732, #db504f, left-heavy, strong symmetry",
+    "objects": [
+      "frisbee"
+    ],
+    "palette": [
+      "#4682b3",
+      "#fec732",
+      "#db504f",
+      "#6b787e",
+      "#e6ca6c",
+      "#ab6072"
+    ],
+    "brightness": "mid-tone",
+    "contrast": "low contrast",
+    "depth": "shallow depth of field",
+    "symmetry": 0.918,
+    "rule_of_thirds": 0.341
+  }
+}

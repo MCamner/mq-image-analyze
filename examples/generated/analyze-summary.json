@@ -1,0 +1,63 @@
+{
+  "objects": [
+    "frisbee"
+  ],
+  "palette": [
+    "#4682b3",
+    "#fec732",
+    "#db504f",
+    "#76747c",
+    "#e34c53",
+    "#e2cc78"
+  ],
+  "brightness": "mid-tone",
+  "contrast": "low contrast",
+  "depth": "shallow depth of field",
+  "composition": "left-heavy, strong symmetry",
+  "symmetry": 0.918,
+  "rule_of_thirds": 0.341,
+  "prompt": "frisbee, mid-tone scene, low contrast, shallow depth of field, color palette: #4682b3, #fec732, #db504f, left-heavy, strong symmetry",
+  "mode": "summary",
+  "detections": [],
+  "limitations": [
+    "Object detection limited to YOLOv8n COCO classes (80 categories).",
+    "Low-confidence detections excluded (default conf < 0.25).",
+    "Duplicate objects collapsed \u2014 count and position not preserved.",
+    "OCR not active \u2014 visible text not analyzed.",
+    "Semantic meaning and emotional context not inferred.",
+    "content_flags require a specialized model \u2014 not active with YOLOv8n.",
+    "Semantic caption unavailable from local-fast (bakllava)."
+  ],
+  "text_regions": [],
+  "unclassified_regions": [],
+  "content_flags": {
+    "nudity": {
+      "detected": false,
+      "confidence": null
+    },
+    "full_nudity": {
+      "detected": false,
+      "confidence": null
+    },
+    "sexual_activity": {
+      "detected": false,
+      "confidence": null
+    },
+    "faces": {
+      "female": {
+        "detected": false,
+        "confidence": null
+      },
+      "male": {
+        "detected": false,
+        "confidence": null
+      }
+    },
+    "covered_parts": [],
+    "source": "not_implemented",
+    "note": "nudenet not installed \u2014 run: pip install nudenet"
+  },
+  "semantic_caption": null,
+  "vision_mode": "local-fast",
+  "vision_model": "bakllava"
+}

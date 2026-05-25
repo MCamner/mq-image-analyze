@@ -1,0 +1,30 @@
+{
+  "screenshot_type": "app-ui",
+  "color_scheme": "mixed",
+  "text_density": "low",
+  "contrast_ratio": 2.66,
+  "hierarchy_depth": 1,
+  "grid_alignment": 0.0312,
+  "layout_regions": [
+    {
+      "role": "panel",
+      "area_percent": 15.7,
+      "position": {
+        "x": 0.133,
+        "y": 0.198,
+        "w": 0.359,
+        "h": 0.438
+      }
+    }
+  ],
+  "issues": [],
+  "prompt": "app-ui screenshot, mixed color scheme, low text density, contrast ratio 2.7:1, hierarchy depth 1, 1 layout regions",
+  "semantic_caption": null,
+  "limitations": [
+    "Layout regions detected via edge contours \u2014 semantic labels are heuristic.",
+    "Text density estimated from edge activity, not OCR.",
+    "Contrast ratio uses two dominant colors \u2014 may not reflect actual text/bg pair.",
+    "AI-look score and hierarchy depth are heuristic baselines.",
+    "No element-level detection (buttons, inputs, icons) without a specialized model."
+  ]
+}
