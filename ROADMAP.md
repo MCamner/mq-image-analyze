@@ -37,13 +37,13 @@
 - [x] Palette difference
 - [x] AI-look detection baseline
 
-## v0.3.0 — Screenshot Intelligence — Planned
+## v0.3.0 — Screenshot Intelligence — Done
 
-- [ ] `mq-image analyze-ui screenshot.png`
-- [ ] UI layout detection
-- [ ] Hierarchy / spacing / contrast review
-- [ ] Terminal screenshot analysis
-- [ ] GitHub README screenshot analysis
+- [x] `mq-image analyze-ui screenshot.png`
+- [x] UI layout detection (contour-based region classification)
+- [x] Hierarchy / spacing / contrast review (WCAG contrast ratio, hierarchy depth, grid alignment)
+- [x] Terminal screenshot analysis (dark + monochrome + text density heuristic)
+- [x] GitHub README screenshot analysis (light + tall + text density heuristic)
 
 ## v0.4.0 — MCP Integration — Planned
 
