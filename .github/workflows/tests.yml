@@ -24,7 +24,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install -e ".[dev,web]"
+          pip install -e ".[dev,web,mcp]"
 
       - name: Check imports
         run: |

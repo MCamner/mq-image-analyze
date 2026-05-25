@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from pathlib import Path
 from unittest.mock import patch
 
@@ -9,6 +10,7 @@ from mq_image_analyze.cli import app
 from mq_image_analyze.reasoning.prompts.reverse_prompt import ReversePromptResult
 
 runner = CliRunner()
+_ANSI_RE = re.compile(r"\x1b\[[0-9;]*m")
 
 _MOCK_RESULT = ReversePromptResult(
     objects=["person", "monitor"],
@@ -25,10 +27,11 @@ _MOCK_RESULT = ReversePromptResult(
 
 def test_analyze_help() -> None:
     result = runner.invoke(app, ["analyze", "--help"])
+    output = _ANSI_RE.sub("", result.output)
     assert result.exit_code == 0
-    assert "IMAGE" in result.output
-    assert "--mode" in result.output
-    assert "--vision-model" in result.output
+    assert "IMAGE" in output
+    assert "--mode" in output
+    assert "--vision-model" in output
 
 
 def test_analyze_json_output(tmp_path: Path) -> None:
