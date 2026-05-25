@@ -135,7 +135,7 @@ mq-image analyze image.jpg --json
 ## Tests
 
 ```bash
-pip install -e ".[dev]"
+pip install -e ".[dev,web,mcp]"
 python -m pytest          # full test suite
 bash scripts/validate.sh  # compile + test + CLI check
 bash release-check.sh     # full release gate
