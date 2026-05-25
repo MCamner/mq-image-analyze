@@ -11,7 +11,7 @@
 - [x] Composition heuristics (rule-of-thirds, symmetry, visual weight, depth)
 - [x] Reverse prompt builder
 
-## v0.1.1 — Hardening — In progress
+## v0.1.1 — Hardening — Done
 
 - [x] MIT LICENSE
 - [x] Tests — palette, composition, CLI (13 passing)
@@ -27,15 +27,15 @@
 - [x] release-check.sh
 - [x] No Silent Omission Rule in MCP docs
 - [x] `limitations` field in all JSON output
-- [ ] Fallback behavior when model file is missing
+- [x] Fallback behavior when model file is missing
 
-## v0.2.0 — Image Comparison — Planned
+## v0.2.0 — Image Comparison — Done
 
-- [ ] `mq-image compare before.jpg after.jpg`
-- [ ] Style drift score
-- [ ] Composition difference
-- [ ] Palette difference
-- [ ] AI-look detection baseline
+- [x] `mq-image compare before.jpg after.jpg`
+- [x] Style drift score
+- [x] Composition difference
+- [x] Palette difference
+- [x] AI-look detection baseline
 
 ## v0.3.0 — Screenshot Intelligence — Planned
 

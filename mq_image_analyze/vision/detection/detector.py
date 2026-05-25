@@ -10,9 +10,18 @@ _SOURCE_MODEL = "yolov8n"
 _model: YOLO | None = None
 
 
+class ModelNotFoundError(RuntimeError):
+    pass
+
+
 def _get_model() -> YOLO:
     global _model
     if _model is None:
+        if not _MODEL_PATH.exists():
+            raise ModelNotFoundError(
+                f"YOLO model not found: {_MODEL_PATH}\n"
+                "Run: mq-image doctor  — or download yolov8n.pt manually."
+            )
         _model = YOLO(str(_MODEL_PATH))
     return _model
 

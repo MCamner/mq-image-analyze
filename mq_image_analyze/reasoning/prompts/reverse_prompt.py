@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from mq_image_analyze.vision.content.classifier import classify as classify_content
-from mq_image_analyze.vision.detection.detector import detect_all, detect_labels
+from mq_image_analyze.vision.detection.detector import ModelNotFoundError, detect_all, detect_labels
 from mq_image_analyze.vision.palette.extractor import (
     brightness_label,
     contrast_label,
@@ -83,24 +83,29 @@ def build(
 
     effective_conf = conf if conf is not None else (0.05 if mode == "exhaustive" else 0.25)
 
-    if mode == "exhaustive":
-        raw = detect_all(path, conf=effective_conf)
-        objects = list(dict.fromkeys(d.label for d in raw))
-        detections = [
-            {
-                "label": d.label,
-                "confidence": d.confidence,
-                "bbox": list(d.bbox),
-                "area_percent": d.area_percent,
-                "source_model": d.source_model,
-            }
-            for d in raw
-        ]
-        limitations = list(_EXHAUSTIVE_LIMITATIONS)
-    else:
-        objects = detect_labels(path, conf=effective_conf)
+    try:
+        if mode == "exhaustive":
+            raw = detect_all(path, conf=effective_conf)
+            objects = list(dict.fromkeys(d.label for d in raw))
+            detections = [
+                {
+                    "label": d.label,
+                    "confidence": d.confidence,
+                    "bbox": list(d.bbox),
+                    "area_percent": d.area_percent,
+                    "source_model": d.source_model,
+                }
+                for d in raw
+            ]
+            limitations = list(_EXHAUSTIVE_LIMITATIONS)
+        else:
+            objects = detect_labels(path, conf=effective_conf)
+            detections = []
+            limitations = list(_SUMMARY_LIMITATIONS)
+    except ModelNotFoundError as exc:
+        objects = []
         detections = []
-        limitations = list(_SUMMARY_LIMITATIONS)
+        limitations = [f"Object detection unavailable: {exc}"]
 
     palette = extract(path)
     brightness = brightness_label(path)

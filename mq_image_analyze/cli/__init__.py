@@ -1,6 +1,7 @@
 import typer
 
 from mq_image_analyze.cli.analyze import analyze
+from mq_image_analyze.cli.compare import compare
 from mq_image_analyze.cli.doctor import doctor
 from mq_image_analyze.cli.serve import serve
 
@@ -26,5 +27,6 @@ def _main(
 
 
 app.command("analyze")(analyze)
+app.command("compare")(compare)
 app.command("doctor")(doctor)
 app.command("serve")(serve)
