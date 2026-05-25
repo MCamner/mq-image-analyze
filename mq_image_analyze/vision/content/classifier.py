@@ -1,8 +1,15 @@
 from __future__ import annotations
 
-from pathlib import Path
+from typing import TYPE_CHECKING, Any
 
-# NudeNet class sets mapped to our three flags
+if TYPE_CHECKING:
+    from pathlib import Path
+
+try:
+    from nudenet import NudeDetector as _NudeDetector  # type: ignore[import-untyped]
+except ImportError:
+    _NudeDetector = None
+
 _NUDITY_CLASSES = {
     "BUTTOCKS_EXPOSED",
     "FEMALE_BREAST_EXPOSED",
@@ -18,25 +25,23 @@ _FULL_NUDITY_CLASSES = {
 }
 
 _CONF_THRESHOLD = 0.5
+_detector: Any = None
 
-_detector = None
 
-
-def _get_detector():
+def _get_detector() -> Any:
     global _detector
     if _detector is None:
-        from nudenet import NudeDetector
-        _detector = NudeDetector()
+        assert _NudeDetector is not None
+        _detector = _NudeDetector()
     return _detector
 
 
 def classify(image_path: str | Path) -> dict:
     """Run NudeNet on image and return content_flags dict."""
-    try:
-        detector = _get_detector()
-    except ImportError:
+    if _NudeDetector is None:
         return _not_implemented("nudenet not installed — run: pip install nudenet")
 
+    detector = _get_detector()
     raw = detector.detect(str(image_path))
     hits = [d for d in raw if d.get("score", 0) >= _CONF_THRESHOLD]
     hit_classes = {d["class"] for d in hits}
@@ -45,7 +50,7 @@ def classify(image_path: str | Path) -> dict:
         scores = [d["score"] for d in hits if d["class"] in classes]
         return round(max(scores), 4) if scores else None
 
-    nudity_hits     = hit_classes & (_NUDITY_CLASSES | _FULL_NUDITY_CLASSES)
+    nudity_hits      = hit_classes & (_NUDITY_CLASSES | _FULL_NUDITY_CLASSES)
     full_nudity_hits = hit_classes & _FULL_NUDITY_CLASSES
 
     return {
