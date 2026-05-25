@@ -16,6 +16,7 @@ from mq_image_analyze.vision.composition.analyzer import (
     symmetry_score,
     visual_weight,
 )
+from mq_image_analyze.vision.semantic.ollama_vision import describe as ollama_describe
 
 _SUMMARY_LIMITATIONS = [
     "Object detection limited to YOLOv8n COCO classes (80 categories).",
@@ -65,6 +66,7 @@ class ReversePromptResult:
     text_regions: list[dict] = field(default_factory=list)
     unclassified_regions: list[dict] = field(default_factory=list)
     content_flags: dict = field(default_factory=lambda: dict(_DEFAULT_CONTENT_FLAGS))
+    semantic_caption: str | None = None
 
 
 def build(
@@ -109,8 +111,22 @@ def build(
     if sym > 0.85:
         composition_desc += ", strong symmetry"
 
+    content_flags = classify_content(path)
+    semantic_caption = ollama_describe(path)
+
     palette_desc = ", ".join(palette[:3])
     obj_desc = ", ".join(objects[:5]) if objects else "no detected objects"
+
+    content_parts: list[str] = []
+    for flag in ("nudity", "full_nudity", "sexual_activity"):
+        entry = content_flags.get(flag, {})
+        if entry.get("detected"):
+            conf = entry.get("confidence")
+            label = flag.replace("_", " ")
+            content_parts.append(
+                f"{label} ({round(conf * 100)}%)" if conf is not None else label
+            )
+    content_desc = "explicit content: " + ", ".join(content_parts) if content_parts else ""
 
     prompt_parts = [
         obj_desc,
@@ -119,6 +135,7 @@ def build(
         depth,
         f"color palette: {palette_desc}",
         composition_desc,
+        content_desc,
     ]
 
     return ReversePromptResult(
@@ -130,11 +147,12 @@ def build(
         composition=composition_desc,
         symmetry=sym,
         rule_of_thirds=rot,
-        prompt=", ".join(p for p in prompt_parts if p),
+        prompt=semantic_caption or ", ".join(p for p in prompt_parts if p),
         mode=mode,
         detections=detections,
         limitations=limitations,
         text_regions=[],
         unclassified_regions=[],
-        content_flags=classify_content(path),
+        content_flags=content_flags,
+        semantic_caption=semantic_caption,
     )

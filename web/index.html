@@ -483,6 +483,14 @@
         </div>
       </div>
 
+      <div class="section" id="secSemantic" style="display:none">
+        <div class="section-title">Semantic caption <span style="color:var(--muted);font-size:0.75rem">bakllava</span></div>
+        <div class="prompt-box" id="semanticBox">
+          <button class="copy-btn" id="copySemanticBtn">copy</button>
+          <span id="semanticText"></span>
+        </div>
+      </div>
+
       <div class="section" id="secDetections" style="display:none">
         <div class="section-title">Detections <span id="detCount" style="color:var(--muted)"></span></div>
         <table class="detections-table">
@@ -637,6 +645,15 @@ function render(d, fname) {
   // Prompt
   document.getElementById('promptText').textContent = d.prompt;
 
+  // Semantic caption (bakllava)
+  const secSem = document.getElementById('secSemantic');
+  if (d.semantic_caption) {
+    document.getElementById('semanticText').textContent = d.semantic_caption;
+    secSem.style.display = '';
+  } else {
+    secSem.style.display = 'none';
+  }
+
   // Detections (exhaustive only)
   const secDet = document.getElementById('secDetections');
   if (d.mode === 'exhaustive' && d.detections.length) {
@@ -695,6 +712,15 @@ function render(d, fname) {
 // Copy prompt
 document.getElementById('copyBtn').addEventListener('click', function() {
   const txt = document.getElementById('promptText').textContent;
+  navigator.clipboard.writeText(txt).then(() => {
+    this.textContent = 'copied';
+    this.classList.add('copied');
+    setTimeout(() => { this.textContent = 'copy'; this.classList.remove('copied'); }, 1500);
+  });
+});
+
+document.getElementById('copySemanticBtn').addEventListener('click', function() {
+  const txt = document.getElementById('semanticText').textContent;
   navigator.clipboard.writeText(txt).then(() => {
     this.textContent = 'copied';
     this.classList.add('copied');
