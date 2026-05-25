@@ -669,7 +669,8 @@ function render(d, fname) {
     if (flags.source === 'not_implemented') {
       cls = 'na'; label = 'n/a';
     } else if (f.detected) {
-      cls = 'detected'; label = `${Math.round(f.confidence * 100)}%`;
+      cls = 'detected';
+      label = f.confidence != null ? `${Math.round(f.confidence * 100)}%` : 'yes';
     } else {
       cls = 'clear'; label = 'clear';
     }
@@ -677,7 +678,14 @@ function render(d, fname) {
       <div class="flag-label">${k.replace(/_/g,' ')}</div>
       <div class="flag-status ${cls}">${label}</div>
     </div>`;
-  }).join('');
+  }).join('') + (flags.raw_classes && flags.raw_classes.length
+    ? `<div style="grid-column:1/-1;margin-top:4px">
+        <div class="section-title" style="margin-bottom:4px">Detected classes</div>
+        <div class="tags">${flags.raw_classes.map(c =>
+          `<span class="tag-item" style="font-size:11px;color:var(--red)">${c.toLowerCase().replace(/_/g,' ')}</span>`
+        ).join('')}</div>
+      </div>`
+    : '');
 
   // Limitations
   const lb = document.getElementById('limBody');

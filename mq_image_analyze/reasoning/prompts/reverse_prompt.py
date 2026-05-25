@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from mq_image_analyze.vision.content.classifier import classify as classify_content
 from mq_image_analyze.vision.detection.detector import detect_all, detect_labels
 from mq_image_analyze.vision.palette.extractor import (
     brightness_label,
@@ -135,4 +136,5 @@ def build(
         limitations=limitations,
         text_regions=[],
         unclassified_regions=[],
+        content_flags=classify_content(path),
     )
