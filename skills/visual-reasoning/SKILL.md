@@ -7,7 +7,8 @@ status: available
 
 # Visual Reasoning
 
-Use this skill when the user wants to understand what an image contains and why it works visually.
+Use this skill when the user wants to understand what an image contains and why
+it works visually.
 
 ## Core workflow
 

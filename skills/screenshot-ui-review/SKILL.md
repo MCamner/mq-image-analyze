@@ -2,7 +2,7 @@
 name: screenshot-ui-review
 description: Use when reviewing screenshots of apps, terminals, dashboards, websites, or GitHub pages for layout and usability.
 phase: 3
-status: planned
+status: available
 ---
 
 # Screenshot UI Review

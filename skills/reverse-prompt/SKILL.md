@@ -7,7 +7,8 @@ status: available
 
 # Reverse Prompt
 
-Use this skill to convert an image into a structured prompt that captures its visual character.
+Use this skill to convert an image into a structured prompt that captures its
+visual character.
 
 ## Core workflow
 

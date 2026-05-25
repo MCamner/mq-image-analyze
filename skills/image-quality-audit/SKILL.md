@@ -2,7 +2,7 @@
 name: image-quality-audit
 description: Use when scoring an image for composition quality, clarity, and visual hierarchy.
 phase: 2
-status: planned
+status: available
 ---
 
 # Image Quality Audit
