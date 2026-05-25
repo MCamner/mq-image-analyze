@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>mq-image-analyze</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:       #0d1117;
+    --surface:  #161b22;
+    --border:   #30363d;
+    --text:     #e6edf3;
+    --muted:    #8b949e;
+    --accent:   #58a6ff;
+    --green:    #3fb950;
+    --yellow:   #d29922;
+    --red:      #f85149;
+    --radius:   8px;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", monospace;
+    font-size: 14px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  header h1 { font-size: 15px; font-weight: 600; letter-spacing: -0.3px; }
+  header .tag {
+    font-size: 11px;
+    color: var(--muted);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 2px 8px;
+    border-radius: 20px;
+  }
+
+  main {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 0;
+    overflow: hidden;
+    height: calc(100vh - 49px);
+  }
+
+  /* LEFT PANEL */
+  .left {
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .drop-zone {
+    margin: 20px;
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 40px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    flex-shrink: 0;
+  }
+  .drop-zone:hover, .drop-zone.drag-over {
+    border-color: var(--accent);
+    background: rgba(88,166,255,0.04);
+  }
+  .drop-zone input { display: none; }
+  .drop-icon { font-size: 32px; margin-bottom: 10px; }
+  .drop-label { color: var(--muted); font-size: 13px; line-height: 1.6; }
+  .drop-label strong { color: var(--accent); }
+
+  .preview {
+    margin: 0 20px 16px;
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .preview.visible { display: flex; }
+  .preview img {
+    width: 100%;
+    max-height: 220px;
+    object-fit: contain;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: #000;
+  }
+
+  .controls {
+    padding: 0 20px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .toggle {
+    position: relative;
+    width: 36px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .toggle-slider {
+    position: absolute;
+    inset: 0;
+    background: var(--border);
+    border-radius: 20px;
+    transition: 0.2s;
+    cursor: pointer;
+  }
+  .toggle-slider::before {
+    content: "";
+    position: absolute;
+    width: 14px; height: 14px;
+    left: 3px; top: 3px;
+    background: var(--text);
+    border-radius: 50%;
+    transition: 0.2s;
+  }
+  .toggle input:checked + .toggle-slider { background: var(--accent); }
+  .toggle input:checked + .toggle-slider::before { transform: translateX(16px); }
+
+  .conf-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .conf-row input[type=range] {
+    flex: 1;
+    accent-color: var(--accent);
+    cursor: pointer;
+  }
+  .conf-val { color: var(--text); font-family: monospace; width: 36px; }
+
+  .analyze-btn {
+    background: var(--accent);
+    color: #000;
+    border: none;
+    border-radius: var(--radius);
+    padding: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s;
+    width: 100%;
+  }
+  .analyze-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .analyze-btn:hover:not(:disabled) { opacity: 0.88; }
+
+  /* RIGHT PANEL */
+  .right {
+    overflow-y: auto;
+    padding: 24px;
+  }
+
+  .empty-state {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+    gap: 8px;
+    text-align: center;
+  }
+  .empty-state .hint { font-size: 22px; }
+
+  .loading {
+    display: none;
+    height: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+    gap: 14px;
+  }
+  .loading.active { display: flex; }
+  .spinner {
+    width: 32px; height: 32px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .results { display: none; }
+  .results.visible { display: block; }
+
+  .result-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .result-header h2 { font-size: 16px; font-weight: 600; }
+  .mode-badge {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .mode-badge.exhaustive { border-color: var(--yellow); color: var(--yellow); }
+
+  .section { margin-bottom: 20px; }
+  .section-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 3px 10px;
+    font-size: 13px;
+  }
+  .tag-item.conf {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .palette-row { display: flex; gap: 6px; flex-wrap: wrap; }
+  .swatch {
+    width: 36px; height: 36px;
+    border-radius: 4px;
+    border: 1px solid rgba(255,255,255,0.08);
+    cursor: pointer;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .swatch:hover::after {
+    content: attr(data-hex);
+    position: absolute;
+    bottom: 42px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  .kv-grid {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 6px 16px;
+    font-size: 13px;
+  }
+  .kv-key { color: var(--muted); }
+  .kv-val { color: var(--text); }
+
+  .prompt-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text);
+    position: relative;
+    word-break: break-word;
+  }
+  .copy-btn {
+    position: absolute;
+    top: 8px; right: 8px;
+    background: var(--border);
+    border: none;
+    border-radius: 4px;
+    color: var(--muted);
+    font-size: 11px;
+    padding: 3px 8px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+  .copy-btn:hover { background: var(--accent); color: #000; }
+  .copy-btn.copied { background: var(--green); color: #000; }
+
+  .detections-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .detections-table th {
+    text-align: left;
+    color: var(--muted);
+    font-weight: 500;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 0 8px 6px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .detections-table td {
+    padding: 5px 8px 5px 0;
+    border-bottom: 1px solid rgba(48,54,61,0.5);
+  }
+  .conf-bar-wrap { display: flex; align-items: center; gap: 8px; }
+  .conf-bar {
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    width: 60px;
+    flex-shrink: 0;
+  }
+  .conf-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: var(--accent);
+  }
+
+  .limitations {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .lim-toggle {
+    padding: 10px 14px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: var(--muted);
+    user-select: none;
+  }
+  .lim-toggle:hover { color: var(--text); }
+  .lim-body { display: none; padding: 0 14px 10px; }
+  .lim-body.open { display: block; }
+  .lim-body li {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.7;
+    list-style: none;
+    padding-left: 12px;
+    position: relative;
+  }
+  .lim-body li::before { content: "·"; position: absolute; left: 0; }
+
+  .content-flags {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  .flag-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 12px;
+    text-align: center;
+  }
+  .flag-label { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+  .flag-status { font-size: 13px; font-weight: 600; }
+  .flag-status.na { color: var(--muted); }
+  .flag-status.clear { color: var(--green); }
+  .flag-status.detected { color: var(--red); }
+
+  .error-box {
+    background: rgba(248,81,73,0.08);
+    border: 1px solid rgba(248,81,73,0.3);
+    border-radius: var(--radius);
+    padding: 14px;
+    color: var(--red);
+    font-size: 13px;
+    display: none;
+  }
+  .error-box.visible { display: block; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>mq-image-analyze</h1>
+  <span class="tag">visual reasoning</span>
+</header>
+
+<main>
+  <div class="left">
+    <div class="drop-zone" id="dropZone">
+      <input type="file" id="fileInput" accept="image/*">
+      <div class="drop-icon">⬡</div>
+      <div class="drop-label">
+        <strong>Click to select</strong> or drag an image here<br>
+        jpg, png, webp
+      </div>
+    </div>
+
+    <div class="preview" id="preview">
+      <img id="previewImg" src="" alt="preview">
+    </div>
+
+    <div class="controls">
+      <div class="toggle-row">
+        <label class="toggle">
+          <input type="checkbox" id="exhaustiveToggle">
+          <span class="toggle-slider"></span>
+        </label>
+        Exhaustive mode
+      </div>
+      <div class="conf-row">
+        <span>Conf</span>
+        <input type="range" id="confSlider" min="1" max="95" value="25" step="1">
+        <span class="conf-val" id="confVal">0.25</span>
+      </div>
+      <button class="analyze-btn" id="analyzeBtn" disabled>Analyze</button>
+    </div>
+  </div>
+
+  <div class="right" id="right">
+    <div class="empty-state" id="emptyState">
+      <div class="hint">◻</div>
+      <div>Drop an image to begin</div>
+    </div>
+
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+      <div>Analyzing…</div>
+    </div>
+
+    <div class="error-box" id="errorBox"></div>
+
+    <div class="results" id="results">
+      <div class="result-header">
+        <h2 id="filename">—</h2>
+        <span class="mode-badge" id="modeBadge">summary</span>
+      </div>
+
+      <div class="section" id="secObjects">
+        <div class="section-title">Objects</div>
+        <div class="tags" id="objectTags"></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Palette</div>
+        <div class="palette-row" id="paletteRow"></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Visual</div>
+        <div class="kv-grid" id="visualGrid"></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Reverse prompt</div>
+        <div class="prompt-box" id="promptBox">
+          <button class="copy-btn" id="copyBtn">copy</button>
+          <span id="promptText"></span>
+        </div>
+      </div>
+
+      <div class="section" id="secDetections" style="display:none">
+        <div class="section-title">Detections <span id="detCount" style="color:var(--muted)"></span></div>
+        <table class="detections-table">
+          <thead>
+            <tr>
+              <th>Label</th>
+              <th>Confidence</th>
+              <th>Area %</th>
+            </tr>
+          </thead>
+          <tbody id="detBody"></tbody>
+        </table>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Content flags</div>
+        <div class="content-flags" id="contentFlags"></div>
+      </div>
+
+      <div class="section">
+        <div class="limitations">
+          <div class="lim-toggle" id="limToggle">
+            <span>Limitations</span>
+            <span id="limArrow">▸</span>
+          </div>
+          <ul class="lim-body" id="limBody"></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+const dropZone    = document.getElementById('dropZone');
+const fileInput   = document.getElementById('fileInput');
+const preview     = document.getElementById('preview');
+const previewImg  = document.getElementById('previewImg');
+const analyzeBtn  = document.getElementById('analyzeBtn');
+const confSlider  = document.getElementById('confSlider');
+const confVal     = document.getElementById('confVal');
+const exhaustive  = document.getElementById('exhaustiveToggle');
+const emptyState  = document.getElementById('emptyState');
+const loading     = document.getElementById('loading');
+const results     = document.getElementById('results');
+const errorBox    = document.getElementById('errorBox');
+const limToggle   = document.getElementById('limToggle');
+const limBody     = document.getElementById('limBody');
+const limArrow    = document.getElementById('limArrow');
+
+let selectedFile = null;
+
+// Conf slider
+confSlider.addEventListener('input', () => {
+  confVal.textContent = (confSlider.value / 100).toFixed(2);
+});
+
+// Exhaustive toggle adjusts default conf
+exhaustive.addEventListener('change', () => {
+  if (exhaustive.checked && confSlider.value == 25) {
+    confSlider.value = 5;
+    confVal.textContent = '0.05';
+  } else if (!exhaustive.checked && confSlider.value == 5) {
+    confSlider.value = 25;
+    confVal.textContent = '0.25';
+  }
+});
+
+// Drop zone
+dropZone.addEventListener('click', () => fileInput.click());
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.classList.remove('drag-over');
+  const f = e.dataTransfer.files[0];
+  if (f && f.type.startsWith('image/')) setFile(f);
+});
+fileInput.addEventListener('change', () => {
+  if (fileInput.files[0]) setFile(fileInput.files[0]);
+});
+
+function setFile(f) {
+  selectedFile = f;
+  previewImg.src = URL.createObjectURL(f);
+  preview.classList.add('visible');
+  analyzeBtn.disabled = false;
+}
+
+// Analyze
+analyzeBtn.addEventListener('click', analyze);
+
+async function analyze() {
+  if (!selectedFile) return;
+
+  setView('loading');
+  errorBox.classList.remove('visible');
+
+  const fd = new FormData();
+  fd.append('file', selectedFile);
+  fd.append('exhaustive', exhaustive.checked ? 'true' : 'false');
+  fd.append('conf', (confSlider.value / 100).toFixed(2));
+
+  try {
+    const res = await fetch('/analyze', { method: 'POST', body: fd });
+    if (!res.ok) throw new Error(`Server error ${res.status}`);
+    const data = await res.json();
+    render(data, selectedFile.name);
+    setView('results');
+  } catch (err) {
+    errorBox.textContent = err.message;
+    errorBox.classList.add('visible');
+    setView('empty');
+  }
+}
+
+function setView(v) {
+  emptyState.style.display = v === 'empty' ? '' : 'none';
+  loading.classList.toggle('active', v === 'loading');
+  results.classList.toggle('visible', v === 'results');
+}
+
+// Render
+function render(d, fname) {
+  document.getElementById('filename').textContent = fname;
+  const badge = document.getElementById('modeBadge');
+  badge.textContent = d.mode;
+  badge.className = 'mode-badge' + (d.mode === 'exhaustive' ? ' exhaustive' : '');
+
+  // Objects
+  const ot = document.getElementById('objectTags');
+  ot.innerHTML = d.objects.length
+    ? d.objects.map(o => `<span class="tag-item">${o}</span>`).join('')
+    : '<span style="color:var(--muted)">none detected</span>';
+
+  // Palette
+  const pr = document.getElementById('paletteRow');
+  pr.innerHTML = d.palette.map(hex =>
+    `<div class="swatch" style="background:${hex}" data-hex="${hex}" title="${hex}" onclick="copyText('${hex}', this)"></div>`
+  ).join('');
+
+  // Visual
+  const vg = document.getElementById('visualGrid');
+  vg.innerHTML = [
+    ['Brightness',     d.brightness],
+    ['Contrast',       d.contrast],
+    ['Depth',          d.depth],
+    ['Composition',    d.composition],
+    ['Symmetry',       d.symmetry],
+    ['Rule of thirds', d.rule_of_thirds],
+  ].map(([k,v]) => `<span class="kv-key">${k}</span><span class="kv-val">${v}</span>`).join('');
+
+  // Prompt
+  document.getElementById('promptText').textContent = d.prompt;
+
+  // Detections (exhaustive only)
+  const secDet = document.getElementById('secDetections');
+  if (d.mode === 'exhaustive' && d.detections.length) {
+    secDet.style.display = '';
+    document.getElementById('detCount').textContent = `(${d.detections.length})`;
+    const tb = document.getElementById('detBody');
+    tb.innerHTML = d.detections.map(det => `
+      <tr>
+        <td>${det.label}</td>
+        <td>
+          <div class="conf-bar-wrap">
+            <div class="conf-bar"><div class="conf-bar-fill" style="width:${Math.round(det.confidence*100)}%"></div></div>
+            ${(det.confidence * 100).toFixed(0)}%
+          </div>
+        </td>
+        <td>${det.area_percent}%</td>
+      </tr>
+    `).join('');
+  } else {
+    secDet.style.display = 'none';
+  }
+
+  // Content flags
+  const cf = document.getElementById('contentFlags');
+  const flags = d.content_flags;
+  const flagKeys = ['nudity', 'full_nudity', 'sexual_activity'];
+  cf.innerHTML = flagKeys.map(k => {
+    const f = flags[k];
+    let cls, label;
+    if (flags.source === 'not_implemented') {
+      cls = 'na'; label = 'n/a';
+    } else if (f.detected) {
+      cls = 'detected'; label = `${Math.round(f.confidence * 100)}%`;
+    } else {
+      cls = 'clear'; label = 'clear';
+    }
+    return `<div class="flag-item">
+      <div class="flag-label">${k.replace(/_/g,' ')}</div>
+      <div class="flag-status ${cls}">${label}</div>
+    </div>`;
+  }).join('');
+
+  // Limitations
+  const lb = document.getElementById('limBody');
+  lb.innerHTML = d.limitations.map(l => `<li>${l}</li>`).join('');
+}
+
+// Copy prompt
+document.getElementById('copyBtn').addEventListener('click', function() {
+  const txt = document.getElementById('promptText').textContent;
+  navigator.clipboard.writeText(txt).then(() => {
+    this.textContent = 'copied';
+    this.classList.add('copied');
+    setTimeout(() => { this.textContent = 'copy'; this.classList.remove('copied'); }, 1500);
+  });
+});
+
+function copyText(text, el) {
+  navigator.clipboard.writeText(text);
+}
+
+// Limitations toggle
+limToggle.addEventListener('click', () => {
+  limBody.classList.toggle('open');
+  limArrow.textContent = limBody.classList.contains('open') ? '▾' : '▸';
+});
+</script>
+</body>
+</html>

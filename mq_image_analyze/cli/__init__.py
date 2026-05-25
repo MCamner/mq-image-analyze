@@ -2,6 +2,7 @@ import typer
 
 from mq_image_analyze.cli.analyze import analyze
 from mq_image_analyze.cli.doctor import doctor
+from mq_image_analyze.cli.serve import serve
 
 _VERSION = (Path := __import__("pathlib").Path)(__file__).parents[2].joinpath("VERSION").read_text().strip()
 
@@ -26,3 +27,4 @@ def _main(
 
 app.command("analyze")(analyze)
 app.command("doctor")(doctor)
+app.command("serve")(serve)
