@@ -24,6 +24,8 @@ async def analyze(
     file: UploadFile = File(...),
     exhaustive: str = Form("false"),
     conf: str = Form(""),
+    vision_mode: str = Form("local-fast"),
+    vision_model: str = Form(""),
 ) -> JSONResponse:
     suffix = Path(file.filename or "image.jpg").suffix or ".jpg"
     with tempfile.NamedTemporaryFile(suffix=suffix, delete=False) as tmp:
@@ -33,7 +35,13 @@ async def analyze(
     try:
         mode = "exhaustive" if exhaustive.lower() == "true" else "summary"
         conf_val = float(conf) if conf else None
-        result = build(tmp_path, mode=mode, conf=conf_val)
+        result = build(
+            tmp_path,
+            mode=mode,
+            conf=conf_val,
+            vision_mode=vision_mode,
+            vision_model=vision_model or None,
+        )
         return JSONResponse(dataclasses.asdict(result))
     finally:
         tmp_path.unlink(missing_ok=True)

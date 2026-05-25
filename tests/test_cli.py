@@ -27,6 +27,8 @@ def test_analyze_help() -> None:
     result = runner.invoke(app, ["analyze", "--help"])
     assert result.exit_code == 0
     assert "IMAGE" in result.output
+    assert "--mode" in result.output
+    assert "--vision-model" in result.output
 
 
 def test_analyze_json_output(tmp_path: Path) -> None:
@@ -61,3 +63,43 @@ def test_analyze_text_output(tmp_path: Path) -> None:
     assert result.exit_code == 0
     assert "person" in result.output
     assert "Reverse prompt" in result.output
+
+
+def test_analyze_passes_vision_backend(tmp_path: Path) -> None:
+    import numpy as np
+    from PIL import Image
+
+    img_path = tmp_path / "test.jpg"
+    Image.fromarray(np.zeros((50, 50, 3), dtype="uint8")).save(img_path)
+
+    with patch("mq_image_analyze.cli.analyze.build", return_value=_MOCK_RESULT) as mock_build:
+        result = runner.invoke(
+            app,
+            [
+                "analyze",
+                str(img_path),
+                "--json",
+                "--mode",
+                "cloud-verify",
+                "--vision-model",
+                "gpt-4o",
+            ],
+        )
+
+    assert result.exit_code == 0
+    mock_build.assert_called_once()
+    assert mock_build.call_args.kwargs["vision_mode"] == "cloud-verify"
+    assert mock_build.call_args.kwargs["vision_model"] == "gpt-4o"
+
+
+def test_analyze_rejects_unknown_vision_backend(tmp_path: Path) -> None:
+    import numpy as np
+    from PIL import Image
+
+    img_path = tmp_path / "test.jpg"
+    Image.fromarray(np.zeros((50, 50, 3), dtype="uint8")).save(img_path)
+
+    result = runner.invoke(app, ["analyze", str(img_path), "--mode", "not-real"])
+
+    assert result.exit_code == 2
+    assert "Unsupported vision mode" in result.output

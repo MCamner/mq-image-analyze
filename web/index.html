@@ -155,6 +155,26 @@
   }
   .conf-val { color: var(--text); font-family: monospace; width: 36px; }
 
+  .select-row {
+    display: grid;
+    grid-template-columns: 92px 1fr;
+    align-items: center;
+    gap: 10px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .select-row select,
+  .select-row input {
+    width: 100%;
+    min-width: 0;
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 8px 9px;
+    font: inherit;
+  }
+
   .analyze-btn {
     background: var(--accent);
     color: #000;
@@ -227,6 +247,15 @@
     letter-spacing: 0.5px;
   }
   .mode-badge.exhaustive { border-color: var(--yellow); color: var(--yellow); }
+  .backend-badge {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
 
   .section { margin-bottom: 20px; }
   .section-title {
@@ -437,6 +466,18 @@
         <input type="range" id="confSlider" min="1" max="95" value="25" step="1">
         <span class="conf-val" id="confVal">0.25</span>
       </div>
+      <div class="select-row">
+        <span>Backend</span>
+        <select id="visionMode">
+          <option value="local-fast">local-fast · Ollama</option>
+          <option value="local-deep">local-deep · Ollama</option>
+          <option value="cloud-verify">cloud-verify · GPT</option>
+        </select>
+      </div>
+      <div class="select-row">
+        <span>Model</span>
+        <input type="text" id="visionModel" placeholder="auto">
+      </div>
       <button class="analyze-btn" id="analyzeBtn" disabled>Analyze</button>
     </div>
   </div>
@@ -457,7 +498,10 @@
     <div class="results" id="results">
       <div class="result-header">
         <h2 id="filename">—</h2>
-        <span class="mode-badge" id="modeBadge">summary</span>
+        <div class="tags">
+          <span class="mode-badge" id="modeBadge">summary</span>
+          <span class="backend-badge" id="backendBadge">local-fast</span>
+        </div>
       </div>
 
       <div class="section" id="secObjects">
@@ -484,7 +528,7 @@
       </div>
 
       <div class="section" id="secSemantic" style="display:none">
-        <div class="section-title">Semantic caption <span style="color:var(--muted);font-size:0.75rem">bakllava</span></div>
+        <div class="section-title">Semantic caption <span id="semanticModelLabel" style="color:var(--muted);font-size:0.75rem"></span></div>
         <div class="prompt-box" id="semanticBox">
           <button class="copy-btn" id="copySemanticBtn">copy</button>
           <span id="semanticText"></span>
@@ -532,6 +576,8 @@ const analyzeBtn  = document.getElementById('analyzeBtn');
 const confSlider  = document.getElementById('confSlider');
 const confVal     = document.getElementById('confVal');
 const exhaustive  = document.getElementById('exhaustiveToggle');
+const visionMode  = document.getElementById('visionMode');
+const visionModel = document.getElementById('visionModel');
 const emptyState  = document.getElementById('emptyState');
 const loading     = document.getElementById('loading');
 const results     = document.getElementById('results');
@@ -555,6 +601,18 @@ exhaustive.addEventListener('change', () => {
   } else if (!exhaustive.checked && confSlider.value == 5) {
     confSlider.value = 25;
     confVal.textContent = '0.25';
+  }
+});
+
+visionMode.addEventListener('change', () => {
+  const defaults = {
+    'local-fast': '',
+    'local-deep': 'llama3.2-vision',
+    'cloud-verify': 'gpt-4.1',
+  };
+  visionModel.placeholder = defaults[visionMode.value] || 'auto';
+  if (!visionModel.value || ['bakllava', 'llama3.2-vision', 'gpt-4.1'].includes(visionModel.value)) {
+    visionModel.value = defaults[visionMode.value];
   }
 });
 
@@ -592,6 +650,8 @@ async function analyze() {
   fd.append('file', selectedFile);
   fd.append('exhaustive', exhaustive.checked ? 'true' : 'false');
   fd.append('conf', (confSlider.value / 100).toFixed(2));
+  fd.append('vision_mode', visionMode.value);
+  fd.append('vision_model', visionModel.value.trim());
 
   try {
     const res = await fetch('/analyze', { method: 'POST', body: fd });
@@ -618,6 +678,7 @@ function render(d, fname) {
   const badge = document.getElementById('modeBadge');
   badge.textContent = d.mode;
   badge.className = 'mode-badge' + (d.mode === 'exhaustive' ? ' exhaustive' : '');
+  document.getElementById('backendBadge').textContent = `${d.vision_mode} · ${d.vision_model}`;
 
   // Objects
   const ot = document.getElementById('objectTags');
@@ -645,8 +706,9 @@ function render(d, fname) {
   // Prompt
   document.getElementById('promptText').textContent = d.prompt;
 
-  // Semantic caption (bakllava)
+  // Semantic caption
   const secSem = document.getElementById('secSemantic');
+  document.getElementById('semanticModelLabel').textContent = d.vision_model || '';
   if (d.semantic_caption) {
     document.getElementById('semanticText').textContent = d.semantic_caption;
     secSem.style.display = '';

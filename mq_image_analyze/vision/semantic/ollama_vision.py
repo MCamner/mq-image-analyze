@@ -16,7 +16,7 @@ _BASE_PROMPT = (
 )
 
 
-def _build_prompt(nudenet_context: dict | None) -> str:
+def build_prompt(nudenet_context: dict | None) -> str:
     if not nudenet_context:
         return _BASE_PROMPT
 
@@ -59,7 +59,7 @@ def describe(
     """Send image to ollama vision model with optional NudeNet context, return description."""
     image_bytes = Path(image_path).read_bytes()
     b64 = base64.b64encode(image_bytes).decode("utf-8")
-    prompt = _build_prompt(nudenet_context)
+    prompt = build_prompt(nudenet_context)
 
     payload = json.dumps({
         "model": model,

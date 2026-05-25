@@ -28,6 +28,7 @@
 - [x] No Silent Omission Rule in MCP docs
 - [x] `limitations` field in all JSON output
 - [x] Fallback behavior when model file is missing
+- [x] Vision backend selection: `local-fast`, `local-deep`, `cloud-verify`
 
 ## v0.2.0 — Image Comparison — Done
 

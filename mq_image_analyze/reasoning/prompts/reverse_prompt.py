@@ -16,7 +16,7 @@ from mq_image_analyze.vision.composition.analyzer import (
     symmetry_score,
     visual_weight,
 )
-from mq_image_analyze.vision.semantic.ollama_vision import describe as ollama_describe
+from mq_image_analyze.vision.semantic.provider import describe as semantic_describe
 
 _SUMMARY_LIMITATIONS = [
     "Object detection limited to YOLOv8n COCO classes (80 categories).",
@@ -72,12 +72,16 @@ class ReversePromptResult:
     unclassified_regions: list[dict] = field(default_factory=list)
     content_flags: dict = field(default_factory=lambda: dict(_DEFAULT_CONTENT_FLAGS))
     semantic_caption: str | None = None
+    vision_mode: str = "local-fast"
+    vision_model: str = "bakllava"
 
 
 def build(
     image_path: str | Path,
     mode: str = "summary",
     conf: float | None = None,
+    vision_mode: str = "local-fast",
+    vision_model: str | None = None,
 ) -> ReversePromptResult:
     path = Path(image_path)
 
@@ -122,7 +126,16 @@ def build(
         composition_desc += ", strong symmetry"
 
     content_flags = classify_content(path)
-    semantic_caption = ollama_describe(path, nudenet_context=content_flags)
+    semantic_caption, effective_vision_mode, effective_vision_model = semantic_describe(
+        path,
+        vision_mode=vision_mode,
+        vision_model=vision_model,
+        nudenet_context=content_flags,
+    )
+    if not semantic_caption:
+        limitations.append(
+            f"Semantic caption unavailable from {effective_vision_mode} ({effective_vision_model})."
+        )
 
     palette_desc = ", ".join(palette[:3])
     obj_desc = ", ".join(objects[:5]) if objects else "no detected objects"
@@ -165,4 +178,6 @@ def build(
         unclassified_regions=[],
         content_flags=content_flags,
         semantic_caption=semantic_caption,
+        vision_mode=effective_vision_mode,
+        vision_model=effective_vision_model,
     )

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from pathlib import Path
 
 from typer.testing import CliRunner
 
@@ -35,4 +36,4 @@ def test_version_flag() -> None:
     result = runner.invoke(app, ["--version"])
     assert result.exit_code == 0
     assert "mq-image" in result.output
-    assert "0.1.0" in result.output
+    assert Path("VERSION").read_text().strip() in result.output

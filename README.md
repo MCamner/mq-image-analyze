@@ -66,10 +66,23 @@ mq-image analyze image.jpg
 ```bash
 mq-image analyze <image>          # full analysis, rich output
 mq-image analyze <image> --json   # structured JSON output
+mq-image analyze <image> --mode local-fast
+mq-image analyze <image> --mode local-deep
+mq-image analyze <image> --mode cloud-verify --vision-model gpt-4.1
 mq-image doctor                   # system readiness check
 mq-image doctor --json            # doctor output as JSON
 mq-image --version                # print version
 ```
+
+Vision backend modes:
+
+| Mode | Default model | Use |
+| ---- | ------------- | --- |
+| `local-fast` | `bakllava` via Ollama | Fast local captioning and simple object/diagram interpretation |
+| `local-deep` | `llama3.2-vision` via Ollama | Better offline analysis when the machine can run a stronger model |
+| `cloud-verify` | `gpt-4.1` via OpenAI | Quality gate for critical architecture diagrams, risk review, trust boundaries, and YAML drafts |
+
+Use `--vision-model gpt-4o` when you specifically want GPT-4o. There is no `gpt-4.0` vision model name in the OpenAI API; use `gpt-4o` or `gpt-4.1`.
 
 Planned (v0.2+):
 
@@ -116,7 +129,9 @@ mq-image analyze image.jpg --json
   "composition": "centered, rule-of-thirds alignment",
   "symmetry": 0.871,
   "rule_of_thirds": 0.453,
-  "prompt": "person, monitor, dark scene, ..."
+  "prompt": "person, monitor, dark scene, ...",
+  "vision_mode": "local-fast",
+  "vision_model": "bakllava"
 }
 ```
 

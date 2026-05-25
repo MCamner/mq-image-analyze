@@ -32,7 +32,8 @@ def _validate_image(path: str) -> Path:
     description=(
         "Analyze an image and return a full visual reasoning report: detected objects, "
         "color palette, brightness, contrast, depth, composition metrics, reverse prompt, "
-        "content flags (nudity/explicit via NudeNet), and optional semantic caption (bakllava). "
+        "content flags (nudity/explicit via NudeNet), and optional semantic caption "
+        "(Ollama local-fast/local-deep or OpenAI cloud-verify). "
         f"Safety: {_SAFETY}. Read-only."
     )
 )
@@ -40,18 +41,22 @@ def analyze_image(
     image_path: str,
     mode: str = "summary",
     conf: float | None = None,
+    vision_mode: str = "local-fast",
+    vision_model: str | None = None,
 ) -> str:
     """
     Args:
         image_path: Absolute or home-relative path to the image file.
         mode: 'summary' (default) or 'exhaustive' (all detections, low conf).
         conf: Detection confidence threshold. Defaults: 0.25 (summary), 0.05 (exhaustive).
+        vision_mode: 'local-fast', 'local-deep', or 'cloud-verify'.
+        vision_model: Optional backend model override, for example 'gpt-4o' or 'gpt-4.1'.
     Returns:
         JSON string with full ReversePromptResult.
     """
     from mq_image_analyze.reasoning.prompts.reverse_prompt import build
     p = _validate_image(image_path)
-    result = build(p, mode=mode, conf=conf)
+    result = build(p, mode=mode, conf=conf, vision_mode=vision_mode, vision_model=vision_model)
     return json.dumps(dataclasses.asdict(result), indent=2)
 
 
@@ -87,24 +92,28 @@ def extract_palette(image_path: str) -> str:
     description=(
         "Build a reverse prompt for an image — a structured text description suitable for "
         "AI image generators or visual search. Combines object detection, palette, composition, "
-        "and optional bakllava semantic caption. "
+        "and optional semantic caption from local Ollama or cloud GPT vision. "
         f"Safety: {_SAFETY}. Read-only."
     )
 )
 def reverse_prompt(
     image_path: str,
     mode: str = "summary",
+    vision_mode: str = "local-fast",
+    vision_model: str | None = None,
 ) -> str:
     """
     Args:
         image_path: Absolute or home-relative path to the image file.
         mode: 'summary' or 'exhaustive'.
+        vision_mode: 'local-fast', 'local-deep', or 'cloud-verify'.
+        vision_model: Optional backend model override.
     Returns:
         JSON with prompt string, objects, palette, semantic_caption, and limitations.
     """
     from mq_image_analyze.reasoning.prompts.reverse_prompt import build
     p = _validate_image(image_path)
-    result = build(p, mode=mode)
+    result = build(p, mode=mode, vision_mode=vision_mode, vision_model=vision_model)
     d = dataclasses.asdict(result)
     return json.dumps({
         "prompt": d["prompt"],

@@ -43,6 +43,8 @@ Confidence threshold: 0.05 (unless `--conf` overrides).
   "rule_of_thirds": 0.0,
   "prompt": "string",
   "mode": "summary",
+  "vision_mode": "local-fast",
+  "vision_model": "bakllava",
   "detections": [],
   "limitations": ["string"],
   "text_regions": [],
@@ -71,6 +73,8 @@ Confidence threshold: 0.05 (unless `--conf` overrides).
   "rule_of_thirds": 0.0,
   "prompt": "string",
   "mode": "exhaustive",
+  "vision_mode": "cloud-verify",
+  "vision_model": "gpt-4.1",
   "detections": [
     {
       "label": "string",
@@ -109,6 +113,8 @@ Confidence threshold: 0.05 (unless `--conf` overrides).
 | `rule_of_thirds` | float | 0.0–1.0 alignment score |
 | `prompt` | string | Reverse prompt string |
 | `mode` | string | `summary` or `exhaustive` |
+| `vision_mode` | string | `local-fast`, `local-deep`, or `cloud-verify` |
+| `vision_model` | string | Backend model used for the semantic caption |
 | `detections` | object[] | Raw detections; empty in summary mode |
 | `detections[].confidence` | float | YOLOv8n confidence score |
 | `detections[].bbox` | float[4] | `[x1, y1, x2, y2]` in pixels |
