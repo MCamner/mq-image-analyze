@@ -5,6 +5,7 @@ from mq_image_analyze.cli.analyze_ui import analyze_ui_cmd
 from mq_image_analyze.cli.compare import compare
 from mq_image_analyze.cli.doctor import doctor
 from mq_image_analyze.cli.serve import serve
+from mq_image_analyze.cli.serve_mcp import serve_mcp
 
 _VERSION = (Path := __import__("pathlib").Path)(__file__).parents[2].joinpath("VERSION").read_text().strip()
 
@@ -31,4 +32,5 @@ app.command("analyze")(analyze)
 app.command("analyze-ui")(analyze_ui_cmd)
 app.command("compare")(compare)
 app.command("doctor")(doctor)
+app.command("mcp")(serve_mcp)
 app.command("serve")(serve)

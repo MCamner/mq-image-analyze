@@ -45,15 +45,17 @@
 - [x] Terminal screenshot analysis (dark + monochrome + text density heuristic)
 - [x] GitHub README screenshot analysis (light + tall + text density heuristic)
 
-## v0.4.0 — MCP Integration — Planned
+## v0.4.0 — MCP Integration — Done
 
-- [ ] MCP server (`mq_image_analyze/mcp/server.py`)
-- [ ] `analyze_image` tool
-- [ ] `extract_palette` tool
-- [ ] `reverse_prompt` tool
-- [ ] `compare_images` tool
-- [ ] `analyze_ui` tool
-- [ ] Tool safety classification
+- [x] MCP server (`mq_image_analyze/mcp/server.py`) using FastMCP
+- [x] `analyze_image` tool
+- [x] `extract_palette` tool
+- [x] `reverse_prompt` tool
+- [x] `compare_images` tool
+- [x] `analyze_ui` tool
+- [x] Tool safety classification (all tools: safe / read-only)
+- [x] `mq-image mcp` CLI command (stdio + sse transport)
+- [x] `[mcp]` optional dependency group in pyproject.toml
 
 ## v0.5.0 — MQ Ecosystem Integration — Planned
 
