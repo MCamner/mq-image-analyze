@@ -40,6 +40,11 @@ _DEFAULT_CONTENT_FLAGS: dict = {
     "nudity": {"detected": False, "confidence": None},
     "full_nudity": {"detected": False, "confidence": None},
     "sexual_activity": {"detected": False, "confidence": None},
+    "faces": {
+        "female": {"detected": False, "confidence": None},
+        "male":   {"detected": False, "confidence": None},
+    },
+    "covered_parts": [],
     "source": "not_implemented",
     "note": (
         "YOLOv8n does not classify explicit content. "
@@ -112,7 +117,7 @@ def build(
         composition_desc += ", strong symmetry"
 
     content_flags = classify_content(path)
-    semantic_caption = ollama_describe(path)
+    semantic_caption = ollama_describe(path, nudenet_context=content_flags)
 
     palette_desc = ", ".join(palette[:3])
     obj_desc = ", ".join(objects[:5]) if objects else "no detected objects"

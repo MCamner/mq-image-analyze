@@ -1,9 +1,7 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
-
-if TYPE_CHECKING:
-    from pathlib import Path
+from pathlib import Path
+from typing import Any
 
 try:
     from nudenet import NudeDetector as _NudeDetector  # type: ignore[import-untyped]
@@ -16,6 +14,7 @@ _NUDITY_CLASSES = {
     "MALE_BREAST_EXPOSED",
     "ARMPITS_EXPOSED",
     "BELLY_EXPOSED",
+    "FEET_EXPOSED",
 }
 
 _FULL_NUDITY_CLASSES = {
@@ -24,15 +23,35 @@ _FULL_NUDITY_CLASSES = {
     "ANUS_EXPOSED",
 }
 
+_COVERED_CLASSES = {
+    "FEMALE_BREAST_COVERED",
+    "FEMALE_GENITALIA_COVERED",
+    "BUTTOCKS_COVERED",
+    "ANUS_COVERED",
+    "BELLY_COVERED",
+    "ARMPITS_COVERED",
+    "FEET_COVERED",
+}
+
+_FACE_CLASSES = {
+    "FACE_FEMALE",
+    "FACE_MALE",
+}
+
 _CONF_THRESHOLD = 0.5
 _detector: Any = None
+
+_MODEL_640 = Path(__file__).parents[3] / "models" / "640m.onnx"
 
 
 def _get_detector() -> Any:
     global _detector
     if _detector is None:
         assert _NudeDetector is not None
-        _detector = _NudeDetector()
+        if _MODEL_640.exists():
+            _detector = _NudeDetector(model_path=str(_MODEL_640), inference_resolution=640)
+        else:
+            _detector = _NudeDetector()
     return _detector
 
 
@@ -52,6 +71,8 @@ def classify(image_path: str | Path) -> dict:
 
     nudity_hits      = hit_classes & (_NUDITY_CLASSES | _FULL_NUDITY_CLASSES)
     full_nudity_hits = hit_classes & _FULL_NUDITY_CLASSES
+    covered_hits     = hit_classes & _COVERED_CLASSES
+    face_hits        = hit_classes & _FACE_CLASSES
 
     return {
         "nudity": {
@@ -66,6 +87,17 @@ def classify(image_path: str | Path) -> dict:
             "detected": False,
             "confidence": None,
         },
+        "faces": {
+            "female": {
+                "detected": "FACE_FEMALE" in face_hits,
+                "confidence": best_conf({"FACE_FEMALE"}),
+            },
+            "male": {
+                "detected": "FACE_MALE" in face_hits,
+                "confidence": best_conf({"FACE_MALE"}),
+            },
+        },
+        "covered_parts": sorted(covered_hits),
         "source": "nudenet",
         "raw_classes": sorted(hit_classes),
         "note": (
@@ -80,6 +112,9 @@ def _not_implemented(note: str) -> dict:
         "nudity":          {"detected": False, "confidence": None},
         "full_nudity":     {"detected": False, "confidence": None},
         "sexual_activity": {"detected": False, "confidence": None},
+        "faces":           {"female": {"detected": False, "confidence": None},
+                            "male":   {"detected": False, "confidence": None}},
+        "covered_parts":   [],
         "source": "not_implemented",
         "note": note,
     }
