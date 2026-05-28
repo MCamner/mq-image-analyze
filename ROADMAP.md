@@ -73,3 +73,26 @@
 - [x] Stable MCP tool contracts
 - [x] Full documentation
 - [x] Release workflow
+
+## v1.1.0 — Visual cognition for architecture review
+
+Goal:
+
+Make mq-image-analyze the visual cognition layer for the mq ecosystem while
+leaving review generation and architecture reasoning to mq-mcp.
+
+### Planned scope
+
+- [ ] Add diagram-understanding output optimized for mq-mcp consumption
+- [ ] Add infra topology extraction for architecture diagrams and screenshots
+- [ ] Add OCR pipeline for terminal output and monitoring dashboards
+- [ ] Add screenshot review primitives for CLI and dashboard screenshots
+- [ ] Add JSON schema for visual architecture observations
+- [ ] Add examples for `mq-review architecture.png` style workflows
+- [ ] Add docs for mq-mcp and mq-agent integration
+
+### Non-goals
+
+- No review generation
+- No semantic memory runtime
+- No architecture decision engine
