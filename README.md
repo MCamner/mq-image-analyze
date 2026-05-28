@@ -3,7 +3,7 @@
 [![Tests](https://github.com/MCamner/mq-image-analyze/actions/workflows/tests.yml/badge.svg)](https://github.com/MCamner/mq-image-analyze/actions/workflows/tests.yml)
 [![Python](https://img.shields.io/badge/python-3.11%2B-blue)](https://www.python.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.0.0-blue)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.1.0-blue)](CHANGELOG.md)
 
 Visual reasoning and image intelligence for AI agents,
 creative workflows, screenshots, and cinematic analysis.
@@ -25,7 +25,7 @@ It is the **perception layer** for [mq-agent](https://github.com/MCamner/mq-agen
 
 ```bash
 $ mq-image --version
-mq-image 1.0.0
+mq-image 1.1.0
 
 $ mq-image doctor
   Python >= 3.11     ok   3.14.5
@@ -71,6 +71,7 @@ mq-image analyze <image> --mode local-deep
 mq-image analyze <image> --mode cloud-verify --vision-model gpt-4.1
 mq-image analyze-ui <screenshot>
 mq-image compare <before> <after>
+mq-image observe-architecture <diagram>   # visual_architecture_observation.v1 JSON
 mq-image serve --port 8000
 mq-image mcp
 mq-image doctor                   # system readiness check
@@ -181,6 +182,51 @@ Part of the MQ ecosystem:
 
 ---
 
+## How mq-agent uses mq-image-analyze
+
+mq-agent is the orchestrator. mq-image-analyze is the perception layer.
+mq-agent never implements image analysis — it delegates to this tool and
+passes the structured result onward to mq-mcp or the user.
+
+**When mq-agent triggers mq-image-analyze:**
+
+| Trigger | Tool called | Backend |
+| ------- | ----------- | ------- |
+| User shares a screenshot | `analyze_ui` | local-fast |
+| User shares an architecture diagram | `observe_architecture` | local (cv2 heuristics) |
+| User asks "what's in this image?" | `analyze_image` | local-fast or cloud-verify |
+| Before/after visual comparison | `compare_images` | local-fast |
+| Diagram needs semantic interpretation | `analyze_image` | cloud-verify (`gpt-4.1`) |
+
+**The flow:**
+
+```text
+mq-agent
+  │
+  ├── receives image path from user
+  │
+  ├── calls observe_architecture(image_path)         ← structural topology
+  │   or analyze_image(image_path, vision_mode=...)  ← semantic caption
+  │
+  ├── receives visual_architecture_observation.v1
+  │   or mq-image.analysis.v1 JSON blob
+  │
+  └── passes JSON as extra_context to mq-mcp review_file / review_diff
+```
+
+**Backend selection:**
+
+| Situation | Backend |
+| --------- | ------- |
+| Local-only, no API key | `local-fast` (BakLLaVA via Ollama) |
+| Higher accuracy needed | `local-deep` (llama3.2-vision) |
+| Critical diagram or trust boundary | `cloud-verify` (`gpt-4.1` via OpenAI) |
+
+mq-image-analyze does not make review decisions. It extracts visual structure.
+Review generation and architecture reasoning remain in mq-mcp.
+
+---
+
 ## Docs
 
 | Doc | Contents |
@@ -209,3 +255,4 @@ Part of the MQ ecosystem:
 | v0.4.0 | MCP integration | Done |
 | v0.5.0 | MQ ecosystem integration | Done |
 | v1.0.0 | Stable toolkit | Done |
+| v1.1.0 | Visual cognition layer (`visual_architecture_observation.v1`, `observe_architecture` MCP tool) | Done |
