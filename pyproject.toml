@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mq-image-analyze"
-version = "1.0.0"
+version = "1.1.0"
 description = "Visual reasoning infrastructure for image analysis"
 requires-python = ">=3.11"
 dependencies = [

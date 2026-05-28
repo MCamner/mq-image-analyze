@@ -1,0 +1,85 @@
+{
+  "schema_version": "visual_architecture_observation.v1",
+  "image_type": "architecture-diagram",
+  "image_path": "/path/to/system-architecture.png",
+  "components": [
+    {
+      "id": "box_0",
+      "bbox": [40.0, 60.0, 280.0, 140.0],
+      "area_percent": 5.12,
+      "label": null,
+      "fill_color": "#c8e6c9",
+      "text": null
+    },
+    {
+      "id": "box_1",
+      "bbox": [340.0, 60.0, 580.0, 140.0],
+      "area_percent": 5.12,
+      "label": null,
+      "fill_color": "#bbdefb",
+      "text": null
+    },
+    {
+      "id": "box_2",
+      "bbox": [640.0, 60.0, 880.0, 140.0],
+      "area_percent": 5.12,
+      "label": null,
+      "fill_color": "#bbdefb",
+      "text": null
+    },
+    {
+      "id": "box_3",
+      "bbox": [340.0, 220.0, 580.0, 300.0],
+      "area_percent": 4.27,
+      "label": null,
+      "fill_color": "#fff9c4",
+      "text": null
+    }
+  ],
+  "connections": [
+    {
+      "id": "edge_0",
+      "direction": "horizontal",
+      "from_component": "box_0",
+      "to_component": "box_1"
+    },
+    {
+      "id": "edge_1",
+      "direction": "horizontal",
+      "from_component": "box_1",
+      "to_component": "box_2"
+    },
+    {
+      "id": "edge_2",
+      "direction": "vertical",
+      "from_component": "box_1",
+      "to_component": "box_3"
+    }
+  ],
+  "groups": [
+    {
+      "color": "#c0e0c0",
+      "component_ids": ["box_0"],
+      "label": null
+    },
+    {
+      "color": "#80c0e0",
+      "component_ids": ["box_1", "box_2"],
+      "label": null
+    }
+  ],
+  "text_regions": [],
+  "layout": {
+    "width": 960,
+    "height": 400,
+    "component_count": 4,
+    "connection_count": 3,
+    "dominant_flow": "left-to-right"
+  },
+  "limitations": [
+    "OCR not available — install pytesseract for text extraction from boxes. Component labels and text fields will be null.",
+    "Component and connection detection is heuristic (contour-based). Overlapping boxes, decorative borders, and complex layouts may produce false positives or miss real components.",
+    "Semantic labels and semantic topology (what each component represents) are not inferred — this requires an LLM call via mq-mcp review tools."
+  ],
+  "ocr_available": false
+}

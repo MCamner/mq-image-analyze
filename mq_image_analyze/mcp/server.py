@@ -171,3 +171,27 @@ def analyze_ui(image_path: str) -> str:
     p = _validate_image(image_path)
     result = _analyze_ui(p)
     return json.dumps(dataclasses.asdict(result), indent=2)
+
+
+@mcp.tool(
+    description=(
+        "Observe an architecture diagram or dashboard screenshot and return a structured "
+        "visual_architecture_observation.v1 JSON blob designed for consumption by mq-mcp "
+        "review tools. Detects rectangular components (boxes), connection lines/arrows, "
+        "color-based groups, and image type (architecture-diagram | dashboard | terminal | "
+        "ui-screenshot | unknown). OCR-based text extraction from boxes is included when "
+        "pytesseract is installed. Output is optimized for injection into LLM review context. "
+        f"Safety: {_SAFETY}. Read-only."
+    )
+)
+def observe_architecture(image_path: str) -> str:
+    """
+    Args:
+        image_path: Absolute or home-relative path to the diagram or screenshot.
+    Returns:
+        JSON string with visual_architecture_observation.v1 schema.
+    """
+    from mq_image_analyze.pipelines.architecture_pipeline import observe_architecture as _observe
+    p = _validate_image(image_path)
+    result = _observe(p)
+    return json.dumps(dataclasses.asdict(result), indent=2)
