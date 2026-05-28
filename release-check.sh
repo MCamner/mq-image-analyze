@@ -1,6 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+REPO_ROOT="$(cd "$(dirname "$0")" && pwd)"
+
+# Prefer venv binaries if available
+PYTHON="${REPO_ROOT}/.venv/bin/python"
+MQ_IMAGE="${REPO_ROOT}/.venv/bin/mq-image"
+[[ -x "$PYTHON" ]]   || PYTHON="python"
+[[ -x "$MQ_IMAGE" ]] || MQ_IMAGE="mq-image"
+
 ERRORS=0
 
 fail() { echo "FAIL: $1"; ERRORS=$((ERRORS + 1)); }
@@ -32,7 +40,7 @@ else
 fi
 
 # pyproject version matches VERSION
-PYPROJECT_VERSION=$(python - <<'PY'
+PYPROJECT_VERSION=$("$PYTHON" - <<'PY'
 import tomllib
 from pathlib import Path
 
@@ -65,7 +73,7 @@ done
 # Tests pass
 echo ""
 echo "==> Running tests"
-if python -m pytest -q 2>&1; then
+if "$PYTHON" -m pytest -q 2>&1; then
   ok "Tests pass"
 else
   fail "Tests failed"
@@ -74,13 +82,13 @@ fi
 # CLI works
 echo ""
 echo "==> CLI checks"
-if mq-image --help > /dev/null 2>&1; then
+if "$MQ_IMAGE" --help > /dev/null 2>&1; then
   ok "mq-image --help"
 else
   fail "mq-image --help failed"
 fi
 
-if mq-image --version > /dev/null 2>&1; then
+if "$MQ_IMAGE" --version > /dev/null 2>&1; then
   ok "mq-image --version"
 else
   fail "mq-image --version failed"
