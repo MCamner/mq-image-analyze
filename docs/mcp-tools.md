@@ -129,3 +129,25 @@ analyze_ui(image_path: str) -> str
 ```
 
 Returns serialized `UIAnalysisResult`.
+
+---
+
+## observe_architecture
+
+Produce a `visual_architecture_observation.v1` JSON blob optimized for injection into mq-mcp review context. Detects rectangular components (boxes), connection lines and arrows, color-based groups, and image type.
+
+```python
+observe_architecture(image_path: str) -> str
+```
+
+Arguments:
+
+| Argument | Description |
+| -------- | ----------- |
+| `image_path` | Absolute or home-relative path to the diagram or screenshot |
+
+Output schema: `visual_architecture_observation.v1`
+
+Fields include: `image_type` (`architecture-diagram \| dashboard \| terminal \| ui-screenshot \| unknown`), `components`, `connections`, `color_groups`, `ocr_text` (when pytesseract is installed), `limitations`, `safety`.
+
+Designed to be consumed by mq-mcp review tools. OCR-based text extraction from diagram boxes is included when pytesseract is installed. Read-only. Safety: `safe`.

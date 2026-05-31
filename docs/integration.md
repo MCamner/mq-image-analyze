@@ -18,44 +18,41 @@ mqlaunch        execution bridge
 
 ## mq-agent
 
-mq-image-analyze provides visual reasoning skills for mq-agent dispatch.
+mq-image-analyze provides visual reasoning skills for mq-agent dispatch via the `skills/` directory and SKILL.md contracts.
 
 Skills available:
 
-- `visual-reasoning` — full image analysis
-- `reverse-prompt` — prompt extraction from image
-- `screenshot-ui-review` — UI critique (Phase 3)
-- `image-quality-audit` — scoring (Phase 2)
-
-Planned integration: skill loader reads from `skills/` and exposes them to mq-agent via standard SKILL.md contracts.
+- `visual-reasoning` — full image analysis via `analyze_image`
+- `reverse-prompt` — prompt extraction from image via `reverse_prompt`
+- `screenshot-ui-review` — UI critique via `analyze_ui`
+- `architecture-observation` — diagram parsing via `observe_architecture`
 
 ---
 
 ## mq-mcp
 
-mq-image-analyze MCP tools (v0.4.0) will be registered in mq-mcp's tool index.
+mq-image-analyze exposes a native MCP server (`mq-image mcp`) that mq-mcp can route tool calls to as a visual perception backend.
 
-Planned tools:
+Active tools (v1.1.0+, compatible with mq-mcp v1.3.0+):
 
 ```text
-analyze_image()
-extract_palette()
-reverse_prompt()
-compare_images()
-score_image()
-analyze_ui()
-ocr_image()
+analyze_image()          — full visual reasoning report
+extract_palette()        — dominant color palette
+reverse_prompt()         — reverse prompt from image
+compare_images()         — image drift comparison
+analyze_ui()             — UI screenshot critique
+observe_architecture()   — visual_architecture_observation.v1 for mq-mcp review context
 ```
 
-See [mcp-tools.md](mcp-tools.md) for full contracts.
+All tools are read-only. Safety classification: `safe`.
+
+See [mcp-tools.md](mcp-tools.md) for full contracts and argument signatures.
 
 ---
 
 ## repo-signal
 
-mq-image-analyze can analyze screenshots of repo README pages, dashboards, and documentation.
-
-Planned use: `repo-signal` can call `analyze_ui` on rendered README screenshots to evaluate visual quality of documentation.
+mq-image-analyze can analyze screenshots of repo README pages, dashboards, and documentation. `repo-signal` can call `analyze_ui` on rendered README screenshots to evaluate visual quality of documentation.
 
 ---
 
