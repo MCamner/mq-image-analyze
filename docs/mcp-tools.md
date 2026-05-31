@@ -2,7 +2,28 @@
 
 All MCP tools are read-only. They inspect image files and return structured analysis; they do not write, delete, mutate, or suppress detector output.
 
-Safety classification: `safe`.
+Safety classification: `safe` (Class A).
+
+See [MQ_MCP_COMPATIBILITY.md](MQ_MCP_COMPATIBILITY.md) for the full role boundary and integration contract with mq-mcp.
+
+---
+
+## Tool contract summary
+
+| Tool | Purpose | Safety class | Input | Output | mq-mcp usage |
+| ---- | ------- | ------------ | ----- | ------ | ------------ |
+| `analyze_image` | Full visual reasoning report | A | image path | objects, palette, composition, caption, limitations | perception context |
+| `extract_palette` | Dominant color palette | A | image path | palette hex list, brightness, contrast | visual context |
+| `reverse_prompt` | Reverse prompt from image | A | image path | prompt string, objects, palette, limitations | prompt context |
+| `compare_images` | Image drift comparison | A | two image paths | palette diff, style drift, object changes | visual regression |
+| `analyze_ui` | UI screenshot analysis | A | screenshot path | layout regions, WCAG contrast, hierarchy | screenshot review |
+| `observe_architecture` | Architecture diagram parsing | A | diagram path | `visual_architecture_observation.v1`: nodes, connections, image_type | architecture review context |
+
+Planned additions (not yet implemented):
+
+| Tool | Purpose | Safety class | Notes |
+| ---- | ------- | ------------ | ----- |
+| `image_ocr` | Extract visible text blocks with position | A | Replaces ad-hoc OCR in `observe_architecture`; standalone tool |
 
 ---
 

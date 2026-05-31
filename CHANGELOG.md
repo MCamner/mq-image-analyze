@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.2.1 — 2026-06-01
+
+### Added
+
+- `docs/MQ_MCP_COMPATIBILITY.md` — dedicated compatibility doc: role boundary,
+  safety rules for image-derived text, MCP tool contract table (implemented + planned),
+  hard boundary, guide for consuming mq-image-analyze output in mq-mcp
+- `docs/mcp-tools.md` — tool contract summary table added at top; planned `image_ocr`
+  tool noted; link to MQ_MCP_COMPATIBILITY.md
+
+### Changed
+
+- README: `mq-mcp compatibility` section links to new MQ_MCP_COMPATIBILITY.md
+
+---
+
 ## 1.2.0 — 2026-06-01
 
 ### Changed
