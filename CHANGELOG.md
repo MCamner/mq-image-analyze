@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.2.0 — 2026-06-01
+
+### Changed
+
+- README: opening paragraph updated — "visual perception layer for the mq ecosystem";
+  architecture flow diagram added; "mq-mcp compatibility" responsibility table added;
+  "Hard boundary" section added (must/may contract)
+- ROADMAP: release map table added; v1.2.0 section added
+- `release-check.sh`: `mq-image mcp --help` and `python -m compileall` checks added
+
+---
+
 ## 1.1.0 — 2026-05-28
 
 ### Added
