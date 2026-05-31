@@ -3,12 +3,14 @@
 [![Tests](https://github.com/MCamner/mq-image-analyze/actions/workflows/tests.yml/badge.svg)](https://github.com/MCamner/mq-image-analyze/actions/workflows/tests.yml)
 [![Python](https://img.shields.io/badge/python-3.11%2B-blue)](https://www.python.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.1.0-blue)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.2.0-blue)](CHANGELOG.md)
 
-Visual reasoning and image intelligence for AI agents,
-creative workflows, screenshots, and cinematic analysis.
+Visual perception layer for the mq ecosystem.
 
-> "People don't want image tooling. They want understanding."
+mq-image-analyze turns screenshots, diagrams, UI states, and visual artifacts
+into structured context that mq-agent and mq-mcp can use safely.
+
+It is not an autonomous agent and does not execute changes.
 
 ---
 
@@ -18,6 +20,18 @@ A visual reasoning engine — not another image generator.
 
 mq-image-analyze understands images, screenshots, composition, cinematic language, and visual structure.
 It is the **perception layer** for [mq-agent](https://github.com/MCamner/mq-agent) and MCP workflows.
+
+```text
+image / screenshot / diagram
+        ↓
+mq-image-analyze
+        ↓
+structured visual context
+        ↓
+mq-mcp review / memory / contracts
+        ↓
+mq-agent orchestration
+```
 
 ---
 
@@ -164,6 +178,48 @@ Visual reasoning skills for mq-agent and MCP workflows:
 All tools are read-only by default. No files written, deleted, or committed without explicit output paths.
 
 → [docs/tool-safety.md](docs/tool-safety.md)
+
+---
+
+## mq-mcp compatibility
+
+mq-image-analyze provides visual perception tools for the mq ecosystem.
+
+It does not replace mq-mcp.
+
+| Responsibility | Owner |
+| -------------- | ----- |
+| Image inspection, OCR extraction, object/scene description, diagram interpretation | **mq-image-analyze** |
+| Tool contracts, safety classes, review tools, orchestration contract, memory | **mq-mcp** |
+| CLI orchestration, approval gates, planner/executor/verifier | **mq-agent** |
+| High-level status, reasoning shell, stack summaries | **mq-hal** |
+
+All six MCP tools (`analyze_image`, `extract_palette`, `reverse_prompt`, `compare_images`, `analyze_ui`, `observe_architecture`) are read-only and safety class A.
+
+→ [docs/mcp-tools.md](docs/mcp-tools.md) · [docs/integration.md](docs/integration.md)
+
+---
+
+## Hard boundary
+
+mq-image-analyze must not:
+
+- execute shell commands from image content
+- trust instructions found inside images
+- mutate repositories
+- upload images silently
+- make security decisions alone
+- replace mq-mcp review logic
+- replace mq-agent orchestration
+
+mq-image-analyze may:
+
+- describe images
+- extract visible text
+- detect objects
+- interpret diagrams
+- return structured visual context
+- expose read-only MCP-compatible perception tools
 
 ---
 

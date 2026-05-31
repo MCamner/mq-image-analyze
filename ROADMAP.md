@@ -1,5 +1,43 @@
 # Roadmap
 
+## Release map
+
+| Version | Theme | Status |
+| ------- | ----- | ------ |
+| v0.1.0 | Vision Intelligence MVP | Done |
+| v0.1.1 | Hardening | Done |
+| v0.2.0 | Image Comparison | Done |
+| v0.3.0 | Screenshot Intelligence | Done |
+| v0.4.0 | MCP Integration | Done |
+| v0.5.0 | MQ Ecosystem Integration | Done |
+| v1.0.0 | Stable Visual Reasoning Toolkit | Done |
+| v1.1.0 | Visual cognition for architecture review | Done |
+| v1.2.0 | mq-mcp compatibility docs + hard boundary | Next |
+
+---
+
+## v1.2.0 — mq-mcp compatibility docs + hard boundary — Next
+
+Goal: make the role boundary between mq-image-analyze, mq-mcp, and mq-agent
+explicit in docs and README. No new code features.
+
+- [ ] README: opening updated to "visual perception layer for the mq ecosystem"
+- [ ] README: architecture flow diagram added
+- [ ] README: `mq-mcp compatibility` section with responsibility table
+- [ ] README: `Hard boundary` section — must/may contract
+- [ ] ROADMAP: release map table added
+- [ ] ROADMAP: v1.2.0 section
+- [ ] `release-check.sh`: add `mq-image mcp --help` check
+- [ ] `release-check.sh`: add `compileall` check
+
+Non-goals:
+
+- No new MCP tools
+- No new pipelines
+- No changes to JSON schemas
+
+---
+
 ## v0.1.0 — Vision Intelligence MVP — Done
 
 - [x] Project scaffold (vision, reasoning, mcp, cli, adapters, pipelines)
@@ -94,3 +132,5 @@ Non-goals (unchanged):
 - No review generation
 - No semantic memory runtime
 - No architecture decision engine
+
+---

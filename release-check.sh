@@ -94,6 +94,19 @@ else
   fail "mq-image --version failed"
 fi
 
+if "$MQ_IMAGE" mcp --help > /dev/null 2>&1; then
+  ok "mq-image mcp --help"
+else
+  fail "mq-image mcp --help failed"
+fi
+
+# Compileall
+if "$PYTHON" -m compileall -q mq_image_analyze 2>&1; then
+  ok "compileall mq_image_analyze"
+else
+  fail "compileall failed"
+fi
+
 # No model weights committed
 if git ls-files | grep -qE '\.(pt|ckpt|safetensors|bin|gguf|onnx)$'; then
   fail "Model weight files are tracked in git"
