@@ -14,19 +14,21 @@
 | v1.1.0 | Visual cognition for architecture review | Done |
 | v1.2.0 | mq-mcp compatibility docs + hard boundary | Done |
 | v1.2.1 | `MQ_MCP_COMPATIBILITY.md` + MCP tool contract table | Done |
-| v1.3.0 | Stable MCP perception tool contracts | Next |
+| v1.3.0 | `image_ocr` MCP tool + mq-agent workflow examples | Done |
 
 ---
 
-## v1.3.0 — Stable MCP perception tool contracts — Next
+## v1.3.0 — `image_ocr` MCP tool + mq-agent workflow examples — Done
 
-Goal: lock the perception tool contracts and validate mq-mcp integration.
-
-- [ ] Validate all 6 MCP tools against mq-mcp v1.3.0+ contract expectations
-- [ ] Add standalone `image_ocr` tool (OCR pipeline without full analysis)
-- [ ] Add mq-agent workflow examples using mq-image-analyze tools
-- [ ] Validate `visual_architecture_observation.v1` consumption by mq-mcp review tools
-- [ ] `docs/mcp-tools.md`: remove "planned" status from `image_ocr` once shipped
+- [x] Standalone `image_ocr` MCP tool — `image_ocr.v1` schema with text regions,
+  bbox, confidence, full_text, ocr_available, limitations
+- [x] `mq_image_analyze/pipelines/ocr_pipeline.py` — reusable OCR pipeline;
+  pytesseract optional; prompt injection warning in every limitations field
+- [x] 12 tests in `tests/test_ocr.py`
+- [x] `examples/mq-agent-workflow.md` — architecture review, UI review, OCR, comparison
+- [x] `docs/mcp-tools.md` — `image_ocr` promoted from planned to stable
+- [x] `docs/MQ_MCP_COMPATIBILITY.md` — `image_ocr` "(planned)" removed; v1 schema noted
+- [x] All 7 MCP tools validated in CI
 
 ---
 

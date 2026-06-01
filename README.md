@@ -3,7 +3,7 @@
 [![Tests](https://github.com/MCamner/mq-image-analyze/actions/workflows/tests.yml/badge.svg)](https://github.com/MCamner/mq-image-analyze/actions/workflows/tests.yml)
 [![Python](https://img.shields.io/badge/python-3.11%2B-blue)](https://www.python.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.2.1-blue)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.3.0-blue)](CHANGELOG.md)
 
 Visual perception layer for the mq ecosystem.
 
@@ -39,7 +39,7 @@ mq-agent orchestration
 
 ```bash
 $ mq-image --version
-mq-image 1.2.1
+mq-image 1.3.0
 
 $ mq-image doctor
   Python >= 3.11     ok   3.14.5
@@ -194,7 +194,7 @@ It does not replace mq-mcp.
 | CLI orchestration, approval gates, planner/executor/verifier | **mq-agent** |
 | High-level status, reasoning shell, stack summaries | **mq-hal** |
 
-All six MCP tools (`analyze_image`, `extract_palette`, `reverse_prompt`, `compare_images`, `analyze_ui`, `observe_architecture`) are read-only and safety class A.
+All seven MCP tools (`analyze_image`, `extract_palette`, `reverse_prompt`, `compare_images`, `analyze_ui`, `observe_architecture`, `image_ocr`) are read-only and safety class A.
 
 → [docs/MQ_MCP_COMPATIBILITY.md](docs/MQ_MCP_COMPATIBILITY.md) · [docs/mcp-tools.md](docs/mcp-tools.md) · [docs/integration.md](docs/integration.md)
 
@@ -314,3 +314,4 @@ Review generation and architecture reasoning remain in mq-mcp.
 | v1.1.0 | Visual cognition layer (`visual_architecture_observation.v1`, `observe_architecture` MCP tool) | Done |
 | v1.2.0 | mq-mcp compatibility docs + hard boundary | Done |
 | v1.2.1 | `MQ_MCP_COMPATIBILITY.md` + MCP tool contract table | Done |
+| v1.3.0 | `image_ocr` MCP tool + mq-agent workflow examples | Done |

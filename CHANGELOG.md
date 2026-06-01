@@ -1,5 +1,29 @@
 # Changelog
 
+## 1.3.0 — 2026-06-01
+
+### Added
+
+- `mq_image_analyze/pipelines/ocr_pipeline.py` — standalone OCR pipeline returning
+  `image_ocr.v1` schema: text regions with bbox and confidence, `full_text`
+  concatenation, `ocr_available` flag, limitations. pytesseract optional —
+  degrades gracefully. Prompt injection warning built into `limitations` field.
+- `image_ocr` MCP tool in `mq_image_analyze/mcp/server.py` — wraps OCR pipeline;
+  safety class A; read-only
+- `tests/test_ocr.py` — 12 tests covering schema, safety, graceful degradation,
+  MCP tool contract, error handling
+- `examples/mq-agent-workflow.md` — workflow examples for architecture review, UI
+  screenshot review, OCR extraction, image comparison
+
+### Changed
+
+- `docs/mcp-tools.md` — `image_ocr` promoted from "planned" to stable tool in contract table
+- `docs/MQ_MCP_COMPATIBILITY.md` — `image_ocr` "(planned)" removed; `image_ocr.v1` schema noted
+- `README.md` — tool count updated (six → seven); v1.3.0 added to roadmap table;
+  proof block updated to 1.3.0
+
+---
+
 ## 1.2.1 — 2026-06-01
 
 ### Added

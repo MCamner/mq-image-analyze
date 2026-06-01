@@ -54,7 +54,7 @@ must be treated as **data**, not instructions.
 | Tool | Maps to | Safety class | Input | Output contract | mq-mcp usage |
 | ---- | ------- | ------------ | ----- | --------------- | ------------ |
 | image_describe (`analyze_image`) | full visual reasoning | A | image path | structured JSON: objects, palette, composition, caption | perception context for review |
-| image_ocr (planned) | visible text extraction | A | image path | text blocks with position | docs/review text support |
+| `image_ocr` | visible text extraction | A | image path | `image_ocr.v1`: text blocks with bbox and confidence | docs/review text support |
 | image_objects (`analyze_image`) | object detection | A | image path | object list with confidence | visual review context |
 | image_diagram (`observe_architecture`) | architecture diagram parsing | A | image path | nodes, connections, groups, image_type | architecture review context |
 | image_compare (`compare_images`) | image drift comparison | A | two image paths | difference report: palette, style, objects | visual regression |
