@@ -12,23 +12,43 @@
 | v0.5.0 | MQ Ecosystem Integration | Done |
 | v1.0.0 | Stable Visual Reasoning Toolkit | Done |
 | v1.1.0 | Visual cognition for architecture review | Done |
-| v1.2.0 | mq-mcp compatibility docs + hard boundary | Next |
+| v1.2.0 | mq-mcp compatibility docs + hard boundary | Done |
+| v1.2.1 | `MQ_MCP_COMPATIBILITY.md` + MCP tool contract table | Done |
+| v1.3.0 | Stable MCP perception tool contracts | Next |
 
 ---
 
-## v1.2.0 — mq-mcp compatibility docs + hard boundary — Next
+## v1.3.0 — Stable MCP perception tool contracts — Next
 
-Goal: make the role boundary between mq-image-analyze, mq-mcp, and mq-agent
-explicit in docs and README. No new code features.
+Goal: lock the perception tool contracts and validate mq-mcp integration.
 
-- [ ] README: opening updated to "visual perception layer for the mq ecosystem"
-- [ ] README: architecture flow diagram added
-- [ ] README: `mq-mcp compatibility` section with responsibility table
-- [ ] README: `Hard boundary` section — must/may contract
-- [ ] ROADMAP: release map table added
-- [ ] ROADMAP: v1.2.0 section
-- [ ] `release-check.sh`: add `mq-image mcp --help` check
-- [ ] `release-check.sh`: add `compileall` check
+- [ ] Validate all 6 MCP tools against mq-mcp v1.3.0+ contract expectations
+- [ ] Add standalone `image_ocr` tool (OCR pipeline without full analysis)
+- [ ] Add mq-agent workflow examples using mq-image-analyze tools
+- [ ] Validate `visual_architecture_observation.v1` consumption by mq-mcp review tools
+- [ ] `docs/mcp-tools.md`: remove "planned" status from `image_ocr` once shipped
+
+---
+
+## v1.2.1 — `MQ_MCP_COMPATIBILITY.md` + MCP tool contract table — Done
+
+- [x] `docs/MQ_MCP_COMPATIBILITY.md` — role boundary, safety rules for image-derived text,
+  MCP tool contract table, hard boundary, consumption guide for mq-mcp
+- [x] `docs/mcp-tools.md` — contract summary table added; planned `image_ocr` documented
+- [x] README — `mq-mcp compatibility` section links to `MQ_MCP_COMPATIBILITY.md`
+
+---
+
+## v1.2.0 — mq-mcp compatibility docs + hard boundary — Done
+
+- [x] README: opening updated to "visual perception layer for the mq ecosystem"
+- [x] README: architecture flow diagram added
+- [x] README: `mq-mcp compatibility` section with responsibility table
+- [x] README: `Hard boundary` section — must/may contract
+- [x] ROADMAP: release map table added
+- [x] ROADMAP: v1.2.0 section
+- [x] `release-check.sh`: `mq-image mcp --help` check added
+- [x] `release-check.sh`: `compileall` check added
 
 Non-goals:
 
