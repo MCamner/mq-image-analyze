@@ -11,9 +11,7 @@ MQ_IMAGE="${REPO_ROOT}/.venv/bin/mq-image"
 
 ERRORS=0
 
-# Handles fail.
 fail() { echo "FAIL: $1"; ERRORS=$((ERRORS + 1)); }
-# Handles ok.
 ok()   { echo "  ok: $1"; }
 
 echo "==> Release check"
