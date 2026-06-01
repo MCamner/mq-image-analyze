@@ -39,7 +39,7 @@ mq-agent orchestration
 
 ```bash
 $ mq-image --version
-mq-image 1.1.0
+mq-image 1.2.1
 
 $ mq-image doctor
   Python >= 3.11     ok   3.14.5
@@ -312,3 +312,5 @@ Review generation and architecture reasoning remain in mq-mcp.
 | v0.5.0 | MQ ecosystem integration | Done |
 | v1.0.0 | Stable toolkit | Done |
 | v1.1.0 | Visual cognition layer (`visual_architecture_observation.v1`, `observe_architecture` MCP tool) | Done |
+| v1.2.0 | mq-mcp compatibility docs + hard boundary | Done |
+| v1.2.1 | `MQ_MCP_COMPATIBILITY.md` + MCP tool contract table | Done |
