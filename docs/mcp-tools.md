@@ -19,11 +19,7 @@ See [MQ_MCP_COMPATIBILITY.md](MQ_MCP_COMPATIBILITY.md) for the full role boundar
 | `analyze_ui` | UI screenshot analysis | A | screenshot path | layout regions, WCAG contrast, hierarchy | screenshot review |
 | `observe_architecture` | Architecture diagram parsing | A | diagram path | `visual_architecture_observation.v1`: nodes, connections, image_type | architecture review context |
 
-Planned additions (not yet implemented):
-
-| Tool | Purpose | Safety class | Notes |
-| ---- | ------- | ------------ | ----- |
-| `image_ocr` | Extract visible text blocks with position | A | Replaces ad-hoc OCR in `observe_architecture`; standalone tool |
+| `image_ocr` | Extract visible text blocks with position | A | Returns `image_ocr.v1`; pytesseract optional; degrades gracefully |
 
 ---
 
