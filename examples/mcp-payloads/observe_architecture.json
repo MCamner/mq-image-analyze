@@ -1,0 +1,36 @@
+{
+  "schema_version": "visual_architecture_observation.v1",
+  "image_type": "architecture-diagram",
+  "image_path": "diagram.png",
+  "components": [
+    {
+      "id": "box_0",
+      "bbox": [28.0, 58.0, 133.0, 123.0],
+      "area_percent": 7.56,
+      "label": null,
+      "fill_color": "#c8e6c8",
+      "text": null
+    }
+  ],
+  "connections": [],
+  "groups": [
+    {
+      "color": "#c0c0c0",
+      "component_ids": ["box_0"],
+      "label": null
+    }
+  ],
+  "text_regions": [],
+  "layout": {
+    "width": 400,
+    "height": 220,
+    "component_count": 1,
+    "connection_count": 0,
+    "dominant_flow": "left-to-right"
+  },
+  "limitations": [
+    "OCR not available — install pytesseract for text extraction from boxes. Component labels and text fields will be null.",
+    "Semantic labels and semantic topology (what each component represents) are not inferred — this requires an LLM call via mq-mcp review tools."
+  ],
+  "ocr_available": false
+}

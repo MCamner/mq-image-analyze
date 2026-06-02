@@ -1,0 +1,11 @@
+{
+  "prompt": "Short reverse prompt.",
+  "semantic_caption": null,
+  "objects": [],
+  "palette": ["#5078a0"],
+  "limitations": [
+    "Object detection limited to YOLOv8n COCO classes (80 categories).",
+    "OCR not active — visible text not analyzed."
+  ],
+  "safety": "safe"
+}

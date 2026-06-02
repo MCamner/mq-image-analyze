@@ -1,0 +1,26 @@
+{
+  "objects": [],
+  "palette": ["#5078a0"],
+  "brightness": "mid-tone",
+  "contrast": "low contrast",
+  "depth": "shallow depth of field",
+  "composition": "balanced, strong symmetry",
+  "symmetry": 1.0,
+  "rule_of_thirds": 0.0,
+  "prompt": "Short visual description.",
+  "mode": "summary",
+  "detections": [],
+  "limitations": [
+    "Object detection limited to YOLOv8n COCO classes (80 categories).",
+    "OCR not active — visible text not analyzed."
+  ],
+  "text_regions": [],
+  "unclassified_regions": [],
+  "content_flags": {
+    "nudity": {"detected": false, "confidence": null},
+    "source": "nudenet"
+  },
+  "semantic_caption": null,
+  "vision_mode": "local-fast",
+  "vision_model": "bakllava"
+}

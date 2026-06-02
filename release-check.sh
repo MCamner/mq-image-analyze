@@ -109,6 +109,13 @@ else
   fail "compileall failed"
 fi
 
+# MCP sample payload freshness
+if "$PYTHON" scripts/check-mcp-sample-payloads.py 2>&1; then
+  ok "MCP sample payloads match live tool contracts"
+else
+  fail "MCP sample payload validation failed"
+fi
+
 # No model weights committed
 if git ls-files | grep -qE '\.(pt|ckpt|safetensors|bin|gguf|onnx)$'; then
   fail "Model weight files are tracked in git"
