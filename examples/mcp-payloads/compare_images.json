@@ -1,0 +1,42 @@
+{
+  "before": "sample-before.png",
+  "after": "sample-after.png",
+  "palette_drift": 0.2,
+  "style_drift": 0.4,
+  "objects_added": [],
+  "objects_removed": [],
+  "brightness_changed": true,
+  "contrast_changed": true,
+  "depth_changed": true,
+  "composition_diff": {
+    "symmetry_delta": -0.02,
+    "rule_of_thirds_delta": 0.24,
+    "depth_changed": true,
+    "composition_changed": false
+  },
+  "ai_look": {
+    "before": 0.7,
+    "after": 0.66,
+    "note": "Score 0-1: higher = more AI-generated characteristics (heuristic baseline)."
+  },
+  "before_result": {
+    "prompt": "Before image summary.",
+    "objects": [],
+    "palette": ["#5078a0"],
+    "brightness": "mid-tone",
+    "contrast": "low contrast",
+    "depth": "shallow depth of field",
+    "symmetry": 1.0,
+    "rule_of_thirds": 0.0
+  },
+  "after_result": {
+    "prompt": "After image summary.",
+    "objects": [],
+    "palette": ["#f5f5f5"],
+    "brightness": "bright",
+    "contrast": "high contrast",
+    "depth": "deep / sharp throughout",
+    "symmetry": 0.98,
+    "rule_of_thirds": 0.24
+  }
+}

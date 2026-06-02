@@ -37,6 +37,25 @@ def test_analyze_image_returns_json(sample_image: Path):
     assert "content_flags" in d
 
 
+@pytest.mark.parametrize(
+    ("tool_name", "sample_file"),
+    [
+        ("analyze_image", "analyze_image.json"),
+        ("extract_palette", "extract_palette.json"),
+        ("reverse_prompt", "reverse_prompt.json"),
+        ("compare_images", "compare_images.json"),
+        ("analyze_ui", "analyze_ui.json"),
+        ("observe_architecture", "observe_architecture.json"),
+        ("image_ocr", "image_ocr.json"),
+    ],
+)
+def test_stable_mcp_sample_payload_exists(tool_name: str, sample_file: str):
+    path = Path("examples/mcp-payloads") / sample_file
+    assert path.is_file(), f"missing sample payload for {tool_name}"
+    payload = json.loads(path.read_text())
+    assert isinstance(payload, dict)
+
+
 def test_analyze_image_missing_file():
     from mq_image_analyze.mcp.server import analyze_image
     with pytest.raises(FileNotFoundError):

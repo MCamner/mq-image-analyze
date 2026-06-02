@@ -1,0 +1,22 @@
+{
+  "screenshot_type": "app-ui",
+  "color_scheme": "light",
+  "text_density": "low",
+  "contrast_ratio": 14.06,
+  "hierarchy_depth": 1,
+  "grid_alignment": 0.21,
+  "layout_regions": [
+    {
+      "role": "panel",
+      "area_percent": 24.0,
+      "position": {"x": 0.02, "y": 0.09, "w": 0.96, "h": 0.25}
+    }
+  ],
+  "issues": [],
+  "prompt": "app-ui screenshot, light color scheme, low text density",
+  "semantic_caption": null,
+  "limitations": [
+    "Layout regions detected via edge contours — semantic labels are heuristic.",
+    "Text density estimated from edge activity, not OCR."
+  ]
+}

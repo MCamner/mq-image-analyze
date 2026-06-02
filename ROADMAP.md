@@ -15,11 +15,11 @@
 | v1.2.0 | mq-mcp compatibility docs + hard boundary | Done |
 | v1.2.1 | `MQ_MCP_COMPATIBILITY.md` + MCP tool contract table | Done |
 | v1.3.0 | `image_ocr` MCP tool + mq-agent workflow examples | Done |
-| v1.4.0 | Perception workflow integration hardening | Planned |
+| v1.4.0 | Perception workflow integration hardening | Done |
 
 ---
 
-## v1.4.0 — Perception workflow integration hardening — Planned
+## v1.4.0 — Perception workflow integration hardening — Done
 
 Goal:
 
@@ -28,12 +28,12 @@ review workflows.
 
 Planned scope:
 
-- [ ] Add canonical examples for UI review, OCR review and architecture observation
-- [ ] Add stable sample payloads for every MCP tool
-- [ ] Add contract checks for `limitations`, `schema_version` and prompt-injection warnings
-- [ ] Add mq-agent handoff examples for screenshot review and diagram review
-- [ ] Add release-check coverage for example payload freshness
-- [ ] Document when to use `local-fast`, `local-deep` and `cloud-verify` in MQ workflows
+- [x] Add canonical examples for UI review, OCR review and architecture observation
+- [x] Add stable sample payloads for every MCP tool
+- [x] Add contract checks for `limitations`, `schema_version` and prompt-injection warnings
+- [x] Add mq-agent handoff examples for screenshot review and diagram review
+- [x] Add release-check coverage for example payload freshness
+- [x] Document when to use `local-fast`, `local-deep` and `cloud-verify` in MQ workflows
 
 Non-goals:
 

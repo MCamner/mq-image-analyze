@@ -18,7 +18,7 @@ then passes the structured observation to mq-mcp for review.
 mq-agent run-tool observe_architecture --arg image_path=docs/arch.png --json
 
 # Step 2: pass visual_architecture_observation.v1 to mq-mcp review
-mq-agent review file docs/arch.png --architecture
+mq-agent review file docs/architecture.md --architecture-image docs/arch.png
 ```
 
 Result flow:
@@ -30,6 +30,10 @@ docs/arch.png
     → mq-agent renders findings
 ```
 
+The `--architecture-image` flag is the preferred handoff because mq-agent keeps
+the image observation separate from review logic: mq-image-analyze returns
+visual facts, then mq-mcp performs the architecture review.
+
 ---
 
 ## Screenshot UI review
@@ -38,6 +42,7 @@ mq-agent reviews a UI screenshot through mq-image-analyze then surfaces findings
 
 ```bash
 mq-agent run-tool analyze_ui --arg image_path=screenshot.png --json
+mq-agent review diff --visual screenshot.png
 ```
 
 Output (`image_ui.v1` compatible):
@@ -96,6 +101,26 @@ mq-agent run-tool compare_images \
 
 Result includes palette drift, style drift score, and object changes — all as
 structured data for mq-mcp or the user to interpret.
+
+---
+
+## Model mode selection in MQ workflows
+
+Use the lightest mode that answers the workflow question:
+
+| Mode | Use when | Notes |
+| ---- | -------- | ----- |
+| `local-fast` | quick triage, release checks, repeatable local workflows | Default. Keeps review loops fast and local. |
+| `local-deep` | local review needs richer captions or better semantic detail | Slower; still local. |
+| `cloud-verify` | final verification or ambiguous visuals need stronger model support | Requires configured cloud vision model; use deliberately. |
+
+Examples:
+
+```bash
+mq-agent run-tool analyze_image --arg image_path=screenshot.png --arg vision_mode=local-fast --json
+mq-agent run-tool reverse_prompt --arg image_path=mockup.png --arg vision_mode=local-deep --json
+mq-agent run-tool analyze_image --arg image_path=launch.png --arg vision_mode=cloud-verify --json
+```
 
 ---
 

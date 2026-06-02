@@ -1,5 +1,17 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- Stable MCP sample payloads for all seven read-only tools under
+  `examples/mcp-payloads/`.
+- `scripts/check-mcp-sample-payloads.py` contract/freshness check for sample
+  payload keysets, schema fields, limitations and prompt-injection warnings.
+- Release-check coverage for MCP sample payload freshness.
+- mq-agent handoff examples for architecture-image and visual screenshot review.
+- MQ workflow guidance for `local-fast`, `local-deep` and `cloud-verify`.
+
 ## 1.3.0 — 2026-06-01
 
 ### Added
