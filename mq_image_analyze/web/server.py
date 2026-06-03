@@ -4,10 +4,12 @@ import dataclasses
 import tempfile
 from pathlib import Path
 
+from fastapi import HTTPException
 from fastapi import FastAPI, File, Form, UploadFile
 from fastapi.responses import FileResponse, JSONResponse
 
 from mq_image_analyze.reasoning.prompts.reverse_prompt import build
+from mq_image_analyze.vision.semantic.provider import normalize_vision_mode
 
 app = FastAPI(title="mq-image-analyze", docs_url=None, redoc_url=None)
 
@@ -34,12 +36,19 @@ async def analyze(
 
     try:
         mode = "exhaustive" if exhaustive.lower() == "true" else "summary"
-        conf_val = float(conf) if conf else None
+        try:
+            conf_val = float(conf) if conf else None
+        except ValueError as exc:
+            raise HTTPException(status_code=422, detail="conf must be a number") from exc
+        try:
+            selected_vision_mode = normalize_vision_mode(vision_mode)
+        except ValueError as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
         result = build(
             tmp_path,
             mode=mode,
             conf=conf_val,
-            vision_mode=vision_mode,
+            vision_mode=selected_vision_mode,
             vision_model=vision_model or None,
         )
         return JSONResponse(dataclasses.asdict(result))

@@ -3,7 +3,7 @@
 [![Tests](https://github.com/MCamner/mq-image-analyze/actions/workflows/tests.yml/badge.svg)](https://github.com/MCamner/mq-image-analyze/actions/workflows/tests.yml)
 [![Python](https://img.shields.io/badge/python-3.11%2B-blue)](https://www.python.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.3.0-blue)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.4.0-blue)](CHANGELOG.md)
 
 Visual perception layer for the mq ecosystem.
 
@@ -39,7 +39,7 @@ mq-agent orchestration
 
 ```bash
 $ mq-image --version
-mq-image 1.3.0
+mq-image 1.4.0
 
 $ mq-image doctor
   Python >= 3.11     ok   3.14.5
@@ -315,3 +315,4 @@ Review generation and architecture reasoning remain in mq-mcp.
 | v1.2.0 | mq-mcp compatibility docs + hard boundary | Done |
 | v1.2.1 | `MQ_MCP_COMPATIBILITY.md` + MCP tool contract table | Done |
 | v1.3.0 | `image_ocr` MCP tool + mq-agent workflow examples | Done |
+| v1.4.0 | Perception workflow integration hardening | Done |

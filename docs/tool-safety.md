@@ -11,8 +11,9 @@ These tools read local image files and return structured analysis. They do not w
 - `analyze_image`
 - `extract_palette`
 - `reverse_prompt`
-- `analyze_composition`
-- `ocr_image`
+- `analyze_ui`
+- `observe_architecture`
+- `image_ocr`
 
 Rules:
 
@@ -28,8 +29,6 @@ Rules:
 These tools read two or more files and return structured comparison output.
 
 - `compare_images`
-- `score_image`
-- `detect_style_drift`
 
 Rules: same as Class A.
 

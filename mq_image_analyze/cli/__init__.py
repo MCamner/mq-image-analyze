@@ -1,3 +1,6 @@
+from importlib.metadata import PackageNotFoundError, version
+from pathlib import Path
+
 import typer
 
 from mq_image_analyze.cli.analyze import analyze
@@ -8,7 +11,18 @@ from mq_image_analyze.cli.observe_architecture import observe_architecture_cmd
 from mq_image_analyze.cli.serve import serve
 from mq_image_analyze.cli.serve_mcp import serve_mcp
 
-_VERSION = (Path := __import__("pathlib").Path)(__file__).parents[2].joinpath("VERSION").read_text().strip()
+
+def _read_version() -> str:
+    repo_version = Path(__file__).parents[2].joinpath("VERSION")
+    if repo_version.exists():
+        return repo_version.read_text().strip()
+    try:
+        return version("mq-image-analyze")
+    except PackageNotFoundError:
+        return "unknown"
+
+
+_VERSION = _read_version()
 
 app = typer.Typer(
     name="mq-image",

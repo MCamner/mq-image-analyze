@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+No unreleased changes.
+
+## 1.4.0 — 2026-06-03
+
 ### Added
 
 - Stable MCP sample payloads for all seven read-only tools under
@@ -11,6 +15,17 @@
 - Release-check coverage for MCP sample payload freshness.
 - mq-agent handoff examples for architecture-image and visual screenshot review.
 - MQ workflow guidance for `local-fast`, `local-deep` and `cloud-verify`.
+
+### Changed
+
+- `docs/tool-safety.md` now lists the current read-only MCP tool surface.
+
+### Fixed
+
+- `mq-image` version lookup now uses the repo `VERSION` file in source checkouts
+  and installed package metadata in wheel installs.
+- Web `/analyze` now returns `422` validation errors for invalid `conf` and
+  `vision_mode` values instead of surfacing internal server errors.
 
 ## 1.3.0 — 2026-06-01
 

@@ -1044,7 +1044,7 @@ wheels = [
 
 [[package]]
 name = "mq-image-analyze"
-version = "1.0.0"
+version = "1.4.0"
 source = { editable = "." }
 dependencies = [
     { name = "opencv-python" },
