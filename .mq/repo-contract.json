@@ -1,0 +1,12 @@
+{
+  "repo": "mq-image-analyze",
+  "role": "visual-perception",
+  "version": "1.4.0",
+  "status": "active",
+  "contracts": [
+    "image_ocr.v1",
+    "image_analyze.v1",
+    "image_diff.v1"
+  ],
+  "next_focus": ""
+}
