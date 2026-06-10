@@ -16,6 +16,56 @@
 | v1.2.1 | `MQ_MCP_COMPATIBILITY.md` + MCP tool contract table | Done |
 | v1.3.0 | `image_ocr` MCP tool + mq-agent workflow examples | Done |
 | v1.4.0 | Perception workflow integration hardening | Done |
+| v1.5.0 | Normalized perception contract for Release Gate v2 | Planned |
+
+---
+
+## Planned: v1.5.0 — Normalized perception contract for Release Gate v2
+
+Goal:
+
+Make mq-image-analyze output easy for mq-agent and mq-mcp Release Gate v2 to
+consume in repeatable screenshot, OCR, UI and diagram review workflows.
+
+Normalized perception object:
+
+```json
+{
+  "source_type": "screenshot | diagram | ui | terminal | browser",
+  "source_path": "path/to/image.png",
+  "ocr_text": "...",
+  "visual_summary": "...",
+  "detected_regions": [],
+  "risk_signals": [],
+  "confidence": "low | medium | high"
+}
+```
+
+Planned scope:
+
+- [ ] Document the normalized perception object and compatibility rules
+- [ ] Add stable sample payloads for screenshot, diagram, UI and OCR outputs
+- [ ] Add `sample_perception_output.json` fixture for cross-repo validation
+- [ ] Keep prompt-injection warnings and `limitations` in image-derived text
+- [ ] Add output schema compatibility tests for mq-agent and mq-mcp consumers
+- [ ] Add OCR fallback and confidence handling tests
+- [ ] Document how perception output feeds `mq-agent review perception <image>`
+  and mq-mcp read-only perception review tools
+
+Boundary:
+
+```text
+mq-image-analyze owns visual extraction.
+mq-agent owns routing and operator workflow.
+mq-mcp owns deterministic review and release validation.
+```
+
+Non-goals:
+
+- no review generation
+- no release gate rule engine
+- no semantic memory ownership
+- no write-capable MCP tools
 
 ---
 
