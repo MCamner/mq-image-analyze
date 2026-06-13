@@ -7,6 +7,21 @@ description: Use when changing mq-image-analyze web UI, FastAPI web server, pack
 
 Use this skill for `mq-image serve` and browser-based image analysis.
 
+## Evals
+
+### Should trigger
+
+- "fix the web upload flow"
+- "the serve command port handling is wrong"
+- "improve the browser review workflow"
+- "the packaged web assets are stale"
+
+### Should not trigger
+
+- "change the CLI" → use `cli-maintainer`
+- "change MCP tools" → use `mcp-tools-maintainer`
+- "update web docs only" → use `docs-maintainer`
+
 ## Core Files
 
 - `mq_image_analyze/cli/serve.py`

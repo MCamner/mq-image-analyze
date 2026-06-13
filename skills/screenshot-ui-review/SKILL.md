@@ -9,6 +9,21 @@ status: available
 
 Use this skill for visual critique of UI screenshots.
 
+## Evals
+
+### Should trigger
+
+- "review this app screenshot for usability"
+- "check this dashboard layout"
+- "is this terminal UI readable?"
+- "audit this GitHub page screenshot"
+
+### Should not trigger
+
+- "score artistic composition" → use `image-quality-audit`
+- "build a prompt from this image" → use `reverse-prompt`
+- "analyze a diagram's architecture" → use `visual-architecture-analysis`
+
 ## Core workflow
 
 1. Detect UI regions (OCR, layout segmentation)

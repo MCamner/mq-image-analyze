@@ -10,6 +10,21 @@ status: available
 Use this skill when the user wants to understand what an image contains and why
 it works visually.
 
+## Evals
+
+### Should trigger
+
+- "what's in this image and why does it work?"
+- "analyze the palette and composition"
+- "detect the objects in this photo"
+- "describe the mood and visual hierarchy"
+
+### Should not trigger
+
+- "turn it into a prompt" → use `reverse-prompt`
+- "review a UI screenshot" → use `screenshot-ui-review`
+- "score composition quality" → use `image-quality-audit`
+
 ## Core workflow
 
 1. Inspect image metadata (format, resolution)

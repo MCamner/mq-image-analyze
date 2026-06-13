@@ -7,6 +7,21 @@ description: Use when changing mq-image-analyze JSON output schemas, analysis re
 
 Use this skill for any machine-readable output change.
 
+## Evals
+
+### Should trigger
+
+- "add a field to the analyze JSON output"
+- "change the compare output schema"
+- "stabilize the UI analysis contract"
+- "version the exhaustive-mode output"
+
+### Should not trigger
+
+- "change a CLI flag" → use `cli-maintainer`
+- "change MCP tool schemas" → use `mcp-tools-maintainer`
+- "update schema docs only" → use `docs-maintainer`
+
 ## Core Files
 
 - `docs/json-schema.md`

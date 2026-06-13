@@ -9,6 +9,21 @@ status: available
 
 Use this skill to produce numeric quality scores for an image.
 
+## Evals
+
+### Should trigger
+
+- "score this image's composition"
+- "rate the visual hierarchy of this photo"
+- "is this image well composed?"
+- "grade the clarity of this render"
+
+### Should not trigger
+
+- "turn this image into a prompt" → use `reverse-prompt`
+- "review this app screenshot for usability" → use `screenshot-ui-review`
+- "what objects are in this image?" → use `visual-reasoning`
+
 ## Core workflow
 
 1. Run visual-reasoning pipeline

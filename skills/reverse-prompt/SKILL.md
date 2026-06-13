@@ -10,6 +10,21 @@ status: available
 Use this skill to convert an image into a structured prompt that captures its
 visual character.
 
+## Evals
+
+### Should trigger
+
+- "turn this image into a generation prompt"
+- "give me a prompt to recreate this style"
+- "cinematic prompt from this frame"
+- "reverse-engineer a prompt for this art"
+
+### Should not trigger
+
+- "score the image quality" → use `image-quality-audit`
+- "what objects are in it?" → use `visual-reasoning`
+- "review this UI screenshot" → use `screenshot-ui-review`
+
 ## Core workflow
 
 1. Run visual-reasoning on the image

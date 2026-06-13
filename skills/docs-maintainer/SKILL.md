@@ -7,6 +7,21 @@ description: Use when keeping mq-image-analyze README, docs, examples, CLI docs,
 
 Keep documentation synchronized with code and tests.
 
+## Evals
+
+### Should trigger
+
+- "sync the README after a CLI change"
+- "the examples in docs are stale"
+- "update the MCP integration docs"
+- "do documented commands still exist?"
+
+### Should not trigger
+
+- "change CLI behavior" → use `cli-maintainer`
+- "change the JSON output schema" → use `json-contract-maintainer`
+- "is it ready to release?" → use `release-readiness`
+
 ## Docs Surfaces
 
 - `README.md`

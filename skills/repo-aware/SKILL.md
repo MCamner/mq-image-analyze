@@ -8,6 +8,21 @@ description: Use when inspecting, explaining, planning, reviewing, or changing m
 Use this skill to ground work in mq-image-analyze's actual architecture,
 contracts, tests, and release flow.
 
+## Evals
+
+### Should trigger
+
+- "explain mq-image-analyze's architecture"
+- "what surfaces does this repo have?"
+- "plan a change that spans the repo"
+- "I'm new here — where do I start?"
+
+### Should not trigger
+
+- "change the CLI" → use `cli-maintainer`
+- "change the JSON schema" → use `json-contract-maintainer`
+- "is it ready to release?" → use `release-readiness`
+
 ## What This Repo Is
 
 mq-image-analyze is the visual perception layer for the MQ ecosystem. It

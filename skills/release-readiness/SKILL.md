@@ -7,6 +7,21 @@ description: Use when preparing mq-image-analyze for release by checking version
 
 Use this skill before tagging or publishing mq-image-analyze.
 
+## Evals
+
+### Should trigger
+
+- "is mq-image-analyze ready to release?"
+- "run the release checklist"
+- "check version and changelog alignment"
+- "what's blocking the release?"
+
+### Should not trigger
+
+- "update the docs" → use `docs-maintainer`
+- "add a CLI flag" → use `cli-maintainer`
+- "change a model backend" → use `model-setup-maintainer`
+
 ## Always Inspect
 
 - `git status --short`
