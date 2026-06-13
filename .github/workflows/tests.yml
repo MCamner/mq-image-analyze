@@ -38,3 +38,7 @@ jobs:
       - name: Verify CLI entry point
         run: |
           mq-image --help
+
+      - name: Check skills consistency
+        run: |
+          bash scripts/check-skills.sh

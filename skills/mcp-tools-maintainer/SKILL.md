@@ -7,6 +7,21 @@ description: Use when changing mq-image-analyze MCP server, MCP tool schemas, to
 
 Use this skill for MCP behavior and tool contracts.
 
+## Evals
+
+### Should trigger
+
+- "add an MCP tool to the image server"
+- "tighten MCP tool read-only safety"
+- "fix mq-mcp integration of the image tools"
+- "the MCP tool schema is wrong"
+
+### Should not trigger
+
+- "change a CLI flag" → use `cli-maintainer`
+- "change the JSON result schema" → use `json-contract-maintainer`
+- "set up a model backend" → use `model-setup-maintainer`
+
 ## Core Files
 
 - `mq_image_analyze/mcp/server.py`

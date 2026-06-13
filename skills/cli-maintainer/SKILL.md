@@ -7,6 +7,21 @@ description: Use when changing mq-image CLI commands, flags, output, doctor chec
 
 Use this skill for the `mq-image` command surface.
 
+## Evals
+
+### Should trigger
+
+- "add a --foo flag to mq-image analyze"
+- "the doctor command output changed"
+- "document a new serve command"
+- "change an exit code for missing images"
+
+### Should not trigger
+
+- "change the analyze JSON schema" → use `json-contract-maintainer`
+- "change MCP tool behavior" → use `mcp-tools-maintainer`
+- "update the README only" → use `docs-maintainer`
+
 ## Core Files
 
 - `mq_image_analyze/cli/analyze.py`

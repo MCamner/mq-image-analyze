@@ -7,6 +7,21 @@ description: Use when changing mq-image-analyze model setup, YOLO weights, Ollam
 
 Use this skill for local and cloud vision model readiness.
 
+## Evals
+
+### Should trigger
+
+- "update the YOLO weights"
+- "switch the Ollama vision backend"
+- "doctor model readiness check fails"
+- "document the OpenAI vision setup"
+
+### Should not trigger
+
+- "change MCP tools" → use `mcp-tools-maintainer`
+- "change CLI flags" → use `cli-maintainer`
+- "docs only" → use `docs-maintainer`
+
 ## Core Files
 
 - `docs/model-setup.md`

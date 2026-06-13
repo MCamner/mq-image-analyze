@@ -7,6 +7,21 @@ description: Use when adding or changing mq-image-analyze features for architect
 
 Use this skill when visual analysis feeds architecture or review workflows.
 
+## Evals
+
+### Should trigger
+
+- "add OCR for architecture diagrams"
+- "analyze this infra topology screenshot"
+- "extract diagram observations for mq-mcp"
+- "parse this terminal screenshot pipeline"
+
+### Should not trigger
+
+- "review a UI screenshot for usability" → use `screenshot-ui-review`
+- "general image analysis" → use `visual-reasoning`
+- "change MCP tool schemas" → use `mcp-tools-maintainer`
+
 ## Boundary
 
 mq-image-analyze owns visual observation: objects, layout, OCR, topology hints, palette, screenshot structure and machine-readable visual facts.
