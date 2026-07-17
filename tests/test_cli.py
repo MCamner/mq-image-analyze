@@ -29,7 +29,9 @@ def test_analyze_help() -> None:
     result = runner.invoke(app, ["analyze", "--help"])
     output = _ANSI_RE.sub("", result.output)
     assert result.exit_code == 0
-    assert "IMAGE" in output
+    # Assert on the argument's help text, not the metavar: newer Typer
+    # renders the argument as lowercase `image <path>` rather than `IMAGE`.
+    assert "Path to image file" in output
     assert "--mode" in output
     assert "--vision-model" in output
 
