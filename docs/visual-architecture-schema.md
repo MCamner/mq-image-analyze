@@ -147,6 +147,7 @@ pip install pytesseract
 ```
 
 Without pytesseract:
+
 - `text_regions` is always empty
 - `component.text` is always `null`
 - `ocr_available` is `false`
@@ -159,7 +160,7 @@ Without pytesseract:
 The `visual_architecture_observation.v1` blob is designed to be passed as context
 to mq-mcp review tools. The recommended integration pattern:
 
-```
+```text
 1. Run observe_architecture on the diagram
 2. Pass the JSON output as `extra_context` to mq-mcp review_file or review_diff
 3. mq-mcp uses component/connection topology as structural context for review

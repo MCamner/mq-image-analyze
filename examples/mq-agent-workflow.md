@@ -22,7 +22,8 @@ mq-agent review file docs/architecture.md --architecture-image docs/arch.png
 ```
 
 Result flow:
-```
+
+```text
 docs/arch.png
     → observe_architecture (mq-image-analyze)
     → visual_architecture_observation.v1 JSON
@@ -46,6 +47,7 @@ mq-agent review diff --visual screenshot.png
 ```
 
 Output (`image_ui.v1` compatible):
+
 ```json
 {
   "image_type": "ui-screenshot",
@@ -67,6 +69,7 @@ mq-agent run-tool image_ocr --arg image_path=diagram.png --json
 ```
 
 Output (`image_ocr.v1`):
+
 ```json
 {
   "schema": "image_ocr.v1",
