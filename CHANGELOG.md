@@ -2,7 +2,14 @@
 
 ## Unreleased
 
-No unreleased changes.
+### Changed
+
+- `release-check.sh` now conforms to the `repo_release_check.v1` contract:
+  `--json` emits the machine-readable verdict (`schema`, `repo`, `status`,
+  `blockers`, `warnings`, `evidence`) on clean stdout and exits 0; `--dry-run`
+  and `--json` skip the clean-tree requirement (the caller owns it). Human mode
+  is unchanged. Lets mq-agent's `stack release --all --preflight` read the
+  release verdict.
 
 ## 1.4.0 — 2026-06-03
 
