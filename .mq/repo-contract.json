@@ -8,5 +8,6 @@
     "image_analyze.v1",
     "image_diff.v1"
   ],
-  "next_focus": ""
+  "next_focus": "",
+  "release_mode": "direct"
 }
