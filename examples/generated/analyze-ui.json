@@ -2,7 +2,7 @@
   "screenshot_type": "app-ui",
   "color_scheme": "mixed",
   "text_density": "low",
-  "contrast_ratio": 2.65,
+  "contrast_ratio": 2.66,
   "hierarchy_depth": 1,
   "grid_alignment": 0.0312,
   "layout_regions": [
@@ -18,7 +18,7 @@
     }
   ],
   "issues": [],
-  "prompt": "app-ui screenshot, mixed color scheme, low text density, contrast ratio 2.6:1, hierarchy depth 1, 1 layout regions",
+  "prompt": "app-ui screenshot, mixed color scheme, low text density, contrast ratio 2.7:1, hierarchy depth 1, 1 layout regions",
   "semantic_caption": null,
   "limitations": [
     "Layout regions detected via edge contours \u2014 semantic labels are heuristic.",
