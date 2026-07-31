@@ -1,8 +1,6 @@
 ---
 name: reverse-prompt
 description: Use when turning an image into a reusable prompt for image generation, visual design, or cinematic direction.
-phase: 1
-status: available
 ---
 
 # Reverse Prompt

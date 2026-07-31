@@ -1,8 +1,6 @@
 ---
 name: visual-reasoning
 description: Use when analyzing an image for objects, palette, composition, mood, visual hierarchy, and prompt intent.
-phase: 1
-status: available
 ---
 
 # Visual Reasoning
