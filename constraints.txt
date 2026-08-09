@@ -1,0 +1,21 @@
+# Exact pins for dependencies whose upstream has already broken us once.
+#
+# pyproject declares ranges, which is right for a library. But CI installs with
+# a bare `pip install -e ".[dev,web,mcp]"`, so every run re-resolves from
+# scratch and picks up whatever is newest on PyPI that day. That is how mcp 2.0
+# landed here: `mcp>=1.0` was satisfied by a release that had removed
+# mcp.server.fastmcp, and the suite went from green to 15 import errors without
+# a single line of our code changing.
+#
+# `mcp<2` in pyproject is the compatibility boundary. This file is the
+# reproducibility: the version CI actually gets is the version recorded here,
+# not the newest 1.x release at install time.
+#
+# Scope note: this pins the dependency that broke, not the full tree. Locking
+# torch, opencv and ultralytics as well would be the complete answer and is a
+# larger change than this fix — worth doing, not worth bundling here.
+#
+# To move the pin: install the new version, run the full suite plus
+# `python -m pytest tests/test_mcp_tools.py tests/test_json_schema.py -q` and
+# `python -m compileall mq_image_analyze/mcp -q`, then update this line.
+mcp==1.29.0

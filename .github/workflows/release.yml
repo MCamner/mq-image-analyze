@@ -22,8 +22,10 @@ jobs:
           cache: pip
 
       - name: Install dependencies
+        # Same constraint as tests.yml: a release must not be cut against a
+        # resolution the test job never saw.
         run: |
-          pip install -e ".[dev,web,mcp]"
+          pip install -c constraints.txt -e ".[dev,web,mcp]"
           python -m pip install build
 
       - name: Run release checks

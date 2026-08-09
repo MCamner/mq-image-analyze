@@ -23,8 +23,11 @@ jobs:
           cache: pip
 
       - name: Install dependencies
+        # -c constraints.txt, or the pin in that file is decorative: this job
+        # re-resolves from PyPI on every run, which is exactly how mcp 2.0 got
+        # in.
         run: |
-          pip install -e ".[dev,web,mcp]"
+          pip install -c constraints.txt -e ".[dev,web,mcp]"
 
       - name: Check imports
         run: |
