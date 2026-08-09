@@ -22,7 +22,11 @@ mq-image-mcp = "mq_image_analyze.mcp.server:mcp.run"
 [project.optional-dependencies]
 dev = ["pytest>=8.0", "pytest-cov"]
 web = ["fastapi>=0.110", "uvicorn>=0.29", "python-multipart>=0.0.9"]
-mcp = ["mcp>=1.0"]
+# Upper bound, not a preference: mcp 2.0 removed mcp.server.fastmcp, which is
+# where FastMCP lived through all of 1.x. mq_image_analyze/mcp/server.py builds
+# its seven tools on it, and so does mq-mcp. Migrating to the 2.x server API is
+# a coordinated stack decision, tracked separately — see the MCP 2.x issue.
+mcp = ["mcp>=1.0,<2"]
 
 [tool.setuptools.packages.find]
 where = ["."]
