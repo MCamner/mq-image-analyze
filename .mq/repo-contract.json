@@ -8,6 +8,17 @@
     "image_analyze.v1",
     "image_diff.v1"
   ],
+  "compatibility": {
+    "protocols": {
+      "mcp_api": "1.x-fastmcp"
+    },
+    "dependencies": {
+      "mcp": ">=1.0,<2"
+    },
+    "import_probes": {
+      "mcp": "from mcp.server.fastmcp import FastMCP"
+    }
+  },
   "next_focus": "",
   "release_mode": "direct"
 }
