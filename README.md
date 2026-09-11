@@ -5,6 +5,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-1.4.0-blue)](CHANGELOG.md)
 
+[Documentation](https://mcamner.github.io/mq-image-analyze/)
+
 Visual perception layer for the mq ecosystem.
 
 mq-image-analyze turns screenshots, diagrams, UI states, and visual artifacts
@@ -35,7 +37,7 @@ mq-agent orchestration
 
 ---
 
-## Proof
+## Demo / example output
 
 ```bash
 $ mq-image --version
