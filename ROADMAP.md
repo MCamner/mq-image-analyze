@@ -16,11 +16,11 @@
 | v1.2.1 | `MQ_MCP_COMPATIBILITY.md` + MCP tool contract table | Done |
 | v1.3.0 | `image_ocr` MCP tool + mq-agent workflow examples | Done |
 | v1.4.0 | Perception workflow integration hardening | Done |
-| v1.5.0 | Normalized perception contract for Release Gate v2 | Planned |
+| v1.5.0 | Normalized perception contract for Release Gate v2 | In progress |
 
 ---
 
-## Planned: v1.5.0 — Normalized perception contract for Release Gate v2
+## In progress: v1.5.0 — Normalized perception contract for Release Gate v2
 
 Goal:
 
@@ -41,16 +41,29 @@ Normalized perception object:
 }
 ```
 
-Planned scope:
+Scope:
 
-- [ ] Document the normalized perception object and compatibility rules
-- [ ] Add stable sample payloads for screenshot, diagram, UI and OCR outputs
-- [ ] Add `sample_perception_output.json` fixture for cross-repo validation
-- [ ] Keep prompt-injection warnings and `limitations` in image-derived text
-- [ ] Add output schema compatibility tests for mq-agent and mq-mcp consumers
-- [ ] Add OCR fallback and confidence handling tests
-- [ ] Document how perception output feeds `mq-agent review perception <image>`
-  and mq-mcp read-only perception review tools
+- [x] Document the normalized perception object and compatibility rules
+  (`docs/MQ_MCP_COMPATIBILITY.md`)
+- [x] Add stable sample payloads for screenshot, diagram, UI and OCR outputs
+  (`examples/perception/`, one per producer, each checked against the consumer)
+- [x] Add `sample_perception_output.json` fixture for cross-repo validation
+- [x] Keep prompt-injection warnings and `limitations` in image-derived text
+- [~] Add output schema compatibility tests for mq-agent and mq-mcp consumers —
+  mq-mcp done, and done by importing its own validator rather than restating
+  its rules. mq-agent has no perception consumer to test against.
+- [x] Add OCR fallback and confidence handling tests
+- [~] Document how perception output feeds `mq-agent review perception <image>`
+  and mq-mcp read-only perception review tools — the mq-mcp half is documented
+  and works. The mq-agent command does not exist: `mq-agent review` offers
+  `file`, `diff` and `repo` only. The documented chain is the one that runs.
+
+Not in this release, and deliberately:
+
+* No new analysis. Normalization renames, joins and restates what the pipelines
+  already produce; nothing is measured or inferred during it.
+* `mq-agent review perception <image>` is mq-agent's work, not this repo's.
+  Until it exists the chain is mq-image-analyze → artifact → mq-mcp gate.
 
 Boundary:
 
