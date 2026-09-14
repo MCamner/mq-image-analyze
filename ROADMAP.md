@@ -64,9 +64,9 @@ Follow-up, owned elsewhere:
 
 Not in this release, and deliberately:
 
-* No new analysis. Normalization renames, joins and restates what the pipelines
+- No new analysis. Normalization renames, joins and restates what the pipelines
   already produce; nothing is measured or inferred during it.
-* `mq-agent review perception <image>` is mq-agent's work, not this repo's.
+- `mq-agent review perception <image>` is mq-agent's work, not this repo's.
   Until it exists the chain is mq-image-analyze → artifact → mq-mcp gate.
 
 Scope status:

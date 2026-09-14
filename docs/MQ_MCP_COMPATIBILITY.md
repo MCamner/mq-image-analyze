@@ -44,14 +44,14 @@ requires and does not reject the ones it does not, which is pinned by a test.
 
 ### Compatibility rules
 
-* No perception happens during normalization. Every field is a rename, a join,
+- No perception happens during normalization. Every field is a rename, a join,
   or a restatement of counts the producer already established.
-* A producer that does not know something does not guess it. An OCR run knows
+- A producer that does not know something does not guess it. An OCR run knows
   neither the kind of image nor its path, so the caller supplies both.
-* A producer vocabulary with no honest equivalent raises rather than picking the
+- A producer vocabulary with no honest equivalent raises rather than picking the
   closest one. `unknown` is not a kind of image, and a `dashboard` is as
   defensibly a `ui` as a `screenshot` — both defer to the caller.
-* A producer value that *does* map wins over a caller hint. The producer
+- A producer value that *does* map wins over a caller hint. The producer
   observed it; a hint does not get to contradict it.
 
 ### `confidence` — completeness of the record, not certainty of a detection
