@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+### Fixed
+
+- `release-check.sh` runs markdownlint, which CI enforces as its own required
+  workflow. Without it a local release check could report "Ready to tag" on a
+  tree CI would reject, which is what happened during v1.5.0. No globs are
+  passed, so the local run reads `.markdownlint-cli2.jsonc` exactly as the
+  action does; an unrunnable linter is a failure rather than a pass.
+
 ## 1.5.0 — 2026-09-14
 
 Normalized perception contract for Release Gate v2. The seventeen commits
