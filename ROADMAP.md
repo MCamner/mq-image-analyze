@@ -16,11 +16,11 @@
 | v1.2.1 | `MQ_MCP_COMPATIBILITY.md` + MCP tool contract table | Done |
 | v1.3.0 | `image_ocr` MCP tool + mq-agent workflow examples | Done |
 | v1.4.0 | Perception workflow integration hardening | Done |
-| v1.5.0 | Normalized perception contract for Release Gate v2 | In progress |
+| v1.5.0 | Normalized perception contract for Release Gate v2 | Done |
 
 ---
 
-## In progress: v1.5.0 — Normalized perception contract for Release Gate v2
+## v1.5.0 — Normalized perception contract for Release Gate v2 — Done
 
 Goal:
 
@@ -49,14 +49,18 @@ Scope:
   (`examples/perception/`, one per producer, each checked against the consumer)
 - [x] Add `sample_perception_output.json` fixture for cross-repo validation
 - [x] Keep prompt-injection warnings and `limitations` in image-derived text
-- [~] Add output schema compatibility tests for mq-agent and mq-mcp consumers —
-  mq-mcp done, and done by importing its own validator rather than restating
-  its rules. mq-agent has no perception consumer to test against.
 - [x] Add OCR fallback and confidence handling tests
-- [~] Document how perception output feeds `mq-agent review perception <image>`
-  and mq-mcp read-only perception review tools — the mq-mcp half is documented
-  and works. The mq-agent command does not exist: `mq-agent review` offers
-  `file`, `diff` and `repo` only. The documented chain is the one that runs.
+- [x] Prove `perception.v1` compatibility against mq-mcp's real Release Gate
+  validator, with a positive fixture and a negative one that must block —
+  imported from the sibling checkout rather than restated here
+- [x] Document the implemented flow: mq-image-analyze → `perception.v1`
+  artifact → mq-mcp Release Gate v2 and read-only perception review tools
+
+Follow-up, owned elsewhere:
+
+- [ ] Add an mq-agent perception workflow/command
+  (**Owner: mq-agent.** `mq-agent review` offers `file`, `diff` and `repo`;
+  there is no perception command. Not a blocker for this producer contract.)
 
 Not in this release, and deliberately:
 
@@ -64,6 +68,20 @@ Not in this release, and deliberately:
   already produce; nothing is measured or inferred during it.
 * `mq-agent review perception <image>` is mq-agent's work, not this repo's.
   Until it exists the chain is mq-image-analyze → artifact → mq-mcp gate.
+
+Scope status:
+
+```text
+v1.5 producer contract    done
+mq-mcp compatibility      done, proven against the real validator
+mq-agent orchestration    deferred to mq-agent
+```
+
+One principle worth keeping from this release: **a green gate is not evidence
+until it evaluated something.** Before this release mq-mcp's perception check
+answered `No perception artifacts found; nothing to validate` — a pass
+indistinguishable from a real validation. A no-op pass may never be cited as
+compatibility evidence; that is why the negative fixture is part of the proof.
 
 Boundary:
 

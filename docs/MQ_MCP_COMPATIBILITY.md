@@ -54,7 +54,10 @@ requires and does not reject the ones it does not, which is pinned by a test.
 * A producer value that *does* map wins over a caller hint. The producer
   observed it; a hint does not get to contradict it.
 
-### `confidence` means something different here than elsewhere in this repo
+### `confidence` — completeness of the record, not certainty of a detection
+
+> `confidence` expresses the completeness and reliability of the normalized
+> perception record. It is **not** the confidence of any individual detection.
 
 The word is already taken. A region carries a float: how sure the detector is
 about one box. The record-level `confidence` answers a different question —
