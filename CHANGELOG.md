@@ -2,14 +2,61 @@
 
 ## Unreleased
 
+## 1.5.0 — 2026-09-14
+
+Normalized perception contract for Release Gate v2. The seventeen commits
+since 1.4.0 are all in this release; the previous `Unreleased` section
+described one of them, so this is rebuilt from the history rather than
+renamed over.
+
+### Added
+
+- `mq_image_analyze.perception` — one normalized record, `perception.v1`, from
+  any of the repo's producers. `from_ocr`, `from_ui` and `from_architecture`
+  rename, join and restate what the pipelines already report; no perception
+  happens during normalization.
+- `tests/fixtures/sample_perception_output.json` — the cross-repo fixture, in
+  a directory mq-mcp's Release Gate already globs.
+- `examples/perception/` — one normalized sample per producer.
+- Contract tests that run mq-mcp's own `_validate_perception_artifact` against
+  what this repo produces, imported from the sibling checkout rather than
+  restated. Skips when no mq-mcp checkout is present, so drift is reported as
+  unverified rather than assumed absent. A negative fixture must block.
+- The normalized perception record, its ownership split and its compatibility
+  rules in `docs/MQ_MCP_COMPATIBILITY.md`.
+- `.mq/repo-contract.json` for the MQ stack contract gate.
+- Evals for all 13 skills, `scripts/check-skills.sh` and its CI job, plus a
+  generated `SKILLS.md`.
+- A Mermaid architecture diagram (#8) and a repo issue template.
+
 ### Changed
 
-- `release-check.sh` now conforms to the `repo_release_check.v1` contract:
+- `release-check.sh` now conforms to the `repo_release_check.v1` contract (#11):
   `--json` emits the machine-readable verdict (`schema`, `repo`, `status`,
   `blockers`, `warnings`, `evidence`) on clean stdout and exits 0; `--dry-run`
   and `--json` skip the clean-tree requirement (the caller owns it). Human mode
   is unchanged. Lets mq-agent's `stack release --all --preflight` read the
   release verdict.
+- Markdown consistency is enforced in CI (#9).
+- Agent scaffolding converged onto main (#10); `release_mode` declared direct;
+  the MCP 1.x compatibility boundary declared in the repo contract.
+
+### Fixed
+
+- `mcp` constrained to the compatible 1.x API (#12).
+- Local skills are discoverable by both Codex and Claude Code; `check-skills.sh`
+  path resolution hardened for skill-local assets and bare directory mentions.
+
+### Notes
+
+- `confidence` on a perception record describes how complete the record is, not
+  how certain any detection is. The per-region float inside `detected_regions`
+  keeps its own meaning.
+- An mq-agent perception command is deferred to mq-agent and is not part of
+  this producer contract.
+- A green gate is not evidence until it evaluated something: before this
+  release mq-mcp's perception check answered `No perception artifacts found;
+  nothing to validate`, which passes without looking at anything.
 
 ## 1.4.0 — 2026-06-03
 

@@ -41,7 +41,7 @@ mq-agent orchestration
 
 ```bash
 $ mq-image --version
-mq-image 1.4.0
+mq-image 1.5.0
 
 $ mq-image doctor
   Python >= 3.11     ok   3.14.5
@@ -318,3 +318,4 @@ Review generation and architecture reasoning remain in mq-mcp.
 | v1.2.1 | `MQ_MCP_COMPATIBILITY.md` + MCP tool contract table | Done |
 | v1.3.0 | `image_ocr` MCP tool + mq-agent workflow examples | Done |
 | v1.4.0 | Perception workflow integration hardening | Done |
+| v1.5.0 | Normalized perception contract for Release Gate v2 | Done |

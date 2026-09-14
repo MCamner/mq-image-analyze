@@ -1,0 +1,28 @@
+{
+  "schema_version": "perception.v1",
+  "source_type": "diagram",
+  "source_path": "diagram.png",
+  "ocr_text": "",
+  "visual_summary": "1 component(s), 0 connection(s), 1 group(s)",
+  "detected_regions": [
+    {
+      "id": "box_0",
+      "bbox": [
+        28.0,
+        58.0,
+        133.0,
+        123.0
+      ],
+      "area_percent": 7.56,
+      "label": null,
+      "fill_color": "#c8e6c8",
+      "text": null
+    }
+  ],
+  "risk_signals": [],
+  "confidence": "medium",
+  "limitations": [
+    "OCR not available \u2014 install pytesseract for text extraction from boxes. Component labels and text fields will be null.",
+    "Semantic labels and semantic topology (what each component represents) are not inferred \u2014 this requires an LLM call via mq-mcp review tools."
+  ]
+}
