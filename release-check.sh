@@ -121,6 +121,19 @@ else
   ok "No .env in git"
 fi
 
+# CI runs markdownlint as its own required workflow, so a release-check that
+# skips it can report "Ready to tag" on a tree CI will reject — which is
+# exactly what happened to v1.5.0. No globs are passed: the action and this
+# both read .markdownlint-cli2.jsonc, and adding a glob here would widen the
+# set CI actually lints. Unrunnable is a failure, not a pass: a gate that
+# could not be checked has not been checked.
+say "==> Markdown checks"
+if command -v npx >/dev/null 2>&1; then
+  run "markdownlint" npx --yes markdownlint-cli2
+else
+  fail "markdownlint not runnable (npx not found) — CI runs it as a required check"
+fi
+
 if [[ "$JSON" -eq 1 ]]; then
   status=READY
   [[ "${#BLOCKERS[@]}" -gt 0 ]] && status=BLOCKED
