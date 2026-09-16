@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540" role="img" aria-labelledby="title desc">
+  <title id="title">mq-image-analyze report</title>
+  <desc id="desc">Terminal-style screenshot of mq-image-analyze returning structured visual context.</desc>
+  <rect width="960" height="540" fill="#0e1116"/>
+  <rect x="56" y="48" width="848" height="444" rx="12" fill="#151a22" stroke="#5fb3ff" stroke-width="3"/>
+  <text x="92" y="104" fill="#5fb3ff" font-family="JetBrains Mono, Menlo, monospace" font-size="28">mq-image analyze screenshot.png</text>
+  <text x="92" y="166" fill="#f4f1e8" font-family="JetBrains Mono, Menlo, monospace" font-size="23">Objects      terminal, chart, status panel</text>
+  <text x="92" y="214" fill="#f4f1e8" font-family="JetBrains Mono, Menlo, monospace" font-size="23">Palette      #101014 #f0b35a #5fb3ff</text>
+  <text x="92" y="262" fill="#f4f1e8" font-family="JetBrains Mono, Menlo, monospace" font-size="23">Composition  centered dashboard, high contrast</text>
+  <text x="92" y="334" fill="#7ee787" font-family="JetBrains Mono, Menlo, monospace" font-size="23">Contract     mq-image.analysis.v1</text>
+  <text x="92" y="382" fill="#9cdcfe" font-family="JetBrains Mono, Menlo, monospace" font-size="23">Mode         local-fast</text>
+  <text x="92" y="430" fill="#f0b35a" font-family="JetBrains Mono, Menlo, monospace" font-size="23">Safe output: structured context only</text>
+</svg>
