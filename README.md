@@ -3,7 +3,7 @@
 [![Tests](https://github.com/MCamner/mq-image-analyze/actions/workflows/tests.yml/badge.svg)](https://github.com/MCamner/mq-image-analyze/actions/workflows/tests.yml)
 [![Python](https://img.shields.io/badge/python-3.11%2B-blue)](https://www.python.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.4.0-blue)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.5.0-blue)](CHANGELOG.md)
 
 [Documentation](https://mcamner.github.io/mq-image-analyze/)
 
@@ -60,6 +60,19 @@ $ mq-image analyze bus.jpg
   Composition    balanced
   Reverse prompt bus, person, stop sign, mid-tone scene, high contrast, ...
 ```
+
+---
+
+## Examples
+
+- Analyze a local screenshot: `mq-image analyze screenshot.png --json`
+- Review a UI state: `mq-image analyze-ui browser-state.png`
+- Compare before/after evidence: `mq-image compare before.png after.png`
+- Extract architecture evidence: `mq-image observe-architecture diagram.png`
+
+## Screenshots
+
+![mq-image-analyze report](docs/screenshots/analysis-report.svg)
 
 ---
 
@@ -319,3 +332,13 @@ Review generation and architecture reasoning remain in mq-mcp.
 | v1.3.0 | `image_ocr` MCP tool + mq-agent workflow examples | Done |
 | v1.4.0 | Perception workflow integration hardening | Done |
 | v1.5.0 | Normalized perception contract for Release Gate v2 | Done |
+
+## Contributing
+
+Keep changes read-only by default and update the relevant CLI, MCP contract,
+schema and docs surfaces together. Before opening a PR, run:
+
+```bash
+bash scripts/validate.sh
+bash release-check.sh
+```
