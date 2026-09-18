@@ -7,6 +7,8 @@
 #   exits 0 (the `status` field carries the verdict). Consumed by mq-agent's
 #   `stack release --all --preflight`. --json implies --dry-run (the preflight
 #   owns the dirty-tree check).
+# Model/example generation and tag publication remain explicitly CI-only;
+# scripts/check-gate-parity.py documents why READY does not cover them.
 set -uo pipefail
 
 REPO_ROOT="$(cd "$(dirname "$0")" && pwd)"
@@ -108,6 +110,10 @@ run "mq-image mcp --help" "$MQ_IMAGE" mcp --help
 
 run "compileall mq_image_analyze" "$PYTHON" -m compileall -q mq_image_analyze
 run "MCP sample payloads match live tool contracts" "$PYTHON" scripts/check-mcp-sample-payloads.py
+
+say "==> Agent discovery and CI parity"
+run "check-skills.sh" bash scripts/check-skills.sh
+run "check-gate-parity.py" "$PYTHON" scripts/check-gate-parity.py
 
 if git ls-files | grep -qE '\.(pt|ckpt|safetensors|bin|gguf|onnx)$'; then
   fail "Model weight files are tracked in git"
