@@ -10,6 +10,8 @@ on:
     branches: [main]
   pull_request:
 
+# Probe: confirming the four required contexts report on a pull request.
+
 permissions:
   contents: read
 
