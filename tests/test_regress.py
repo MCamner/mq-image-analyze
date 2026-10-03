@@ -171,3 +171,67 @@ def test_cli_update_baseline_copies_current_and_passes(dirs):
 def test_cli_rejects_a_missing_directory(tmp_path: Path):
     result = runner.invoke(app, ["regress", str(tmp_path / "nope"), str(tmp_path)])
     assert result.exit_code != 0
+
+
+# ── ignored regions ──────────────────────────────────────────────────────────
+
+from mq_image_analyze.reasoning.comparison.regress import parse_ignore  # noqa: E402
+
+
+def _clock_dirs(tmp_path: Path) -> tuple[Path, Path]:
+    base, cur = tmp_path / "b", tmp_path / "c"
+    _screen(base / "home.png", box=(150, 5, 190, 15))       # "clock" at the top right
+    _screen(cur / "home.png", box=(140, 5, 180, 15))        # moved: the time changed
+    _screen(base / "other.png", box=(150, 5, 190, 15))
+    _screen(cur / "other.png", box=(140, 5, 180, 15))
+    return base, cur
+
+
+def test_parse_ignore():
+    assert parse_ignore(["1,2,30,40"]) == [(None, (1, 2, 30, 40))]
+    assert parse_ignore(["home.png:1,2,30,40"]) == [("home.png", (1, 2, 30, 40))]
+
+
+@pytest.mark.parametrize("bad", ["1,2,3", "a,b,c,d", "30,40,1,2", "home.png:"])
+def test_parse_ignore_rejects(bad: str):
+    with pytest.raises(ValueError):
+        parse_ignore([bad])
+
+
+def test_an_ignored_region_hides_its_change(tmp_path: Path):
+    base, cur = _clock_dirs(tmp_path)
+    report = regress(base, cur, fail_over=0.0, ignore=parse_ignore(["130,0,199,20"]))
+    assert {e.name: e.status for e in report.entries} == {"home.png": "unchanged", "other.png": "unchanged"}
+    assert report.entries[0].ignored_regions == [[130, 0, 199, 20]]
+
+
+def test_a_named_ignore_applies_to_that_screen_only(tmp_path: Path):
+    base, cur = _clock_dirs(tmp_path)
+    report = regress(base, cur, fail_over=0.0, ignore=parse_ignore(["home.png:130,0,199,20"]))
+    assert {e.name: e.status for e in report.entries} == {"home.png": "unchanged", "other.png": "changed"}
+
+
+def test_changes_outside_the_ignored_region_still_fail(tmp_path: Path):
+    base, cur = tmp_path / "b", tmp_path / "c"
+    _screen(base / "s.png", box=(150, 5, 190, 15))
+    img = Image.new("RGB", (200, 100), "white")
+    draw = ImageDraw.Draw(img)
+    draw.rectangle((140, 5, 180, 15), fill="black")
+    draw.rectangle((20, 60, 60, 80), fill="black")           # a real change elsewhere
+    cur.mkdir()
+    img.save(cur / "s.png")
+    entry = regress(base, cur, fail_over=0.0, ignore=parse_ignore(["130,0,199,20"])).entries[0]
+    assert entry.status == "changed"
+    assert all(r["bbox"][1] >= 55 for r in entry.regions)
+
+
+def test_cli_ignore_region(tmp_path: Path):
+    base, cur = _clock_dirs(tmp_path)
+    result = runner.invoke(app, ["regress", str(base), str(cur), "--ignore-region", "130,0,199,20"])
+    assert result.exit_code == 0, result.output
+
+
+def test_cli_bad_ignore_region_is_a_usage_error(tmp_path: Path):
+    base, cur = _clock_dirs(tmp_path)
+    result = runner.invoke(app, ["regress", str(base), str(cur), "--ignore-region", "1,2,3"])
+    assert result.exit_code == 2

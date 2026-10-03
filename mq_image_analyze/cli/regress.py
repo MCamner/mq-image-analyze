@@ -32,6 +32,12 @@ def regress_cmd(
     source_type: str = typer.Option(
         "screenshot", "--source-type", help="perception.v1 source_type: screenshot | ui | browser | terminal"
     ),
+    ignore_region: list[str] = typer.Option(
+        [],
+        "--ignore-region",
+        help="Exclude a box from comparison: x1,y1,x2,y2 (baseline pixels) for every screen, "
+        "or name.png:x1,y1,x2,y2 for one. Repeatable.",
+    ),
     json_output: bool = typer.Option(False, "--json", help="Print JSONL, one line per screen."),
     update_baseline: bool = typer.Option(
         False,
@@ -42,13 +48,19 @@ def regress_cmd(
 ) -> None:
     """Compare a directory of screenshots against a baseline. Exit 1 if a screen changed or disappeared."""
     from mq_image_analyze import perception
-    from mq_image_analyze.reasoning.comparison.regress import regress
+    from mq_image_analyze.reasoning.comparison.regress import parse_ignore, regress
 
     if source_type not in perception.SOURCE_TYPES:
         typer.echo(f"Error: --source-type must be one of {sorted(perception.SOURCE_TYPES)}", err=True)
         raise typer.Exit(2)
 
-    report = regress(baseline, current, fail_over=fail_over)
+    try:
+        ignore = parse_ignore(ignore_region)
+    except ValueError as exc:
+        typer.echo(f"Error: {exc}", err=True)
+        raise typer.Exit(2) from exc
+
+    report = regress(baseline, current, fail_over=fail_over, ignore=ignore)
 
     if update_baseline:
         copied = [e for e in report.entries if e.status in ("new", "changed", "unchanged") and e.current]
@@ -95,6 +107,8 @@ def _overlay(entry, target: Path) -> None:
     with Image.open(entry.baseline) as b, Image.open(entry.current) as c:
         img = c.convert("RGB").resize(b.size) if c.size != b.size else c.convert("RGB")
     draw = ImageDraw.Draw(img)
+    for box in entry.ignored_regions:
+        draw.rectangle(box, fill=(128, 128, 128))
     for region in entry.regions:
         draw.rectangle(region["bbox"], outline=(255, 64, 64), width=3)
     img.save(target)

@@ -10,7 +10,8 @@
   changed or disappeared. `--out` writes `report.jsonl`, a side-by-side
   `report.html`, overlays with changed regions outlined, and one `perception.v1`
   artifact per failing screen for mq-mcp's Release Gate. `--update-baseline`
-  copies the current run into the baseline.
+  copies the current run into the baseline. `--ignore-region [name:]x1,y1,x2,y2`
+  excludes dynamic content such as clocks from every screen or from one.
 - `perception.from_regression()`, checked against mq-mcp's own validator.
 
 ### Notes

@@ -7,6 +7,9 @@ threshold. The threshold is on that share, not on the mean `pixel_diff`: a
 renamed button moves the mean by about 0.001 and would pass any useful mean
 threshold. A screen missing from current fails; one only in current is new.
 
+Ignored regions (clocks, dates, user names) are cleared from the change mask
+before anything is counted, so changes there never fail a screen.
+
 Pixel comparison only: this says where a screen changed, not whether the
 change was intended.
 """
@@ -29,6 +32,26 @@ PIXEL_THRESHOLD = 25
 MIN_REGION_AREA = 0.0005
 MAX_REGIONS = 50
 
+Box = tuple[int, int, int, int]
+#: (screen name or None for every screen, box in baseline pixels, inclusive)
+Ignore = tuple[str | None, Box]
+
+
+def parse_ignore(specs: list[str]) -> list[Ignore]:
+    """`x1,y1,x2,y2` for every screen, or `name.png:x1,y1,x2,y2` for one."""
+    parsed: list[Ignore] = []
+    for spec in specs:
+        name, _, coords = spec.rpartition(":")
+        parts = coords.split(",")
+        try:
+            x1, y1, x2, y2 = (int(p) for p in parts)
+        except ValueError as exc:
+            raise ValueError(f"ignore region must be [name:]x1,y1,x2,y2 with integers, got {spec!r}") from exc
+        if x2 < x1 or y2 < y1 or min(x1, y1) < 0:
+            raise ValueError(f"ignore region needs 0 <= x1 <= x2 and 0 <= y1 <= y2, got {spec!r}")
+        parsed.append((name or None, (x1, y1, x2, y2)))
+    return parsed
+
 
 @dataclass
 class RegressEntry:
@@ -40,6 +63,7 @@ class RegressEntry:
     changed_ratio: float | None = None
     size_changed: bool | None = None
     regions: list[dict] = field(default_factory=list)
+    ignored_regions: list[list[int]] = field(default_factory=list)
 
     @property
     def failed(self) -> bool:
@@ -64,11 +88,13 @@ def _gray(path: Path, size: tuple[int, int] | None = None) -> np.ndarray:
         return np.asarray(gray, dtype=np.uint8)
 
 
-def _changes(before: Path, after: Path) -> tuple[float, list[dict]]:
+def _changes(before: Path, after: Path, ignore: list[Box] = ()) -> tuple[float, list[dict]]:
     """(share of changed pixels, boxes around them in `before`'s coordinates)."""
     b = _gray(before)
     a = _gray(after, size=(b.shape[1], b.shape[0]))
     mask = (cv2.absdiff(b, a) > PIXEL_THRESHOLD).astype(np.uint8) * 255
+    for x1, y1, x2, y2 in ignore:
+        mask[y1 : y2 + 1, x1 : x2 + 1] = 0
     if not mask.any():
         return 0.0, []
     ratio = round(float(np.count_nonzero(mask)) / mask.size, 6)
@@ -103,7 +129,9 @@ def _images(directory: Path) -> dict[str, Path]:
     }
 
 
-def regress(baseline_dir: Path, current_dir: Path, *, fail_over: float) -> RegressReport:
+def regress(
+    baseline_dir: Path, current_dir: Path, *, fail_over: float, ignore: list[Ignore] = ()
+) -> RegressReport:
     baseline = _images(Path(baseline_dir))
     current = _images(Path(current_dir))
     entries = []
@@ -116,7 +144,8 @@ def regress(baseline_dir: Path, current_dir: Path, *, fail_over: float) -> Regre
             entries.append(RegressEntry(name, "new", None, str(c)))
             continue
         diff, size_changed = _pixel_diff(b, c)
-        ratio, regions = _changes(b, c)
+        boxes = [box for screen, box in ignore if screen in (None, name)]
+        ratio, regions = _changes(b, c, boxes)
         changed = size_changed or (bool(regions) and ratio > fail_over)
         entries.append(RegressEntry(
             name=name,
@@ -127,5 +156,6 @@ def regress(baseline_dir: Path, current_dir: Path, *, fail_over: float) -> Regre
             changed_ratio=ratio,
             size_changed=size_changed,
             regions=regions,
+            ignored_regions=[list(box) for box in boxes],
         ))
     return RegressReport(fail_over=fail_over, entries=entries)

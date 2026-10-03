@@ -125,6 +125,7 @@ are paired by file name.
 mq-image regress baseline/ current/
 mq-image regress baseline/ current/ --out reports/perception/regress
 mq-image regress baseline/ current/ --fail-over 0.001 --json
+mq-image regress baseline/ current/ --ignore-region 520,0,639,56 --ignore-region login.png:0,360,300,399
 mq-image regress baseline/ current/ --update-baseline
 ```
 
@@ -135,6 +136,7 @@ mq-image regress baseline/ current/ --update-baseline
 | `--fail-over` | float 0–1 | no | Share of changed pixels a screen may have. Default `0`: any change that survives noise filtering fails |
 | `--out`, `-o` | directory | no | Write `report.jsonl`, `report.html`, `overlays/` and one `perception.v1` artifact per failing screen |
 | `--source-type` | string | no | `source_type` for the artifacts. Default `screenshot` |
+| `--ignore-region` | `[name:]x1,y1,x2,y2` | no | Exclude a box (baseline pixels, inclusive) from comparison, for every screen or only `name`. Repeatable |
 | `--json` | flag | no | Print JSONL, one line per screen |
 | `--update-baseline` | flag | no | Copy every current screenshot into the baseline and exit 0. Nothing is deleted |
 
@@ -156,6 +158,11 @@ Exit code 1 when any screen fails. That exit code is what blocks CI: mq-mcp's
 Release Gate validates the artifacts and lists their `risk_signals` as a warning,
 but does not block on them. Write the artifacts under `reports/perception/` for
 the gate to find them.
+
+Ignored regions are for content that changes on every run, such as clocks, dates,
+user names and session IDs. Pixels inside them never count as changed. They are
+listed per screen as `ignored_regions` in the JSON and drawn grey in the overlays.
+A bad box is a usage error (exit 2).
 
 This is pixel comparison. It says where a screen changed, not whether the change
 was intended.
