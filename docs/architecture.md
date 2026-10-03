@@ -26,10 +26,10 @@ Raw signal extraction from images. Deterministic. Fast. No LLMs.
 | `vision/detection` | Object detection via YOLOv8n |
 | `vision/palette` | Dominant colors, brightness, contrast |
 | `vision/composition` | Rule-of-thirds, symmetry, visual weight, depth |
-| `vision/ocr` | Text extraction via EasyOCR |
-| `vision/metadata` | EXIF, format, resolution |
-| `vision/screenshot` | UI-specific signal extraction |
-| `vision/segmentation` | Region and semantic segmentation |
+| `vision/ui` | Screenshot type, layout regions, WCAG contrast, hierarchy |
+| `vision/architecture` | Diagram components, connections, color groups, image type |
+| `vision/content` | Content flags (NudeNet) |
+| `vision/semantic` | Optional captions via Ollama or OpenAI vision |
 
 ### Reasoning
 
@@ -38,11 +38,7 @@ Interpretation of vision signals into human-readable and structured outputs.
 | Module | Purpose |
 | ------ | ------- |
 | `reasoning/prompts` | Reverse prompt builder from vision signals |
-| `reasoning/cinematic` | Cinematic language and lighting style analysis |
-| `reasoning/styles` | Visual style classification |
-| `reasoning/scoring` | Composition, realism, clarity scores |
-| `reasoning/ui_analysis` | UI design pattern recognition |
-| `reasoning/comparisons` | Multi-image comparison and drift detection |
+| `reasoning/comparison` | Two-image comparison and drift detection |
 
 ### Experience
 
@@ -52,8 +48,9 @@ The output interfaces. Generation is optional.
 | ------ | ------- |
 | `cli/` | Typer-based CLI commands |
 | `mcp/` | FastMCP server and tool definitions |
-| `pipelines/` | End-to-end analysis flows |
-| `adapters/` | External system integrations |
+| `web/` | FastAPI upload UI (`mq-image serve`) |
+| `pipelines/` | OCR (pytesseract, optional) and architecture observation flows |
+| `perception.py` | Normalized `perception.v1` record for mq-mcp Release Gate v2 |
 
 ## Design constraints
 

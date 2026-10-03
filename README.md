@@ -130,8 +130,8 @@ Three layers only. Generation is optional and secondary.
 
 | Layer | What it does |
 | ----- | ------------ |
-| Vision | Objects, palette, composition, OCR, metadata |
-| Reasoning | Style, cinematic, prompts, scoring, UI analysis |
+| Vision | Objects, palette, composition, UI layout, diagram topology, OCR |
+| Reasoning | Reverse prompts, image comparison |
 | Experience | CLI, MCP tools, agent skill dispatch |
 
 → [docs/architecture.md](docs/architecture.md)

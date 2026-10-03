@@ -14,6 +14,18 @@
 - `examples/mcp-payloads/image_perception.json`, covered by the sample payload
   check and by mq-mcp's own perception validator.
 
+### Removed
+
+- Seventeen packages that held nothing but an empty `__init__.py`:
+  `adapters/` (flux, imagesorcery, openai, photoshop, sdxl), `mcp/schemas`,
+  `mcp/tools`, `reasoning/{cinematic,comparisons,scoring,styles,ui_analysis}`,
+  `utils`, and `vision/{metadata,ocr,screenshot,segmentation}`. Nothing
+  imported them; the architecture doc and README described them as working
+  features. Both now list only modules that exist.
+- The root `web/` copy of the web server. `mq-image serve` has always run the
+  packaged `mq_image_analyze/web/`; the root copy was an older version that
+  lacked the vision-mode and `conf` validation.
+
 ### Fixed
 
 - `release-check.sh` runs markdownlint, which CI enforces as its own required

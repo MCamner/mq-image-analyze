@@ -27,8 +27,6 @@ Use this skill for `mq-image serve` and browser-based image analysis.
 - `mq_image_analyze/cli/serve.py`
 - `mq_image_analyze/web/server.py`
 - `mq_image_analyze/web/index.html`
-- `web/server.py`
-- `web/index.html`
 - `tests/test_web_package.py`
 - `docs/cli.md`
 - `README.md`
@@ -36,8 +34,7 @@ Use this skill for `mq-image serve` and browser-based image analysis.
 ## UI Contract
 
 - The web UI should expose image upload/analysis clearly.
-- The packaged web assets under `mq_image_analyze/web/` must stay in sync with
-  root `web/` assets when both are used.
+- Web assets live only in the package, under `mq_image_analyze/web/`.
 - `mq-image serve --port 8000` should be documented and testable.
 - Browser output should reflect the same JSON contracts as CLI/MCP where
   applicable.

@@ -9,13 +9,10 @@ flowchart TD
     VIS["vision"]
     REAS["reasoning"]
   end
-  ADAPT["adapters (model providers)"]
-  UTIL["utils"]
+  SEM["vision/semantic (Ollama / OpenAI)"]
   CLI --> PIPE
   MCP --> PIPE
   WEBAPI --> PIPE
   PIPE --> VIS
   PIPE --> REAS
-  VIS --> ADAPT
-  REAS --> ADAPT
-  PIPE --> UTIL
+  VIS --> SEM
