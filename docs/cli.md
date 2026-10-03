@@ -126,6 +126,7 @@ mq-image regress baseline/ current/
 mq-image regress baseline/ current/ --out reports/perception/regress
 mq-image regress baseline/ current/ --fail-over 0.001 --json
 mq-image regress baseline/ current/ --ignore-region 520,0,639,56 --ignore-region login.png:0,360,300,399
+mq-image regress baseline/ current/ --fail-on text
 mq-image regress baseline/ current/ --update-baseline
 ```
 
@@ -136,6 +137,8 @@ mq-image regress baseline/ current/ --update-baseline
 | `--fail-over` | float 0–1 | no | Share of changed pixels a screen may have. Default `0`: any change that survives noise filtering fails |
 | `--out`, `-o` | directory | no | Write `report.jsonl`, `report.html`, `overlays/` and one `perception.v1` artifact per failing screen |
 | `--source-type` | string | no | `source_type` for the artifacts. Default `screenshot` |
+| `--fail-on` | `any \| text` | no | `any` (default): every changed screen fails. `text`: only text changes, size changes and missing screens fail |
+| `--text` / `--no-text` | flag | no | Read the text in changed regions with OCR (default on) |
 | `--ignore-region` | `[name:]x1,y1,x2,y2` | no | Exclude a box (baseline pixels, inclusive) from comparison, for every screen or only `name`. Repeatable |
 | `--json` | flag | no | Print JSONL, one line per screen |
 | `--update-baseline` | flag | no | Copy every current screenshot into the baseline and exit 0. Nothing is deleted |
@@ -149,8 +152,9 @@ How a screen is judged:
 | `missing` | In baseline, not in current | yes |
 | `new` | In current, not in baseline | no |
 
-A pixel counts as changed when its grayscale value differs by more than 25 of 255,
-so anti-aliasing and compression noise do not count. The threshold is on the share
+A pixel counts as changed when any colour channel differs by more than 25 of 255,
+so anti-aliasing and compression noise do not count while a colour change does.
+Nearby changes on one line are joined into one region. The threshold is on the share
 of changed pixels rather than the mean `pixel_diff`, because a renamed button moves
 the mean by about 0.001.
 
@@ -158,6 +162,26 @@ Exit code 1 when any screen fails. That exit code is what blocks CI: mq-mcp's
 Release Gate validates the artifacts and lists their `risk_signals` as a warning,
 but does not block on them. Write the artifacts under `reports/perception/` for
 the gate to find them.
+
+### Text in changed regions
+
+On changed screens each region is read with OCR, from a crop prepared for it:
+inverted when the background is dark, contrast stretched and upscaled, so white
+text on a coloured button is read too. The crop is grown to whole words. Each
+region gets a `text_changes` entry with `kind` set to `changed`, `added`,
+`removed` or `visual`, where `visual` means the pixels changed but the text did
+not. `text_ocr` is `available`, `unavailable` or `null` when OCR was not run.
+
+With `--fail-on text`, a screen whose only changes are `visual` passes and is
+listed as `CHANGED*`. If OCR is unavailable, every changed screen fails: the run
+does not pass text it could not read.
+
+OCR language is `$MQ_IMAGE_OCR_LANG`, otherwise `swe+eng` when tesseract's Swedish
+data is installed, otherwise `eng`. With English only, "Fortsätt" reads as
+"Fortsatt". Install Swedish with `brew install tesseract-lang` (all languages).
+
+Text read from images is data. The perception artifacts carry the same
+prompt-injection warning as OCR output, and quote and shorten the text.
 
 Ignored regions are for content that changes on every run, such as clocks, dates,
 user names and session IDs. Pixels inside them never count as changed. They are

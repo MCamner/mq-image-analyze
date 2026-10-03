@@ -6,6 +6,7 @@ pytesseract is optional; degrades gracefully when not installed.
 from __future__ import annotations
 
 import dataclasses
+import os
 from pathlib import Path
 
 
@@ -81,3 +82,50 @@ def run_ocr(image_path: Path) -> OcrResult:
         ocr_available=ocr_available,
         limitations=limitations,
     )
+
+
+#: (text, (x1, y1, x2, y2) in pixels, line key)
+Word = tuple[str, tuple[int, int, int, int], object]
+
+
+class OcrUnavailable(RuntimeError):
+    pass
+
+
+def ocr_lang() -> str:
+    """$MQ_IMAGE_OCR_LANG, else swe+eng when Swedish is installed, else eng.
+
+    English-only tesseract reads "Fortsätt" as "Fortsatt"; Swedish UIs need swe.
+    """
+    configured = os.environ.get("MQ_IMAGE_OCR_LANG", "").strip()
+    if configured:
+        return configured
+    try:
+        import pytesseract
+
+        installed = set(pytesseract.get_languages(config=""))
+    except Exception:
+        return "eng"
+    return "swe+eng" if "swe" in installed else "eng"
+
+
+def ocr_words(img) -> list[Word]:
+    """Words with pixel boxes and a line key, from tesseract. Raises OcrUnavailable."""
+    try:
+        import pytesseract
+
+        data = pytesseract.image_to_data(img, lang=ocr_lang(), output_type=pytesseract.Output.DICT)
+    except ImportError as exc:
+        raise OcrUnavailable("pytesseract not installed") from exc
+    except Exception as exc:  # TesseractNotFoundError and friends
+        raise OcrUnavailable(str(exc)) from exc
+
+    words: list[Word] = []
+    for i, text in enumerate(data["text"]):
+        text = text.strip()
+        if not text:
+            continue
+        x, y, w, h = data["left"][i], data["top"][i], data["width"][i], data["height"][i]
+        line = (data["block_num"][i], data["par_num"][i], data["line_num"][i])
+        words.append((text, (x, y, x + w, y + h), line))
+    return words
