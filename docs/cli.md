@@ -253,6 +253,7 @@ Start the MCP server.
 mq-image mcp
 mq-image mcp --transport stdio
 mq-image mcp --transport sse
+mq-image mcp --transport http --port 8766
 ```
 
 Install MCP dependencies with:
@@ -260,3 +261,6 @@ Install MCP dependencies with:
 ```bash
 pip install -e ".[mcp]"
 ```
+
+The HTTP transport is the loopback bridge used by mq-agent. Its default port is
+8766; stdio remains the default transport.
