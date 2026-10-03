@@ -20,6 +20,31 @@
 | v1.6.0 | Runnable perception contract | Done |
 | v1.7.0 | Safer agent and cloud use, CI-ready comparison | Done |
 | v1.8.0 | Screenshot regression for the Release Gate | Done |
+| v1.9.0 | What changed, not only where | Done |
+
+---
+
+## v1.9.0 — What changed, not only where — Done
+
+Goal:
+
+Make a regression readable without opening images: name the text that changed,
+and let CI fail on text changes while tolerating purely visual ones.
+
+- [x] OCR per changed region, from a crop prepared for OCR (inverted on dark
+  backgrounds, upscaled), grown to whole words
+- [x] `changed` / `added` / `removed` / `visual` per region; quoted risk signals
+  with the prompt-injection warning
+- [x] `--fail-on text`, failing closed when OCR is unavailable; `--no-text`
+- [x] Per-channel comparison (colour-only changes) and one region per text line
+- [x] `MQ_IMAGE_OCR_LANG`, `swe+eng` by default when Swedish data is installed
+- [x] Loopback HTTP bridge for mq-agent (`mcp --transport http`), refusing
+  non-loopback Host and Origin
+
+Not in this release:
+
+- Judging whether a text change was intended.
+- Authentication on the HTTP bridge; like stdio, any local process can call it.
 
 ---
 

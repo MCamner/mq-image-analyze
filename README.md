@@ -3,7 +3,7 @@
 [![Tests](https://github.com/MCamner/mq-image-analyze/actions/workflows/tests.yml/badge.svg)](https://github.com/MCamner/mq-image-analyze/actions/workflows/tests.yml)
 [![Python](https://img.shields.io/badge/python-3.11%2B-blue)](https://www.python.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.8.0-blue)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.9.0-blue)](CHANGELOG.md)
 
 [Documentation](https://mcamner.github.io/mq-image-analyze/)
 
@@ -41,7 +41,7 @@ mq-agent orchestration
 
 ```bash
 $ mq-image --version
-mq-image 1.8.0
+mq-image 1.9.0
 
 $ mq-image doctor
   Python >= 3.11     ok   3.14.5
@@ -343,6 +343,7 @@ Review generation and architecture reasoning remain in mq-mcp.
 | v1.6.0 | Runnable `perception.v1` (`perceive`, `image_perception`), `ocr` CLI, upload validation | Done |
 | v1.7.0 | MCP path confinement, `compare --fail-over`, cloud redaction, batch analyze, caption cache | Done |
 | v1.8.0 | `mq-image regress`: screenshot regression with Release Gate artifacts | Done |
+| v1.9.0 | Text-aware `regress` (OCR per changed region, `--fail-on text`), MCP HTTP bridge for mq-agent | Done |
 
 ## Contributing
 
