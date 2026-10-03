@@ -18,6 +18,28 @@
 | v1.4.0 | Perception workflow integration hardening | Done |
 | v1.5.0 | Normalized perception contract for Release Gate v2 | Done |
 | v1.6.0 | Runnable perception contract | Done |
+| v1.7.0 | Safer agent and cloud use, CI-ready comparison | Done |
+
+---
+
+## v1.7.0 — Safer agent and cloud use, CI-ready comparison — Done
+
+Goal:
+
+Limit what an agent can make the MCP server read and what leaves the machine
+in cloud-verify, and make the CLI usable in CI and on screenshot series.
+
+- [x] `MQ_IMAGE_ALLOWED_ROOTS` path confinement for every MCP tool
+- [x] `compare`: `pixel_diff`, `size_changed`, `--fail-over` exit code
+- [x] Opt-in, fail-closed redaction of personnummer and email before cloud-verify
+- [x] `mq-image analyze <directory>` with JSONL output
+- [x] `--cache` for semantic captions (CLI only; MCP stays write-free)
+
+Not in this release:
+
+- Name redaction. Names are not pattern-shaped; that needs a name list or an
+  NER model and is a separate decision.
+- A full `uv lock` refresh with uv 0.12 (it rewrites CUDA platform markers).
 
 ---
 
