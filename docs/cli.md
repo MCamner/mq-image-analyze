@@ -113,6 +113,7 @@ Compare two images for visual drift.
 mq-image compare <before> <after>
 mq-image compare <before> <after> --json
 mq-image compare <before> <after> --exhaustive --conf 0.05
+mq-image compare baseline.png current.png --fail-over 0.02   # CI visual regression
 ```
 
 | Argument | Type | Required | Description |
@@ -122,6 +123,11 @@ mq-image compare <before> <after> --exhaustive --conf 0.05
 | `--json` | flag | no | Output raw JSON |
 | `--exhaustive` | flag | no | Use exhaustive detection mode |
 | `--conf` | float | no | Detection confidence threshold |
+| `--fail-over` | float 0–1 | no | Exit 1 when `pixel_diff` exceeds the value; output is printed first |
+
+`pixel_diff` is the mean absolute grayscale difference, 0 for identical images and
+1 for black against white. When the sizes differ, `after` is resized to `before`
+and `size_changed` is `true`.
 
 ---
 

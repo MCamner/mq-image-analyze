@@ -151,7 +151,7 @@ Output:
 
 ## compare_images
 
-Compare two images for palette drift, style drift, composition differences, object changes, and AI-look heuristic score.
+Compare two images for pixel difference (`pixel_diff`, `size_changed`), palette drift, style drift, composition differences, object changes, and AI-look heuristic score.
 
 ```python
 compare_images(

@@ -138,7 +138,7 @@ def reverse_prompt(
 
 @mcp.tool(
     description=(
-        "Compare two images and return palette drift, style drift, composition differences, "
+        "Compare two images and return pixel_diff (0-1 mean grayscale difference), size_changed, palette drift, style drift, composition differences, "
         "objects added/removed, and an AI-look heuristic score for each image. "
         f"Safety: {_SAFETY}. Read-only."
     )
