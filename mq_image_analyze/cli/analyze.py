@@ -36,6 +36,11 @@ def analyze(
         help="cloud-verify only: mask personnummer and emails found by OCR before upload; "
         "if OCR is unavailable the image is not sent. Also on with MQ_IMAGE_REDACT_CLOUD=1.",
     ),
+    cache: bool = typer.Option(
+        False,
+        "--cache",
+        help="Reuse semantic captions from a local cache ($MQ_IMAGE_CACHE_DIR or ~/.cache/mq-image-analyze).",
+    ),
 ) -> None:
     """Analyze an image — objects, style, composition, reverse prompt."""
     mode = "exhaustive" if exhaustive else "summary"
@@ -47,7 +52,7 @@ def analyze(
 
     if image.is_dir():
         _analyze_dir(image, json_output, mode=mode, conf=conf, vision_mode=selected_vision_mode,
-                     vision_model=vision_model, redact=redact)
+                     vision_model=vision_model, redact=redact, cache=cache)
         return
 
     result = build(
@@ -57,6 +62,7 @@ def analyze(
         vision_mode=selected_vision_mode,
         vision_model=vision_model,
         redact=redact,
+        cache=cache,
     )
 
     if json_output:

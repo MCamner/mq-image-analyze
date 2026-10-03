@@ -35,6 +35,7 @@ mq-image analyze screenshots/ --json > results.jsonl
 | `--mode` | string | no | Vision backend: `local-fast`, `local-deep`, or `cloud-verify` |
 | `--vision-model` | string | no | Override backend model, for example `gpt-4o` or `gpt-4.1` |
 | `--redact` | flag | no | `cloud-verify` only: mask personnummer and email addresses before upload |
+| `--cache` | flag | no | Reuse semantic captions from a local cache |
 
 Backend defaults:
 
@@ -55,6 +56,15 @@ mq-image analyze diagram.png --mode cloud-verify --vision-model gpt-4o
 With a directory, `--json` prints JSONL: one object per image with a `path` key
 added. An image that fails becomes `{"path": ..., "error": ...}` and the batch
 continues; the exit code is 1 if any image failed. Subdirectories are not read.
+
+### Caption cache
+
+`--cache` stores semantic captions under `$MQ_IMAGE_CACHE_DIR`, default
+`~/.cache/mq-image-analyze/captions`. The key is the image content, vision mode,
+model, whether the upload was redacted, and the prompt text, so renaming a file
+still hits while changing any of the others misses. Missing captions are not
+stored. Delete the directory to clear it. The MCP tools never use the cache,
+so they keep writing nothing to disk.
 
 ### Redaction before cloud-verify
 
