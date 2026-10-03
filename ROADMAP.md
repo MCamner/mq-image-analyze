@@ -17,6 +17,30 @@
 | v1.3.0 | `image_ocr` MCP tool + mq-agent workflow examples | Done |
 | v1.4.0 | Perception workflow integration hardening | Done |
 | v1.5.0 | Normalized perception contract for Release Gate v2 | Done |
+| v1.6.0 | Runnable perception contract | Done |
+
+---
+
+## v1.6.0 — Runnable perception contract — Done
+
+Goal:
+
+v1.5 defined `perception.v1`, but only the test suite could produce it. Make
+the artifact producible from an image, and remove surface that claimed more
+than the code does.
+
+- [x] `mq-image perceive <image> --producer ui|architecture|ocr` with `--out`
+- [x] `image_perception` MCP tool, sample payload validated by mq-mcp's own
+  perception validator
+- [x] `mq-image ocr`, CLI parity with the `image_ocr` MCP tool
+- [x] Remove 17 empty stub packages and the stale root `web/` copy; docs list
+  only modules that exist
+- [x] Validate web uploads: extension, byte size, pixel count, readability
+
+Not in this release:
+
+- No new analysis. `perceive` runs existing producers and existing normalizers.
+- `mq-agent review perception <image>` is still mq-agent's work.
 
 ---
 
