@@ -18,8 +18,8 @@ See [MQ_MCP_COMPATIBILITY.md](MQ_MCP_COMPATIBILITY.md) for the full role boundar
 | `compare_images` | Image drift comparison | A | two image paths | palette diff, style drift, object changes | visual regression |
 | `analyze_ui` | UI screenshot analysis | A | screenshot path | layout regions, WCAG contrast, hierarchy | screenshot review |
 | `observe_architecture` | Architecture diagram parsing | A | diagram path | `visual_architecture_observation.v1`: nodes, connections, image_type | architecture review context |
-
-| `image_ocr` | Extract visible text blocks with position | A | Returns `image_ocr.v1`; pytesseract optional; degrades gracefully |
+| `image_ocr` | Extract visible text blocks with position | A | image path | `image_ocr.v1`; pytesseract optional; degrades gracefully | docs/review text support |
+| `image_perception` | Normalized perception record | A | image path, producer, optional source_type | `perception.v1` | Release Gate v2 artifact |
 
 ---
 
@@ -196,3 +196,23 @@ Output schema: `visual_architecture_observation.v1`
 Fields include: `image_type` (`architecture-diagram \| dashboard \| terminal \| ui-screenshot \| unknown`), `components`, `connections`, `color_groups`, `ocr_text` (when pytesseract is installed), `limitations`, `safety`.
 
 Designed to be consumed by mq-mcp review tools. OCR-based text extraction from diagram boxes is included when pytesseract is installed. Read-only. Safety: `safe`.
+
+---
+
+## image_perception
+
+Run one producer (`ui`, `architecture` or `ocr`) and return a normalized `perception.v1` record — the artifact shape mq-mcp Release Gate v2 validates.
+
+```python
+image_perception(image_path: str, producer: str, source_type: str | None = None) -> str
+```
+
+| Argument | Description |
+| -------- | ----------- |
+| `image_path` | Absolute or home-relative path to the image |
+| `producer` | `ui`, `architecture` or `ocr` |
+| `source_type` | `screenshot`, `diagram`, `ui`, `terminal` or `browser`. Required for `ocr`; otherwise used only when the producer's classification has no unambiguous equivalent |
+
+Fields: `schema_version`, `source_type`, `source_path`, `ocr_text`, `visual_summary`, `detected_regions`, `risk_signals`, `confidence` (record completeness, not accuracy), `limitations`.
+
+The tool refuses rather than guessing a `source_type`. Normalization adds no perception of its own. Read-only. Safety: `safe`.

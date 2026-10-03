@@ -93,6 +93,12 @@ def test_an_architecture_record_satisfies_the_consumer(tmp_path):
     assert consumer_errors(record, tmp_path) == []
 
 
+def test_the_image_perception_tool_output_satisfies_the_consumer(tmp_path):
+    """What `image_perception` and `mq-image perceive` emit, not only what the
+    normalizers return when handed a payload."""
+    assert consumer_errors(payload("image_perception.json"), tmp_path) == []
+
+
 def test_a_broken_record_is_rejected_by_the_consumer(tmp_path):
     """The negative half. Without it a passing gate proves only that nothing
     was looked at — which is what the gate reports today, with no artifacts in

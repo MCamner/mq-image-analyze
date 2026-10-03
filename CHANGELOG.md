@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+### Added
+
+- `mq-image perceive <image> --producer ui|architecture|ocr` and the
+  `image_perception` MCP tool. `perception.v1` existed only as normalizers fed
+  by tests; there was no way to produce a Release Gate artifact from an image.
+  `perception.perceive()` runs the named producer and hands its payload to the
+  existing normalizer, so the map-or-refuse rule for `source_type` is
+  unchanged. `--out` writes the artifact to a file.
+- `mq-image ocr`, the CLI counterpart of the `image_ocr` MCP tool.
+- `examples/mcp-payloads/image_perception.json`, covered by the sample payload
+  check and by mq-mcp's own perception validator.
+
 ### Fixed
 
 - `release-check.sh` runs markdownlint, which CI enforces as its own required

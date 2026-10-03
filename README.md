@@ -101,6 +101,8 @@ mq-image analyze <image> --mode cloud-verify --vision-model gpt-4.1
 mq-image analyze-ui <screenshot>
 mq-image compare <before> <after>
 mq-image observe-architecture <diagram>   # visual_architecture_observation.v1 JSON
+mq-image ocr <image> --json        # image_ocr.v1 JSON
+mq-image perceive <image> --producer ui|architecture|ocr   # perception.v1 record
 mq-image serve --port 8000
 mq-image mcp
 mq-image doctor                   # system readiness check
@@ -209,7 +211,7 @@ It does not replace mq-mcp.
 | CLI orchestration, approval gates, planner/executor/verifier | **mq-agent** |
 | High-level status, reasoning shell, stack summaries | **mq-hal** |
 
-All seven MCP tools (`analyze_image`, `extract_palette`, `reverse_prompt`, `compare_images`, `analyze_ui`, `observe_architecture`, `image_ocr`) are read-only and safety class A.
+All eight MCP tools (`analyze_image`, `extract_palette`, `reverse_prompt`, `compare_images`, `analyze_ui`, `observe_architecture`, `image_ocr`, `image_perception`) are read-only and safety class A.
 
 → [docs/MQ_MCP_COMPATIBILITY.md](docs/MQ_MCP_COMPATIBILITY.md) · [docs/mcp-tools.md](docs/mcp-tools.md) · [docs/integration.md](docs/integration.md)
 
