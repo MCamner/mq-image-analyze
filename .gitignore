@@ -46,3 +46,7 @@ runs/
 checkpoints/
 experiments/
 .codegraph/
+
+# Local editor and MCP client config (may hold tokens or machine paths)
+.cursor/
+.mcp.json
