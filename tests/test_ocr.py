@@ -66,10 +66,11 @@ def test_run_ocr_degrades_without_pytesseract(blank_image: Path) -> None:
             raise ImportError("mocked absence")
         return real_import(name, *args, **kwargs)
 
+    # No reload: run_ocr imports pytesseract at call time, so the mock applies.
+    # Reloading would replace OcrUnavailable and break `except` clauses elsewhere.
+    from mq_image_analyze.pipelines import ocr_pipeline
+
     with patch("builtins.__import__", side_effect=mock_import):
-        from mq_image_analyze.pipelines import ocr_pipeline
-        import importlib
-        importlib.reload(ocr_pipeline)
         result = ocr_pipeline.run_ocr(blank_image)
 
     assert result.ocr_available is False
