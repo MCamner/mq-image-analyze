@@ -23,11 +23,12 @@ mq-image analyze <image> --exhaustive --conf 0.05
 mq-image analyze <image> --mode local-fast
 mq-image analyze <image> --mode local-deep
 mq-image analyze <image> --mode cloud-verify --vision-model gpt-4.1
+mq-image analyze screenshots/ --json > results.jsonl
 ```
 
 | Argument | Type | Required | Description |
 | -------- | ---- | -------- | ----------- |
-| `image` | path | yes | Path to image file |
+| `image` | path | yes | Image file, or a directory (every image directly in it, sorted by name) |
 | `--json` | flag | no | Output raw JSON instead of rich terminal output |
 | `--exhaustive` | flag | no | Preserve every raw detection, including duplicates |
 | `--conf` | float | no | Detection confidence threshold |
@@ -48,6 +49,12 @@ For GPT-4o:
 ```bash
 mq-image analyze diagram.png --mode cloud-verify --vision-model gpt-4o
 ```
+
+### Directories
+
+With a directory, `--json` prints JSONL: one object per image with a `path` key
+added. An image that fails becomes `{"path": ..., "error": ...}` and the batch
+continues; the exit code is 1 if any image failed. Subdirectories are not read.
 
 ### Redaction before cloud-verify
 

@@ -7,6 +7,8 @@ from pathlib import Path
 
 from mcp.server.fastmcp import FastMCP
 
+from mq_image_analyze.formats import IMAGE_EXTENSIONS
+
 mcp = FastMCP("mq-image-analyze")
 
 # ── safety classification ──────────────────────────────────────────────────────
@@ -15,7 +17,7 @@ mcp = FastMCP("mq-image-analyze")
 # safety: "safe" = read-only, deterministic, no side-effects
 _SAFETY = "safe"
 
-_ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp", ".bmp", ".tiff", ".tif"}
+_ALLOWED_EXTENSIONS = IMAGE_EXTENSIONS
 
 
 def _allowed_roots() -> list[Path]:

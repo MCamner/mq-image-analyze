@@ -10,6 +10,7 @@ from fastapi import FastAPI, File, Form, UploadFile
 from fastapi.responses import FileResponse, JSONResponse
 from PIL import Image, UnidentifiedImageError
 
+from mq_image_analyze.formats import IMAGE_EXTENSIONS
 from mq_image_analyze.reasoning.prompts.reverse_prompt import build
 from mq_image_analyze.vision.semantic.provider import normalize_vision_mode
 
@@ -20,7 +21,7 @@ _WEB_DIR = Path(__file__).parent
 # Same formats the MCP tools accept. Uploads are checked before anything is
 # written to disk: extension, then byte size, then the pixel count Pillow reads
 # from the header, so a small file that decodes to a huge bitmap is refused too.
-ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp", ".bmp", ".tiff", ".tif"}
+ALLOWED_EXTENSIONS = IMAGE_EXTENSIONS
 MAX_UPLOAD_BYTES = 25 * 1024 * 1024
 MAX_IMAGE_PIXELS = 50_000_000
 
