@@ -33,6 +33,7 @@ mq-image analyze <image> --mode cloud-verify --vision-model gpt-4.1
 | `--conf` | float | no | Detection confidence threshold |
 | `--mode` | string | no | Vision backend: `local-fast`, `local-deep`, or `cloud-verify` |
 | `--vision-model` | string | no | Override backend model, for example `gpt-4o` or `gpt-4.1` |
+| `--redact` | flag | no | `cloud-verify` only: mask personnummer and email addresses before upload |
 
 Backend defaults:
 
@@ -47,6 +48,20 @@ For GPT-4o:
 ```bash
 mq-image analyze diagram.png --mode cloud-verify --vision-model gpt-4o
 ```
+
+### Redaction before cloud-verify
+
+`--redact`, or `MQ_IMAGE_REDACT_CLOUD=1` for every call including MCP and the web
+UI, sends a masked copy to OpenAI instead of the original:
+
+- OCR (pytesseract) finds Swedish personnummer/samordningsnummer, 10-digit numbers
+  of the same shape, and email addresses; their boxes are painted black.
+- If OCR is unavailable the image is **not sent**. The result has no caption and a
+  limitation says why.
+- Only OCR-readable text is covered. Faces, handwriting, small or rotated text and
+  identifiers in other formats are not. Treat it as reducing exposure, not as
+  de-identification.
+- Local modes never leave the machine and are not redacted.
 
 ---
 

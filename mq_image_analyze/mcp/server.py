@@ -54,6 +54,7 @@ def analyze_image(
     conf: float | None = None,
     vision_mode: str = "local-fast",
     vision_model: str | None = None,
+    redact: bool = False,
 ) -> str:
     """
     Args:
@@ -62,12 +63,14 @@ def analyze_image(
         conf: Detection confidence threshold. Defaults: 0.25 (summary), 0.05 (exhaustive).
         vision_mode: 'local-fast', 'local-deep', or 'cloud-verify'.
         vision_model: Optional backend model override, for example 'gpt-4o' or 'gpt-4.1'.
+        redact: cloud-verify only. Mask personnummer and emails found by OCR before
+            upload; when OCR is unavailable the image is not sent.
     Returns:
         JSON string with full ReversePromptResult.
     """
     from mq_image_analyze.reasoning.prompts.reverse_prompt import build
     p = _validate_image(image_path)
-    result = build(p, mode=mode, conf=conf, vision_mode=vision_mode, vision_model=vision_model)
+    result = build(p, mode=mode, conf=conf, vision_mode=vision_mode, vision_model=vision_model, redact=redact)
     return json.dumps(dataclasses.asdict(result), indent=2)
 
 
@@ -112,6 +115,7 @@ def reverse_prompt(
     mode: str = "summary",
     vision_mode: str = "local-fast",
     vision_model: str | None = None,
+    redact: bool = False,
 ) -> str:
     """
     Args:
@@ -119,12 +123,13 @@ def reverse_prompt(
         mode: 'summary' or 'exhaustive'.
         vision_mode: 'local-fast', 'local-deep', or 'cloud-verify'.
         vision_model: Optional backend model override.
+        redact: cloud-verify only. Mask personnummer and emails before upload.
     Returns:
         JSON with prompt string, objects, palette, semantic_caption, and limitations.
     """
     from mq_image_analyze.reasoning.prompts.reverse_prompt import build
     p = _validate_image(image_path)
-    result = build(p, mode=mode, vision_mode=vision_mode, vision_model=vision_model)
+    result = build(p, mode=mode, vision_mode=vision_mode, vision_model=vision_model, redact=redact)
     d = dataclasses.asdict(result)
     return json.dumps({
         "prompt": d["prompt"],

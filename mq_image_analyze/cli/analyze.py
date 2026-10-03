@@ -29,6 +29,12 @@ def analyze(
         "--vision-model",
         help="Override backend model, e.g. bakllava, llama3.2-vision, gpt-4o, gpt-4.1",
     ),
+    redact: bool = typer.Option(
+        False,
+        "--redact",
+        help="cloud-verify only: mask personnummer and emails found by OCR before upload; "
+        "if OCR is unavailable the image is not sent. Also on with MQ_IMAGE_REDACT_CLOUD=1.",
+    ),
 ) -> None:
     """Analyze an image — objects, style, composition, reverse prompt."""
     mode = "exhaustive" if exhaustive else "summary"
@@ -44,6 +50,7 @@ def analyze(
         conf=conf,
         vision_mode=selected_vision_mode,
         vision_model=vision_model,
+        redact=redact,
     )
 
     if json_output:

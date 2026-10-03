@@ -83,6 +83,7 @@ analyze_image(
     conf: float | None = None,
     vision_mode: str = "local-fast",
     vision_model: str | None = None,
+    redact: bool = False,
 ) -> str
 ```
 
@@ -95,6 +96,7 @@ Arguments:
 | `conf` | Detection confidence threshold |
 | `vision_mode` | `local-fast`, `local-deep`, or `cloud-verify` |
 | `vision_model` | Optional backend model override |
+| `redact` | `cloud-verify` only: mask personnummer and email addresses before upload; not sent if OCR is unavailable. See [cli.md](cli.md#redaction-before-cloud-verify) |
 
 Returns a JSON string matching [json-schema.md](json-schema.md).
 
@@ -131,6 +133,7 @@ reverse_prompt(
     mode: str = "summary",
     vision_mode: str = "local-fast",
     vision_model: str | None = None,
+    redact: bool = False,
 ) -> str
 ```
 

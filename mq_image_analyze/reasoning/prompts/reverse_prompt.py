@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import os
+import tempfile
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -15,6 +17,11 @@ from mq_image_analyze.vision.composition.analyzer import (
     rule_of_thirds_score,
     symmetry_score,
     visual_weight,
+)
+from mq_image_analyze.vision import redaction
+from mq_image_analyze.vision.semantic.provider import (
+    default_model_for_mode,
+    normalize_vision_mode,
 )
 from mq_image_analyze.vision.semantic.provider import describe as semantic_describe
 
@@ -82,8 +89,10 @@ def build(
     conf: float | None = None,
     vision_mode: str = "local-fast",
     vision_model: str | None = None,
+    redact: bool = False,
 ) -> ReversePromptResult:
     path = Path(image_path)
+    redact = redact or os.environ.get("MQ_IMAGE_REDACT_CLOUD") == "1"
 
     effective_conf = conf if conf is not None else (0.05 if mode == "exhaustive" else 0.25)
 
@@ -126,12 +135,28 @@ def build(
         composition_desc += ", strong symmetry"
 
     content_flags = classify_content(path)
-    semantic_caption, effective_vision_mode, effective_vision_model = semantic_describe(
-        path,
-        vision_mode=vision_mode,
-        vision_model=vision_model,
-        nudenet_context=content_flags,
-    )
+    if redact and normalize_vision_mode(vision_mode) == "cloud-verify":
+        with tempfile.TemporaryDirectory() as tmp:
+            redacted = redaction.redact_for_cloud(path, Path(tmp))
+            limitations.extend(redacted.notes)
+            if redacted.path is None:
+                semantic_caption = None
+                effective_vision_mode = "cloud-verify"
+                effective_vision_model = vision_model or default_model_for_mode("cloud-verify")
+            else:
+                semantic_caption, effective_vision_mode, effective_vision_model = semantic_describe(
+                    redacted.path,
+                    vision_mode=vision_mode,
+                    vision_model=vision_model,
+                    nudenet_context=content_flags,
+                )
+    else:
+        semantic_caption, effective_vision_mode, effective_vision_model = semantic_describe(
+            path,
+            vision_mode=vision_mode,
+            vision_model=vision_model,
+            nudenet_context=content_flags,
+        )
     if not semantic_caption:
         limitations.append(
             f"Semantic caption unavailable from {effective_vision_mode} ({effective_vision_model})."
