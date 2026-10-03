@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import dataclasses
 import json
+import os
 from pathlib import Path
 
 from mcp.server.fastmcp import FastMCP
@@ -17,8 +18,18 @@ _SAFETY = "safe"
 _ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp", ".bmp", ".tiff", ".tif"}
 
 
+def _allowed_roots() -> list[Path]:
+    """Directories from MQ_IMAGE_ALLOWED_ROOTS (os.pathsep-separated); empty means no limit."""
+    raw = os.environ.get("MQ_IMAGE_ALLOWED_ROOTS", "")
+    return [Path(r).expanduser().resolve() for r in raw.split(os.pathsep) if r.strip()]
+
+
 def _validate_image(path: str) -> Path:
     p = Path(path).expanduser().resolve()
+    roots = _allowed_roots()
+    # Checked before existence, so a refusal says nothing about what is on disk.
+    if roots and not any(p.is_relative_to(root) for root in roots):
+        raise PermissionError(f"Image path is outside MQ_IMAGE_ALLOWED_ROOTS: {path}")
     if not p.exists():
         raise FileNotFoundError(f"Image not found: {p}")
     if p.suffix.lower() not in _ALLOWED_EXTENSIONS:
