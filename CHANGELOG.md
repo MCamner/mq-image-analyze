@@ -28,6 +28,13 @@
 
 ### Fixed
 
+- `POST /analyze` validates uploads before writing them to disk: extensions
+  must match the MCP tools' set (415 otherwise), uploads are capped at 25 MB
+  and decoded images at 50 million pixels (413), and bytes Pillow cannot read
+  are refused (422). Previously any file of any size was written to a temp
+  file and handed to the pipelines. An upload without a filename is now
+  refused instead of being assumed to be a JPEG.
+
 - `release-check.sh` runs markdownlint, which CI enforces as its own required
   workflow. Without it a local release check could report "Ready to tag" on a
   tree CI would reject, which is what happened during v1.5.0. No globs are
