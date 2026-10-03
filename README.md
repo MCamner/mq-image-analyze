@@ -103,6 +103,9 @@ mq-image compare <before> <after>
 mq-image observe-architecture <diagram>   # visual_architecture_observation.v1 JSON
 mq-image ocr <image> --json        # image_ocr.v1 JSON
 mq-image perceive <image> --producer ui|architecture|ocr   # perception.v1 record
+mq-image analyze screenshots/ --json      # JSONL, one line per image
+mq-image analyze <image> --mode cloud-verify --redact   # mask personnummer/email before upload
+mq-image compare <before> <after> --fail-over 0.02      # exit 1 on visual regression
 mq-image serve --port 8000
 mq-image mcp
 mq-image doctor                   # system readiness check
