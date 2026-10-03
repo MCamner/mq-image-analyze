@@ -59,6 +59,28 @@ def test_a_changed_area_is_located(tmp_path: Path):
     assert regions[0]["area_percent"] > 0
 
 
+def test_a_colour_only_change_is_detected(tmp_path: Path):
+    """Blue to darker blue barely moves grayscale; compare per channel."""
+    base, cur = tmp_path / "b", tmp_path / "c"
+    for d, fill in ((base, (40, 110, 200)), (cur, (30, 90, 170))):
+        d.mkdir()
+        img = Image.new("RGB", (200, 100), "white")
+        ImageDraw.Draw(img).rectangle((20, 20, 79, 59), fill=fill)
+        img.save(d / "s.png")
+    assert regress(base, cur, fail_over=0.0, text=False).entries[0].status == "changed"
+
+
+def test_words_on_one_line_form_one_region(tmp_path: Path):
+    a = _screen(tmp_path / "a.png")
+    b = tmp_path / "b.png"
+    img = Image.new("RGB", (200, 100), "white")
+    draw = ImageDraw.Draw(img)
+    for x in (20, 52, 84):  # three "words" 8 px apart
+        draw.rectangle((x, 40, x + 23, 52), fill="black")
+    img.save(b)
+    assert len(changed_regions(a, b)) == 1
+
+
 # ── pairing and status ───────────────────────────────────────────────────────
 
 def test_statuses(dirs):

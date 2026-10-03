@@ -10,6 +10,11 @@ threshold. A screen missing from current fails; one only in current is new.
 Ignored regions (clocks, dates, user names) are cleared from the change mask
 before anything is counted, so changes there never fail a screen.
 
+On changed screens the text inside each region is read with OCR (text_diff),
+so a region is `changed`/`added`/`removed` text or `visual` only. With
+fail_on="text" a screen fails only on a text change, a size change or when it
+is missing; if OCR cannot run it fails anyway rather than pass unread.
+
 Pixel comparison only: this says where a screen changed, not whether the
 change was intended.
 """
@@ -23,14 +28,18 @@ import numpy as np
 from PIL import Image
 
 from mq_image_analyze.formats import IMAGE_EXTENSIONS
+from mq_image_analyze.pipelines.ocr_pipeline import OcrUnavailable
+from mq_image_analyze.reasoning.comparison import text_diff
 from mq_image_analyze.reasoning.comparison.comparator import _pixel_diff
 
-#: Grayscale difference (0–255) below which a pixel counts as unchanged, so
+#: Per-channel difference (0–255) below which a pixel counts as unchanged, so
 #: anti-aliasing and compression noise do not light up the whole screen.
+#: Per channel, not grayscale: blue to darker blue barely moves gray.
 PIXEL_THRESHOLD = 25
 #: Regions smaller than this share of the image are dropped as noise.
 MIN_REGION_AREA = 0.0005
 MAX_REGIONS = 50
+FAIL_ON = ("any", "text")
 
 Box = tuple[int, int, int, int]
 #: (screen name or None for every screen, box in baseline pixels, inclusive)
@@ -64,9 +73,16 @@ class RegressEntry:
     size_changed: bool | None = None
     regions: list[dict] = field(default_factory=list)
     ignored_regions: list[list[int]] = field(default_factory=list)
+    text_changes: list[dict] = field(default_factory=list)
+    #: "available", "unavailable", or None when OCR was not attempted
+    text_ocr: str | None = None
+    #: Set by regress() from fail_on; None falls back to the status.
+    fails: bool | None = None
 
     @property
     def failed(self) -> bool:
+        if self.fails is not None:
+            return self.fails
         return self.status in ("changed", "missing")
 
 
@@ -80,26 +96,27 @@ class RegressReport:
         return sum(e.failed for e in self.entries)
 
 
-def _gray(path: Path, size: tuple[int, int] | None = None) -> np.ndarray:
+def _rgb(path: Path, size: tuple[int, int] | None = None) -> np.ndarray:
     with Image.open(path) as img:
-        gray = img.convert("L")
-        if size is not None and gray.size != size:
-            gray = gray.resize(size)
-        return np.asarray(gray, dtype=np.uint8)
+        rgb = img.convert("RGB")
+        if size is not None and rgb.size != size:
+            rgb = rgb.resize(size)
+        return np.asarray(rgb, dtype=np.uint8)
 
 
 def _changes(before: Path, after: Path, ignore: list[Box] = ()) -> tuple[float, list[dict]]:
     """(share of changed pixels, boxes around them in `before`'s coordinates)."""
-    b = _gray(before)
-    a = _gray(after, size=(b.shape[1], b.shape[0]))
-    mask = (cv2.absdiff(b, a) > PIXEL_THRESHOLD).astype(np.uint8) * 255
+    b = _rgb(before)
+    a = _rgb(after, size=(b.shape[1], b.shape[0]))
+    mask = (cv2.absdiff(b, a).max(axis=2) > PIXEL_THRESHOLD).astype(np.uint8) * 255
     for x1, y1, x2, y2 in ignore:
         mask[y1 : y2 + 1, x1 : x2 + 1] = 0
     if not mask.any():
         return 0.0, []
     ratio = round(float(np.count_nonzero(mask)) / mask.size, 6)
-    # Join nearby changed pixels into one region instead of one box per glyph.
-    mask = cv2.dilate(mask, np.ones((5, 5), np.uint8))
+    # Join nearby changed pixels into one region instead of one box per glyph;
+    # wider than tall so the words of one line become one region.
+    mask = cv2.dilate(mask, np.ones((5, 15), np.uint8))
     contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
     total = b.shape[0] * b.shape[1]
@@ -129,25 +146,43 @@ def _images(directory: Path) -> dict[str, Path]:
     }
 
 
+def _fails(entry: RegressEntry, fail_on: str) -> bool:
+    if entry.status == "missing":
+        return True
+    if entry.status != "changed":
+        return False
+    if fail_on == "any" or entry.size_changed or entry.text_ocr != "available":
+        return True
+    return any(change["kind"] != "visual" for change in entry.text_changes)
+
+
 def regress(
-    baseline_dir: Path, current_dir: Path, *, fail_over: float, ignore: list[Ignore] = ()
+    baseline_dir: Path,
+    current_dir: Path,
+    *,
+    fail_over: float,
+    ignore: list[Ignore] = (),
+    text: bool = True,
+    fail_on: str = "any",
 ) -> RegressReport:
+    if fail_on not in FAIL_ON:
+        raise ValueError(f"fail_on must be one of {FAIL_ON}, got {fail_on!r}")
     baseline = _images(Path(baseline_dir))
     current = _images(Path(current_dir))
     entries = []
     for name in sorted(baseline.keys() | current.keys()):
         b, c = baseline.get(name), current.get(name)
         if c is None:
-            entries.append(RegressEntry(name, "missing", str(b), None))
+            entries.append(RegressEntry(name, "missing", str(b), None, fails=True))
             continue
         if b is None:
-            entries.append(RegressEntry(name, "new", None, str(c)))
+            entries.append(RegressEntry(name, "new", None, str(c), fails=False))
             continue
         diff, size_changed = _pixel_diff(b, c)
         boxes = [box for screen, box in ignore if screen in (None, name)]
         ratio, regions = _changes(b, c, boxes)
         changed = size_changed or (bool(regions) and ratio > fail_over)
-        entries.append(RegressEntry(
+        entry = RegressEntry(
             name=name,
             status="changed" if changed else "unchanged",
             baseline=str(b),
@@ -157,5 +192,13 @@ def regress(
             size_changed=size_changed,
             regions=regions,
             ignored_regions=[list(box) for box in boxes],
-        ))
+        )
+        if changed and text and regions:
+            try:
+                entry.text_changes = text_diff.text_changes(b, c, regions)
+                entry.text_ocr = "available"
+            except OcrUnavailable:
+                entry.text_ocr = "unavailable"
+        entry.fails = _fails(entry, fail_on)
+        entries.append(entry)
     return RegressReport(fail_over=fail_over, entries=entries)

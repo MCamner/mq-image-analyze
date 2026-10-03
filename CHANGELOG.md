@@ -11,6 +11,20 @@
   request carrying a non-loopback `Origin` (403), so a web page cannot make it
   run a tool. stdio stays the default.
 - The `mcp` extra now includes `fastapi` and `uvicorn` for the bridge.
+- `regress` reads the text in changed regions with OCR and reports each region
+  as `changed`, `added`, `removed` or `visual`. Text changes become quoted risk
+  signals, carrying the prompt-injection warning. `--fail-on text` fails only on
+  text, size and missing screens, and falls back to failing every changed
+  screen when OCR is unavailable. `--no-text` skips OCR.
+- `MQ_IMAGE_OCR_LANG` sets the OCR language for `regress` and redaction.
+  Default is `swe+eng` when Swedish data is installed, else `eng`.
+
+### Fixed
+
+- `regress` missed colour-only changes. It compared grayscale, where blue to
+  darker blue moves too little; it now compares per colour channel.
+- `regress` split one line of text into one region per word. Regions are now
+  joined along the line.
 
 ## 1.8.0 — 2026-10-03
 

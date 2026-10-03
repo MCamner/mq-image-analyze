@@ -111,6 +111,10 @@ def test_a_regression_record_satisfies_the_consumer(status, tmp_path):
         pixel_diff=None if status == "missing" else 0.08,
         size_changed=None if status == "missing" else False,
         regions=[] if status == "missing" else [{"bbox": [1, 2, 30, 40], "area_percent": 6.0}],
+        text_changes=[] if status == "missing" else [
+            {"bbox": [1, 2, 30, 40], "kind": "changed", "before": "Logga in", "after": "Fortsätt"}
+        ],
+        text_ocr=None if status == "missing" else "available",
     )
     record = perception.from_regression(entry, fail_over=0.01, source_type="screenshot")
     assert consumer_errors(record, tmp_path) == []

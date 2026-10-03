@@ -16,15 +16,12 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw
 
+from mq_image_analyze.pipelines.ocr_pipeline import OcrUnavailable, Word
+from mq_image_analyze.pipelines.ocr_pipeline import ocr_words as _ocr_words
+
 _PERSONNUMMER = re.compile(r"^(?:19|20)?\d{6}[-+]?\d{4}$")
 _EMAIL = re.compile(r"^[\w.+-]+@[\w-]+(?:\.[\w-]+)+$")
 _STRIP = ".,;:()[]<>\"'"
-
-Word = tuple[str, tuple[int, int, int, int], object]
-
-
-class OcrUnavailable(RuntimeError):
-    pass
 
 
 @dataclass
@@ -32,28 +29,6 @@ class RedactionResult:
     path: Path | None
     redacted: int
     notes: list[str] = field(default_factory=list)
-
-
-def _ocr_words(img: Image.Image) -> list[Word]:
-    """Words with pixel boxes and a line key, from tesseract."""
-    try:
-        import pytesseract
-
-        data = pytesseract.image_to_data(img, output_type=pytesseract.Output.DICT)
-    except ImportError as exc:
-        raise OcrUnavailable("pytesseract not installed") from exc
-    except Exception as exc:  # TesseractNotFoundError and friends
-        raise OcrUnavailable(str(exc)) from exc
-
-    words: list[Word] = []
-    for i, text in enumerate(data["text"]):
-        text = text.strip()
-        if not text:
-            continue
-        x, y, w, h = data["left"][i], data["top"][i], data["width"][i], data["height"][i]
-        line = (data["block_num"][i], data["par_num"][i], data["line_num"][i])
-        words.append((text, (x, y, x + w, y + h), line))
-    return words
 
 
 def _is_sensitive(text: str) -> bool:
