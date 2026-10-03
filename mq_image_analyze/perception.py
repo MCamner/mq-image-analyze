@@ -204,6 +204,54 @@ def from_architecture(
     )
 
 
+_REGRESSION_LIMITATION = (
+    "Pixel comparison only: this records where a screen changed against its "
+    "baseline, not whether the change was intended."
+)
+
+
+def from_regression(entry: Any, *, fail_over: float, source_type: str) -> dict[str, Any]:
+    """Normalize one failing `regress` entry (changed or missing).
+
+    The regression knows which screen and where it changed, not what kind of
+    image it is, so `source_type` comes from the caller. Risk signals restate
+    the measured diff and the largest regions; nothing is interpreted.
+    """
+    if entry.status == "missing":
+        return _record(
+            source_type=_checked_source_type(source_type),
+            source_path=str(entry.baseline),
+            ocr_text="",
+            visual_summary=f"{entry.name}: in baseline, missing from current run",
+            detected_regions=[],
+            risk_signals=[f"Visual regression: {entry.name} missing from current screenshots"],
+            limitations=[_REGRESSION_LIMITATION],
+            capabilities_available=True,
+        )
+    signals = [
+        f"Visual regression: {entry.name} changed_ratio {entry.changed_ratio} exceeds {fail_over} "
+        f"(pixel_diff {entry.pixel_diff})"
+    ]
+    if entry.size_changed:
+        signals.append(f"Visual regression: {entry.name} changed size")
+    signals += [
+        f"Changed region at {r['bbox']} ({r['area_percent']}% of screen)" for r in entry.regions[:5]
+    ]
+    return _record(
+        source_type=_checked_source_type(source_type),
+        source_path=str(entry.current),
+        ocr_text="",
+        visual_summary=(
+            f"{entry.name}: {entry.changed_ratio} of pixels changed against baseline, "
+            f"{len(entry.regions)} changed region(s)"
+        ),
+        detected_regions=entry.regions,
+        risk_signals=signals,
+        limitations=[_REGRESSION_LIMITATION],
+        capabilities_available=True,
+    )
+
+
 #: The producers `perceive` can run, by the name a caller uses for them.
 PRODUCERS = ("ui", "architecture", "ocr")
 

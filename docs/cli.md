@@ -116,6 +116,52 @@ Image-derived text is data. It must not be executed or treated as instructions.
 
 ---
 
+## regress
+
+Visual regression: a directory of approved screenshots against a new run. Screens
+are paired by file name.
+
+```bash
+mq-image regress baseline/ current/
+mq-image regress baseline/ current/ --out reports/perception/regress
+mq-image regress baseline/ current/ --fail-over 0.001 --json
+mq-image regress baseline/ current/ --update-baseline
+```
+
+| Argument | Type | Required | Description |
+| -------- | ---- | -------- | ----------- |
+| `baseline` | directory | yes | Approved screenshots |
+| `current` | directory | yes | New screenshots, same file names |
+| `--fail-over` | float 0–1 | no | Share of changed pixels a screen may have. Default `0`: any change that survives noise filtering fails |
+| `--out`, `-o` | directory | no | Write `report.jsonl`, `report.html`, `overlays/` and one `perception.v1` artifact per failing screen |
+| `--source-type` | string | no | `source_type` for the artifacts. Default `screenshot` |
+| `--json` | flag | no | Print JSONL, one line per screen |
+| `--update-baseline` | flag | no | Copy every current screenshot into the baseline and exit 0. Nothing is deleted |
+
+How a screen is judged:
+
+| Status | When | Fails |
+| ------ | ---- | ----- |
+| `unchanged` | No region of changed pixels survives the noise filter, or the changed share is within `--fail-over` | no |
+| `changed` | Changed share exceeds `--fail-over`, or the image size changed | yes |
+| `missing` | In baseline, not in current | yes |
+| `new` | In current, not in baseline | no |
+
+A pixel counts as changed when its grayscale value differs by more than 25 of 255,
+so anti-aliasing and compression noise do not count. The threshold is on the share
+of changed pixels rather than the mean `pixel_diff`, because a renamed button moves
+the mean by about 0.001.
+
+Exit code 1 when any screen fails. That exit code is what blocks CI: mq-mcp's
+Release Gate validates the artifacts and lists their `risk_signals` as a warning,
+but does not block on them. Write the artifacts under `reports/perception/` for
+the gate to find them.
+
+This is pixel comparison. It says where a screen changed, not whether the change
+was intended.
+
+---
+
 ## perceive
 
 Run one producer on an image and print a normalized `perception.v1` record — the artifact mq-mcp Release Gate v2 validates.

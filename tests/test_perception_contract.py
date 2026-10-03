@@ -99,6 +99,23 @@ def test_the_image_perception_tool_output_satisfies_the_consumer(tmp_path):
     assert consumer_errors(payload("image_perception.json"), tmp_path) == []
 
 
+@pytest.mark.parametrize("status", ["changed", "missing"])
+def test_a_regression_record_satisfies_the_consumer(status, tmp_path):
+    from mq_image_analyze.reasoning.comparison.regress import RegressEntry
+
+    entry = RegressEntry(
+        name="login.png",
+        status=status,
+        baseline="baseline/login.png",
+        current=None if status == "missing" else "current/login.png",
+        pixel_diff=None if status == "missing" else 0.08,
+        size_changed=None if status == "missing" else False,
+        regions=[] if status == "missing" else [{"bbox": [1, 2, 30, 40], "area_percent": 6.0}],
+    )
+    record = perception.from_regression(entry, fail_over=0.01, source_type="screenshot")
+    assert consumer_errors(record, tmp_path) == []
+
+
 def test_a_broken_record_is_rejected_by_the_consumer(tmp_path):
     """The negative half. Without it a passing gate proves only that nothing
     was looked at — which is what the gate reports today, with no artifacts in

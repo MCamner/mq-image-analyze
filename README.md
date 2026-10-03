@@ -106,6 +106,7 @@ mq-image perceive <image> --producer ui|architecture|ocr   # perception.v1 recor
 mq-image analyze screenshots/ --json      # JSONL, one line per image
 mq-image analyze <image> --mode cloud-verify --redact   # mask personnummer/email before upload
 mq-image compare <before> <after> --fail-over 0.02      # exit 1 on visual regression
+mq-image regress baseline/ current/ --out reports/perception/regress   # screenshot regression + Release Gate artifacts
 mq-image serve --port 8000
 mq-image mcp
 mq-image doctor                   # system readiness check

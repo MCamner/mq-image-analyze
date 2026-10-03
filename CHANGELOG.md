@@ -1,5 +1,26 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- `mq-image regress <baseline> <current>`: visual regression for a directory of
+  screenshots, paired by file name. Each screen is `unchanged`, `changed`,
+  `missing` or `new`, with the boxes where pixels changed. Exit 1 when a screen
+  changed or disappeared. `--out` writes `report.jsonl`, a side-by-side
+  `report.html`, overlays with changed regions outlined, and one `perception.v1`
+  artifact per failing screen for mq-mcp's Release Gate. `--update-baseline`
+  copies the current run into the baseline.
+- `perception.from_regression()`, checked against mq-mcp's own validator.
+
+### Notes
+
+- The threshold is the share of changed pixels, defaulting to any change that
+  survives noise filtering. The first version thresholded the mean
+  `pixel_diff`; a real run showed a renamed button scoring 0.001 and passing.
+- mq-mcp's Release Gate lists the artifacts' risk signals as a warning and does
+  not block on them. The `regress` exit code is what blocks CI.
+
 ## 1.7.0 — 2026-10-03
 
 ### Added

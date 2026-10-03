@@ -10,6 +10,7 @@ from mq_image_analyze.cli.doctor import doctor
 from mq_image_analyze.cli.observe_architecture import observe_architecture_cmd
 from mq_image_analyze.cli.ocr import ocr_cmd
 from mq_image_analyze.cli.perceive import perceive_cmd
+from mq_image_analyze.cli.regress import regress_cmd
 from mq_image_analyze.cli.serve import serve
 from mq_image_analyze.cli.serve_mcp import serve_mcp
 
@@ -52,5 +53,6 @@ app.command("doctor")(doctor)
 app.command("observe-architecture")(observe_architecture_cmd)
 app.command("ocr")(ocr_cmd)
 app.command("perceive")(perceive_cmd)
+app.command("regress")(regress_cmd)
 app.command("mcp")(serve_mcp)
 app.command("serve")(serve)
