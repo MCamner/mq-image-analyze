@@ -2,7 +2,38 @@
 
 ## Unreleased
 
+### Added
+
+- `mq-image perceive <image> --producer ui|architecture|ocr` and the
+  `image_perception` MCP tool. `perception.v1` existed only as normalizers fed
+  by tests; there was no way to produce a Release Gate artifact from an image.
+  `perception.perceive()` runs the named producer and hands its payload to the
+  existing normalizer, so the map-or-refuse rule for `source_type` is
+  unchanged. `--out` writes the artifact to a file.
+- `mq-image ocr`, the CLI counterpart of the `image_ocr` MCP tool.
+- `examples/mcp-payloads/image_perception.json`, covered by the sample payload
+  check and by mq-mcp's own perception validator.
+
+### Removed
+
+- Seventeen packages that held nothing but an empty `__init__.py`:
+  `adapters/` (flux, imagesorcery, openai, photoshop, sdxl), `mcp/schemas`,
+  `mcp/tools`, `reasoning/{cinematic,comparisons,scoring,styles,ui_analysis}`,
+  `utils`, and `vision/{metadata,ocr,screenshot,segmentation}`. Nothing
+  imported them; the architecture doc and README described them as working
+  features. Both now list only modules that exist.
+- The root `web/` copy of the web server. `mq-image serve` has always run the
+  packaged `mq_image_analyze/web/`; the root copy was an older version that
+  lacked the vision-mode and `conf` validation.
+
 ### Fixed
+
+- `POST /analyze` validates uploads before writing them to disk: extensions
+  must match the MCP tools' set (415 otherwise), uploads are capped at 25 MB
+  and decoded images at 50 million pixels (413), and bytes Pillow cannot read
+  are refused (422). Previously any file of any size was written to a temp
+  file and handed to the pipelines. An upload without a filename is now
+  refused instead of being assumed to be a JPEG.
 
 - `release-check.sh` runs markdownlint, which CI enforces as its own required
   workflow. Without it a local release check could report "Ready to tag" on a

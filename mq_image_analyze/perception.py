@@ -23,6 +23,8 @@ the consumer's, this refuses rather than picking the closest one.
 """
 from __future__ import annotations
 
+import dataclasses
+from pathlib import Path
 from typing import Any
 
 #: This repo's addition, on top of the consumer's required fields.
@@ -200,3 +202,45 @@ def from_architecture(
         limitations=payload.get("limitations") or [],
         capabilities_available=bool(payload.get("ocr_available", False)),
     )
+
+
+#: The producers `perceive` can run, by the name a caller uses for them.
+PRODUCERS = ("ui", "architecture", "ocr")
+
+
+def perceive(
+    image_path: Path,
+    *,
+    producer: str,
+    source_type: str | None = None,
+    source_path: str | None = None,
+) -> dict[str, Any]:
+    """Run one producer on an image and normalize what it reported.
+
+    The perception still happens in the producer; this only picks which one
+    and hands its payload to the matching normalizer, so the rules above —
+    map or refuse, never guess — hold unchanged. `source_path` defaults to the
+    image path as given.
+    """
+    path = str(source_path if source_path is not None else image_path)
+    if producer == "ui":
+        from mq_image_analyze.vision.ui.analyzer import analyze_ui
+
+        payload = dataclasses.asdict(analyze_ui(Path(image_path)))
+        return from_ui(payload, source_path=path, source_type=source_type)
+    if producer == "architecture":
+        from mq_image_analyze.pipelines.architecture_pipeline import observe_architecture
+
+        payload = dataclasses.asdict(observe_architecture(Path(image_path)))
+        return from_architecture(payload, source_path=path, source_type=source_type)
+    if producer == "ocr":
+        if source_type is None:
+            raise ValueError(
+                "source_type is required for the ocr producer: OCR output does not "
+                f"say what kind of image it read (one of {sorted(SOURCE_TYPES)})"
+            )
+        from mq_image_analyze.pipelines.ocr_pipeline import run_ocr
+
+        payload = dataclasses.asdict(run_ocr(Path(image_path)))
+        return from_ocr(payload, source_type=source_type, source_path=path)
+    raise ValueError(f"producer must be one of {list(PRODUCERS)}, got {producer!r}")

@@ -31,13 +31,13 @@ prompts, and visual differences through CLI, web, and MCP surfaces.
 
 Primary surfaces:
 
-- `mq_image_analyze/vision/` for object, palette, composition, UI, semantic,
-  content, OCR, and metadata pipelines
-- `mq_image_analyze/reasoning/` for prompts, comparisons, UI analysis, scoring,
-  and cinematic/style reasoning
+- `mq_image_analyze/vision/` for object, palette, composition, UI,
+  architecture, semantic, and content signals
+- `mq_image_analyze/pipelines/` for OCR and architecture observation
+- `mq_image_analyze/reasoning/` for reverse prompts and comparisons
 - `mq_image_analyze/cli/` for `mq-image` commands
 - `mq_image_analyze/mcp/` for MCP server and tool contracts
-- `mq_image_analyze/web/` and `web/` for the web UI/server package
+- `mq_image_analyze/web/` for the web UI/server package
 - `docs/` for architecture, CLI, JSON schema, MCP tools, safety, model setup,
   integration, and release docs
 - `skills/` for agent-facing visual reasoning skills

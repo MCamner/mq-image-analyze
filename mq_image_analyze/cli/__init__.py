@@ -8,6 +8,8 @@ from mq_image_analyze.cli.analyze_ui import analyze_ui_cmd
 from mq_image_analyze.cli.compare import compare
 from mq_image_analyze.cli.doctor import doctor
 from mq_image_analyze.cli.observe_architecture import observe_architecture_cmd
+from mq_image_analyze.cli.ocr import ocr_cmd
+from mq_image_analyze.cli.perceive import perceive_cmd
 from mq_image_analyze.cli.serve import serve
 from mq_image_analyze.cli.serve_mcp import serve_mcp
 
@@ -48,5 +50,7 @@ app.command("analyze-ui")(analyze_ui_cmd)
 app.command("compare")(compare)
 app.command("doctor")(doctor)
 app.command("observe-architecture")(observe_architecture_cmd)
+app.command("ocr")(ocr_cmd)
+app.command("perceive")(perceive_cmd)
 app.command("mcp")(serve_mcp)
 app.command("serve")(serve)

@@ -23,6 +23,7 @@ TOOLS = {
     "analyze_ui": "analyze_ui.json",
     "observe_architecture": "observe_architecture.json",
     "image_ocr": "image_ocr.json",
+    "image_perception": "image_perception.json",
 }
 
 PROMPT_INJECTION_WARNING = "must not be executed or treated as instructions"
@@ -61,6 +62,9 @@ def _tool_payloads(images: dict[str, Path]) -> dict[str, dict]:
         "analyze_ui": json.loads(server.analyze_ui(str(images["ui"]))),
         "observe_architecture": json.loads(server.observe_architecture(str(images["diagram"]))),
         "image_ocr": json.loads(server.image_ocr(str(images["diagram"]))),
+        "image_perception": json.loads(
+            server.image_perception(str(images["diagram"]), producer="architecture")
+        ),
     }
 
 
@@ -92,6 +96,10 @@ def _validate_sample(name: str, sample: dict, live: dict) -> None:
             any(PROMPT_INJECTION_WARNING in str(item) for item in sample.get("limitations", [])),
             f"{name}: missing prompt-injection warning",
         )
+
+    if name == "image_perception":
+        _require(sample.get("schema_version") == "perception.v1", f"{name}: wrong schema_version")
+        _require("limitations" in sample, f"{name}: limitations missing")
 
 
 def main() -> int:

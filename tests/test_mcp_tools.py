@@ -47,6 +47,7 @@ def test_analyze_image_returns_json(sample_image: Path):
         ("analyze_ui", "analyze_ui.json"),
         ("observe_architecture", "observe_architecture.json"),
         ("image_ocr", "image_ocr.json"),
+        ("image_perception", "image_perception.json"),
     ],
 )
 def test_stable_mcp_sample_payload_exists(tool_name: str, sample_file: str):

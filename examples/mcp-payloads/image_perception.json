@@ -1,0 +1,56 @@
+{
+  "schema_version": "perception.v1",
+  "source_type": "diagram",
+  "source_path": "diagram.png",
+  "ocr_text": "",
+  "visual_summary": "3 component(s), 0 connection(s), 1 group(s)",
+  "detected_regions": [
+    {
+      "id": "box_0",
+      "bbox": [
+        28.0,
+        58.0,
+        133.0,
+        123.0
+      ],
+      "area_percent": 7.56,
+      "label": null,
+      "fill_color": "#c8e6c8",
+      "text": null
+    },
+    {
+      "id": "box_1",
+      "bbox": [
+        248.0,
+        58.0,
+        353.0,
+        123.0
+      ],
+      "area_percent": 7.56,
+      "label": null,
+      "fill_color": "#c8e6c8",
+      "text": null
+    },
+    {
+      "id": "box_2",
+      "bbox": [
+        138.0,
+        148.0,
+        243.0,
+        203.0
+      ],
+      "area_percent": 6.38,
+      "label": null,
+      "fill_color": "#c8e6c8",
+      "text": null
+    }
+  ],
+  "risk_signals": [],
+  "confidence": "medium",
+  "limitations": [
+    "OCR not available — install pytesseract for text extraction from boxes. Component labels and text fields will be null.",
+    "No connections detected. Arrow/line detection works best on diagrams with solid thin lines between boxes.",
+    "Component and connection detection is heuristic (contour-based). Overlapping boxes, decorative borders, and complex layouts may produce false positives or miss real components.",
+    "Semantic labels and semantic topology (what each component represents) are not inferred — this requires an LLM call via mq-mcp review tools."
+  ]
+}

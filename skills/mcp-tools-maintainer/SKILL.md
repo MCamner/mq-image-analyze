@@ -25,8 +25,6 @@ Use this skill for MCP behavior and tool contracts.
 ## Core Files
 
 - `mq_image_analyze/mcp/server.py`
-- `mq_image_analyze/mcp/tools/__init__.py`
-- `mq_image_analyze/mcp/schemas/__init__.py`
 - `docs/mcp-tools.md`
 - `docs/tool-safety.md`
 - `docs/integration.md`
