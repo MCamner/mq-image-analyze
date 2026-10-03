@@ -19,6 +19,31 @@
 | v1.5.0 | Normalized perception contract for Release Gate v2 | Done |
 | v1.6.0 | Runnable perception contract | Done |
 | v1.7.0 | Safer agent and cloud use, CI-ready comparison | Done |
+| v1.8.0 | Screenshot regression for the Release Gate | Done |
+
+---
+
+## v1.8.0 — Screenshot regression for the Release Gate — Done
+
+Goal:
+
+Turn a directory of screenshots into release evidence: what changed, where,
+and a CI exit code that stops the release when a screen changed or vanished.
+
+- [x] `mq-image regress <baseline> <current>`, paired by file name
+- [x] Threshold on the share of changed pixels, with a noise filter; default is
+  any real change
+- [x] Changed regions as boxes, overlays, side-by-side HTML report, JSONL
+- [x] One `perception.v1` artifact per failing screen, checked against mq-mcp's
+  validator
+- [x] `--ignore-region` for clocks, dates and other dynamic content
+- [x] `--update-baseline`
+
+Not in this release:
+
+- Blocking in the Release Gate itself. mq-mcp treats perception risk as
+  advisory; `regress` blocks through its exit code.
+- Judging whether a change was intended. This is pixel comparison.
 
 ---
 
