@@ -38,6 +38,13 @@ def regress_cmd(
         help="Exclude a box from comparison: x1,y1,x2,y2 (baseline pixels) for every screen, "
         "or name.png:x1,y1,x2,y2 for one. Repeatable.",
     ),
+    fail_on: str = typer.Option(
+        "any",
+        "--fail-on",
+        help="any: every changed screen fails. text: only text changes (read with OCR), size changes and "
+        "missing screens fail; without OCR every changed screen fails.",
+    ),
+    text: bool = typer.Option(True, "--text/--no-text", help="Read text in changed regions with OCR."),
     json_output: bool = typer.Option(False, "--json", help="Print JSONL, one line per screen."),
     update_baseline: bool = typer.Option(
         False,
@@ -48,8 +55,11 @@ def regress_cmd(
 ) -> None:
     """Compare a directory of screenshots against a baseline. Exit 1 if a screen changed or disappeared."""
     from mq_image_analyze import perception
-    from mq_image_analyze.reasoning.comparison.regress import parse_ignore, regress
+    from mq_image_analyze.reasoning.comparison.regress import FAIL_ON, parse_ignore, regress
 
+    if fail_on not in FAIL_ON:
+        typer.echo(f"Error: --fail-on must be one of {list(FAIL_ON)}", err=True)
+        raise typer.Exit(2)
     if source_type not in perception.SOURCE_TYPES:
         typer.echo(f"Error: --source-type must be one of {sorted(perception.SOURCE_TYPES)}", err=True)
         raise typer.Exit(2)
@@ -60,7 +70,7 @@ def regress_cmd(
         typer.echo(f"Error: {exc}", err=True)
         raise typer.Exit(2) from exc
 
-    report = regress(baseline, current, fail_over=fail_over, ignore=ignore)
+    report = regress(baseline, current, fail_over=fail_over, ignore=ignore, text=text, fail_on=fail_on)
 
     if update_baseline:
         copied = [e for e in report.entries if e.status in ("new", "changed", "unchanged") and e.current]
@@ -76,8 +86,22 @@ def regress_cmd(
     else:
         for e in report.entries:
             detail = f"changed {e.changed_ratio:.4%}, {len(e.regions)} region(s)" if e.changed_ratio is not None else ""
-            typer.echo(f"  {e.status.upper():9}  {e.name}  {detail}".rstrip())
-        typer.echo(f"\n{len(report.entries)} screen(s), {report.failed} failed (--fail-over {fail_over})")
+            label = e.status.upper() if e.failed or e.status != "changed" else "CHANGED*"
+            typer.echo(f"  {label:9}  {e.name}  {detail}".rstrip())
+            for change in e.text_changes:
+                if change["kind"] == "changed":
+                    typer.echo(f"             text changed: {change['before']!r} → {change['after']!r}")
+                elif change["kind"] == "added":
+                    typer.echo(f"             text added:   {change['after']!r}")
+                elif change["kind"] == "removed":
+                    typer.echo(f"             text removed: {change['before']!r}")
+            if e.text_ocr == "unavailable":
+                typer.echo("             text not read: OCR unavailable")
+        typer.echo(
+            f"\n{len(report.entries)} screen(s), {report.failed} failed (--fail-over {fail_over}, --fail-on {fail_on})"
+        )
+        if any(e.status == "changed" and not e.failed for e in report.entries):
+            typer.echo("CHANGED* = pixels changed, no text change: passes with --fail-on text")
 
     if out is not None:
         _write_outputs(out, report, lines, source_type)
@@ -120,7 +144,7 @@ def _html(out: Path, report) -> str:
 
     rows = []
     for e in report.entries:
-        if not e.failed and e.status != "new":
+        if e.status == "unchanged":
             continue
         left = f'<img src="{rel(e.baseline)}" alt="baseline">' if e.baseline else "<em>none</em>"
         if e.status == "changed":
@@ -130,6 +154,12 @@ def _html(out: Path, report) -> str:
         else:
             right = "<em>missing</em>"
         detail = f"changed {e.changed_ratio:.4%} · {len(e.regions)} region(s)" if e.changed_ratio is not None else ""
+        for change in e.text_changes:
+            if change["kind"] != "visual":
+                detail += (
+                    f"<br>text {change['kind']}: <q>{html.escape(change['before'])}</q> → "
+                    f"<q>{html.escape(change['after'])}</q>"
+                )
         rows.append(
             f'<section class="{e.status}"><h2>{html.escape(e.name)} <span>{e.status}</span></h2>'
             f"<p>{detail}</p><div class=\"pair\"><figure>{left}<figcaption>baseline</figcaption></figure>"
