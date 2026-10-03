@@ -109,6 +109,8 @@ mq-image compare <before> <after> --fail-over 0.02      # exit 1 on visual regre
 mq-image regress baseline/ current/ --out reports/perception/regress   # screenshot regression + Release Gate artifacts
 mq-image serve --port 8000
 mq-image mcp
+# Local HTTP bridge for mq-agent (127.0.0.1:8766)
+mq-image mcp --transport http
 mq-image doctor                   # system readiness check
 mq-image doctor --json            # doctor output as JSON
 mq-image --version                # print version

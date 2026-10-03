@@ -219,3 +219,11 @@ image_perception(image_path: str, producer: str, source_type: str | None = None)
 Fields: `schema_version`, `source_type`, `source_path`, `ocr_text`, `visual_summary`, `detected_regions`, `risk_signals`, `confidence` (record completeness, not accuracy), `limitations`.
 
 The tool refuses rather than guessing a `source_type`. Normalization adds no perception of its own. Read-only. Safety: `safe`.
+
+## Local mq-agent HTTP bridge
+
+Start with `mq-image mcp --transport http --port 8766`. The bridge binds to
+`127.0.0.1` and exposes `GET /health`, `GET /tools`, and
+`POST /tools/{name}` with a JSON argument object. It uses the same registered
+MCP tools and image path restrictions as stdio. stdio remains the default.
+The web UI (`mq-image serve`) is a separate surface.
