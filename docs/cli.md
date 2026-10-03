@@ -23,16 +23,19 @@ mq-image analyze <image> --exhaustive --conf 0.05
 mq-image analyze <image> --mode local-fast
 mq-image analyze <image> --mode local-deep
 mq-image analyze <image> --mode cloud-verify --vision-model gpt-4.1
+mq-image analyze screenshots/ --json > results.jsonl
 ```
 
 | Argument | Type | Required | Description |
 | -------- | ---- | -------- | ----------- |
-| `image` | path | yes | Path to image file |
+| `image` | path | yes | Image file, or a directory (every image directly in it, sorted by name) |
 | `--json` | flag | no | Output raw JSON instead of rich terminal output |
 | `--exhaustive` | flag | no | Preserve every raw detection, including duplicates |
 | `--conf` | float | no | Detection confidence threshold |
 | `--mode` | string | no | Vision backend: `local-fast`, `local-deep`, or `cloud-verify` |
 | `--vision-model` | string | no | Override backend model, for example `gpt-4o` or `gpt-4.1` |
+| `--redact` | flag | no | `cloud-verify` only: mask personnummer and email addresses before upload |
+| `--cache` | flag | no | Reuse semantic captions from a local cache |
 
 Backend defaults:
 
@@ -47,6 +50,35 @@ For GPT-4o:
 ```bash
 mq-image analyze diagram.png --mode cloud-verify --vision-model gpt-4o
 ```
+
+### Directories
+
+With a directory, `--json` prints JSONL: one object per image with a `path` key
+added. An image that fails becomes `{"path": ..., "error": ...}` and the batch
+continues; the exit code is 1 if any image failed. Subdirectories are not read.
+
+### Caption cache
+
+`--cache` stores semantic captions under `$MQ_IMAGE_CACHE_DIR`, default
+`~/.cache/mq-image-analyze/captions`. The key is the image content, vision mode,
+model, whether the upload was redacted, and the prompt text, so renaming a file
+still hits while changing any of the others misses. Missing captions are not
+stored. Delete the directory to clear it. The MCP tools never use the cache,
+so they keep writing nothing to disk.
+
+### Redaction before cloud-verify
+
+`--redact`, or `MQ_IMAGE_REDACT_CLOUD=1` for every call including MCP and the web
+UI, sends a masked copy to OpenAI instead of the original:
+
+- OCR (pytesseract) finds Swedish personnummer/samordningsnummer, 10-digit numbers
+  of the same shape, and email addresses; their boxes are painted black.
+- If OCR is unavailable the image is **not sent**. The result has no caption and a
+  limitation says why.
+- Only OCR-readable text is covered. Faces, handwriting, small or rotated text and
+  identifiers in other formats are not. Treat it as reducing exposure, not as
+  de-identification.
+- Local modes never leave the machine and are not redacted.
 
 ---
 
@@ -113,6 +145,7 @@ Compare two images for visual drift.
 mq-image compare <before> <after>
 mq-image compare <before> <after> --json
 mq-image compare <before> <after> --exhaustive --conf 0.05
+mq-image compare baseline.png current.png --fail-over 0.02   # CI visual regression
 ```
 
 | Argument | Type | Required | Description |
@@ -122,6 +155,11 @@ mq-image compare <before> <after> --exhaustive --conf 0.05
 | `--json` | flag | no | Output raw JSON |
 | `--exhaustive` | flag | no | Use exhaustive detection mode |
 | `--conf` | float | no | Detection confidence threshold |
+| `--fail-over` | float 0–1 | no | Exit 1 when `pixel_diff` exceeds the value; output is printed first |
+
+`pixel_diff` is the mean absolute grayscale difference, 0 for identical images and
+1 for black against white. When the sizes differ, `after` is resized to `before`
+and `size_changed` is `true`.
 
 ---
 

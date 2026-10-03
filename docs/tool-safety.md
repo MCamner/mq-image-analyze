@@ -64,6 +64,23 @@ Rules:
 
 ---
 
+## Path confinement
+
+By default the MCP tools read any image file the server process can read. Set
+`MQ_IMAGE_ALLOWED_ROOTS` to confine them:
+
+```bash
+export MQ_IMAGE_ALLOWED_ROOTS="$HOME/screenshots:$HOME/repos/diagrams"
+```
+
+- Separator is `:` on macOS/Linux (`;` on Windows).
+- Paths are resolved before the check, so `..` and symlinks cannot lead outside a root.
+- A path outside every root raises `PermissionError` before the file is checked for
+  existence, so the error does not reveal what is on disk.
+- Applies to all MCP tools. The CLI is not confined: it runs as the user who typed the command.
+
+---
+
 ## Boundary principle
 
 Image analysis tools must never cross the line from **reading** to **acting**.

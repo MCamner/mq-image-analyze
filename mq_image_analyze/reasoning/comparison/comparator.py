@@ -3,6 +3,9 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from pathlib import Path
 
+import numpy as np
+from PIL import Image
+
 from mq_image_analyze.reasoning.prompts.reverse_prompt import ReversePromptResult, build
 
 
@@ -26,6 +29,22 @@ def _palette_drift(before: list[str], after: list[str]) -> float:
     for color in before:
         total += min(_color_distance(color, c) for c in after)
     return round(total / len(before), 4)
+
+
+def _pixel_diff(before: Path, after: Path) -> tuple[float, bool]:
+    """Mean absolute grayscale difference, 0 (identical) to 1 (black vs white).
+
+    When sizes differ, `after` is resized to `before` so the number stays
+    comparable; the size change itself is reported separately.
+    """
+    with Image.open(before) as b_img, Image.open(after) as a_img:
+        b = b_img.convert("L")
+        a = a_img.convert("L")
+        size_changed = b.size != a.size
+        if size_changed:
+            a = a.resize(b.size)
+        diff = np.abs(np.asarray(b, dtype=np.int16) - np.asarray(a, dtype=np.int16)).mean() / 255
+    return round(float(diff), 4), size_changed
 
 
 def _ai_look_score(result: ReversePromptResult) -> float:
@@ -58,6 +77,8 @@ class CompareResult:
     depth_changed: bool
     composition_diff: dict
     ai_look: dict
+    pixel_diff: float = 0.0
+    size_changed: bool = False
     before_result: dict = field(default_factory=dict)
     after_result: dict = field(default_factory=dict)
 
@@ -75,6 +96,7 @@ def compare(
     a = build(after_path, mode=mode, conf=conf)
 
     palette_drift = _palette_drift(b.palette, a.palette)
+    pixel_diff, size_changed = _pixel_diff(before_path, after_path)
 
     brightness_changed = b.brightness != a.brightness
     contrast_changed = b.contrast != a.contrast
@@ -115,6 +137,8 @@ def compare(
         depth_changed=depth_changed,
         composition_diff=composition_diff,
         ai_look=ai_look,
+        pixel_diff=pixel_diff,
+        size_changed=size_changed,
         before_result={"prompt": b.prompt, "objects": b.objects, "palette": b.palette,
                        "brightness": b.brightness, "contrast": b.contrast, "depth": b.depth,
                        "symmetry": b.symmetry, "rule_of_thirds": b.rule_of_thirds},

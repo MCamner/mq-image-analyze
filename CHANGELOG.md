@@ -1,5 +1,31 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- `MQ_IMAGE_ALLOWED_ROOTS` confines every MCP tool to the listed directories.
+  Paths are resolved first, so `..` and symlinks cannot escape, and the refusal
+  comes before the existence check. Unset keeps the previous behavior.
+- `compare` reports `pixel_diff` (mean absolute grayscale difference, 0–1) and
+  `size_changed`. `--fail-over N` exits 1 when `pixel_diff` exceeds `N`, for
+  visual regression in CI. Both fields are additive.
+- Opt-in redaction before `cloud-verify`: `--redact`, `redact=True` on
+  `analyze_image` and `reverse_prompt`, or `MQ_IMAGE_REDACT_CLOUD=1`. OCR-found
+  personnummer and email addresses are painted black on the copy that is sent.
+  Without OCR the image is not sent. Only OCR-readable text is covered.
+- `mq-image analyze <directory>`: every image directly in it, JSONL with
+  `--json`, `{path, error}` for a failing image, exit 1 if any failed.
+- `mq-image analyze --cache`: semantic captions cached on disk, keyed on image
+  bytes, vision mode, model, redaction and prompt text. MCP does not cache.
+
+### Changed
+
+- The accepted image extensions live in `mq_image_analyze/formats.py`, shared
+  by CLI, MCP and web.
+- `uv.lock` records the project version as 1.6.0. A full `uv lock` with uv 0.12
+  also rewrites platform markers on CUDA dependencies and was left out.
+
 ## 1.6.0 — 2026-10-03
 
 ### Added

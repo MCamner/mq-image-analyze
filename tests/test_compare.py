@@ -96,3 +96,56 @@ def test_compare_returns_serialisable(sample_image: Path):
     assert "ai_look" in d
     assert "before_result" in d
     assert "after_result" in d
+
+
+# ── pixel_diff and --fail-over ───────────────────────────────────────────────
+
+from PIL import Image as _Image  # noqa: E402
+from typer.testing import CliRunner  # noqa: E402
+
+from mq_image_analyze.cli import app  # noqa: E402
+from mq_image_analyze.reasoning.comparison.comparator import _pixel_diff  # noqa: E402
+
+
+def _png(path: Path, color, size=(40, 40)) -> Path:
+    _Image.new("RGB", size, color=color).save(path)
+    return path
+
+
+def test_pixel_diff_identical_is_zero(tmp_path: Path):
+    a = _png(tmp_path / "a.png", (10, 20, 30))
+    assert _pixel_diff(a, a) == (0.0, False)
+
+
+def test_pixel_diff_black_to_white_is_one(tmp_path: Path):
+    a = _png(tmp_path / "a.png", (0, 0, 0))
+    b = _png(tmp_path / "b.png", (255, 255, 255))
+    assert _pixel_diff(a, b) == (1.0, False)
+
+
+def test_pixel_diff_reports_size_change(tmp_path: Path):
+    a = _png(tmp_path / "a.png", (0, 0, 0), size=(40, 40))
+    b = _png(tmp_path / "b.png", (0, 0, 0), size=(80, 40))
+    diff, size_changed = _pixel_diff(a, b)
+    assert size_changed is True
+    assert diff == 0.0
+
+
+def test_compare_result_carries_pixel_diff(sample_image: Path):
+    result = compare(sample_image, sample_image)
+    assert result.pixel_diff == 0.0
+    assert result.size_changed is False
+
+
+def test_cli_fail_over_exits_1_when_exceeded(tmp_path: Path):
+    a = _png(tmp_path / "a.png", (0, 0, 0))
+    b = _png(tmp_path / "b.png", (255, 255, 255))
+    result = CliRunner().invoke(app, ["compare", str(a), str(b), "--json", "--fail-over", "0.5"])
+    assert result.exit_code == 1
+    assert "pixel_diff" in result.output
+
+
+def test_cli_fail_over_passes_under_threshold(tmp_path: Path):
+    a = _png(tmp_path / "a.png", (0, 0, 0))
+    result = CliRunner().invoke(app, ["compare", str(a), str(a), "--fail-over", "0.01"])
+    assert result.exit_code == 0, result.output

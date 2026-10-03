@@ -2,9 +2,12 @@ from __future__ import annotations
 
 import dataclasses
 import json
+import os
 from pathlib import Path
 
 from mcp.server.fastmcp import FastMCP
+
+from mq_image_analyze.formats import IMAGE_EXTENSIONS
 
 mcp = FastMCP("mq-image-analyze")
 
@@ -14,11 +17,21 @@ mcp = FastMCP("mq-image-analyze")
 # safety: "safe" = read-only, deterministic, no side-effects
 _SAFETY = "safe"
 
-_ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp", ".bmp", ".tiff", ".tif"}
+_ALLOWED_EXTENSIONS = IMAGE_EXTENSIONS
+
+
+def _allowed_roots() -> list[Path]:
+    """Directories from MQ_IMAGE_ALLOWED_ROOTS (os.pathsep-separated); empty means no limit."""
+    raw = os.environ.get("MQ_IMAGE_ALLOWED_ROOTS", "")
+    return [Path(r).expanduser().resolve() for r in raw.split(os.pathsep) if r.strip()]
 
 
 def _validate_image(path: str) -> Path:
     p = Path(path).expanduser().resolve()
+    roots = _allowed_roots()
+    # Checked before existence, so a refusal says nothing about what is on disk.
+    if roots and not any(p.is_relative_to(root) for root in roots):
+        raise PermissionError(f"Image path is outside MQ_IMAGE_ALLOWED_ROOTS: {path}")
     if not p.exists():
         raise FileNotFoundError(f"Image not found: {p}")
     if p.suffix.lower() not in _ALLOWED_EXTENSIONS:
@@ -43,6 +56,7 @@ def analyze_image(
     conf: float | None = None,
     vision_mode: str = "local-fast",
     vision_model: str | None = None,
+    redact: bool = False,
 ) -> str:
     """
     Args:
@@ -51,12 +65,14 @@ def analyze_image(
         conf: Detection confidence threshold. Defaults: 0.25 (summary), 0.05 (exhaustive).
         vision_mode: 'local-fast', 'local-deep', or 'cloud-verify'.
         vision_model: Optional backend model override, for example 'gpt-4o' or 'gpt-4.1'.
+        redact: cloud-verify only. Mask personnummer and emails found by OCR before
+            upload; when OCR is unavailable the image is not sent.
     Returns:
         JSON string with full ReversePromptResult.
     """
     from mq_image_analyze.reasoning.prompts.reverse_prompt import build
     p = _validate_image(image_path)
-    result = build(p, mode=mode, conf=conf, vision_mode=vision_mode, vision_model=vision_model)
+    result = build(p, mode=mode, conf=conf, vision_mode=vision_mode, vision_model=vision_model, redact=redact)
     return json.dumps(dataclasses.asdict(result), indent=2)
 
 
@@ -101,6 +117,7 @@ def reverse_prompt(
     mode: str = "summary",
     vision_mode: str = "local-fast",
     vision_model: str | None = None,
+    redact: bool = False,
 ) -> str:
     """
     Args:
@@ -108,12 +125,13 @@ def reverse_prompt(
         mode: 'summary' or 'exhaustive'.
         vision_mode: 'local-fast', 'local-deep', or 'cloud-verify'.
         vision_model: Optional backend model override.
+        redact: cloud-verify only. Mask personnummer and emails before upload.
     Returns:
         JSON with prompt string, objects, palette, semantic_caption, and limitations.
     """
     from mq_image_analyze.reasoning.prompts.reverse_prompt import build
     p = _validate_image(image_path)
-    result = build(p, mode=mode, vision_mode=vision_mode, vision_model=vision_model)
+    result = build(p, mode=mode, vision_mode=vision_mode, vision_model=vision_model, redact=redact)
     d = dataclasses.asdict(result)
     return json.dumps({
         "prompt": d["prompt"],
@@ -127,7 +145,7 @@ def reverse_prompt(
 
 @mcp.tool(
     description=(
-        "Compare two images and return palette drift, style drift, composition differences, "
+        "Compare two images and return pixel_diff (0-1 mean grayscale difference), size_changed, palette drift, style drift, composition differences, "
         "objects added/removed, and an AI-look heuristic score for each image. "
         f"Safety: {_SAFETY}. Read-only."
     )

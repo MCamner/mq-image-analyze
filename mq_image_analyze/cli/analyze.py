@@ -8,6 +8,7 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 
+from mq_image_analyze.formats import IMAGE_EXTENSIONS
 from mq_image_analyze.reasoning.prompts.reverse_prompt import build
 from mq_image_analyze.vision.semantic.provider import normalize_vision_mode
 
@@ -15,7 +16,7 @@ console = Console()
 
 
 def analyze(
-    image: Path = typer.Argument(..., help="Path to image file", exists=True),
+    image: Path = typer.Argument(..., help="Path to image file, or a directory of images (non-recursive)", exists=True),
     json_output: bool = typer.Option(False, "--json", help="Output raw JSON"),
     exhaustive: bool = typer.Option(False, "--exhaustive", help="High-recall mode: all detections, no collapsing"),
     conf: Optional[float] = typer.Option(None, "--conf", help="Detection confidence threshold (default: 0.25 summary, 0.05 exhaustive)"),
@@ -29,6 +30,17 @@ def analyze(
         "--vision-model",
         help="Override backend model, e.g. bakllava, llama3.2-vision, gpt-4o, gpt-4.1",
     ),
+    redact: bool = typer.Option(
+        False,
+        "--redact",
+        help="cloud-verify only: mask personnummer and emails found by OCR before upload; "
+        "if OCR is unavailable the image is not sent. Also on with MQ_IMAGE_REDACT_CLOUD=1.",
+    ),
+    cache: bool = typer.Option(
+        False,
+        "--cache",
+        help="Reuse semantic captions from a local cache ($MQ_IMAGE_CACHE_DIR or ~/.cache/mq-image-analyze).",
+    ),
 ) -> None:
     """Analyze an image — objects, style, composition, reverse prompt."""
     mode = "exhaustive" if exhaustive else "summary"
@@ -38,12 +50,19 @@ def analyze(
         typer.echo(str(exc), err=True)
         raise typer.Exit(2) from exc
 
+    if image.is_dir():
+        _analyze_dir(image, json_output, mode=mode, conf=conf, vision_mode=selected_vision_mode,
+                     vision_model=vision_model, redact=redact, cache=cache)
+        return
+
     result = build(
         image,
         mode=mode,
         conf=conf,
         vision_mode=selected_vision_mode,
         vision_model=vision_model,
+        redact=redact,
+        cache=cache,
     )
 
     if json_output:
@@ -91,3 +110,40 @@ def analyze(
     console.print("[dim]Limitations:[/dim]")
     for lim in result.limitations:
         console.print(f"  [dim]· {lim}[/dim]")
+
+
+def _analyze_dir(directory: Path, json_output: bool, **build_kwargs) -> None:
+    """Every image directly in `directory`, sorted by name. JSONL with --json.
+
+    A failing image is reported on its own line and the batch continues;
+    the exit code is 1 if any image failed.
+    """
+    import dataclasses
+    import json
+
+    images = sorted(p for p in directory.iterdir() if p.is_file() and p.suffix.lower() in IMAGE_EXTENSIONS)
+    if not images:
+        typer.echo(f"No images in {directory}", err=True)
+        raise typer.Exit(1)
+
+    failed = 0
+    for path in images:
+        try:
+            result = build(path, **build_kwargs)
+        except Exception as exc:  # one broken file must not end the batch
+            failed += 1
+            if json_output:
+                typer.echo(json.dumps({"path": str(path), "error": str(exc)}))
+            else:
+                console.print(f"[red]{path.name}[/red]  error: {exc}")
+            continue
+        if json_output:
+            typer.echo(json.dumps({"path": str(path), **dataclasses.asdict(result)}))
+        else:
+            console.print(f"[bold cyan]{path.name}[/bold cyan]  [dim]{result.brightness} · {result.contrast}[/dim]")
+            console.print(f"  [italic]{result.prompt}[/italic]")
+
+    if not json_output:
+        console.print(f"\n[dim]{len(images)} image(s), {failed} failed[/dim]")
+    if failed:
+        raise typer.Exit(1)

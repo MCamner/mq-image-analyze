@@ -21,6 +21,13 @@ def compare(
     json_output: bool = typer.Option(False, "--json", help="Output raw JSON"),
     exhaustive: bool = typer.Option(False, "--exhaustive", help="Use exhaustive detection mode"),
     conf: Optional[float] = typer.Option(None, "--conf", help="Detection confidence threshold"),
+    fail_over: Optional[float] = typer.Option(
+        None,
+        "--fail-over",
+        min=0.0,
+        max=1.0,
+        help="Exit 1 when pixel_diff exceeds this value (0-1). For CI visual regression.",
+    ),
 ) -> None:
     """Compare two images — palette drift, composition diff, style drift, AI-look score."""
     mode = "exhaustive" if exhaustive else "summary"
@@ -28,6 +35,7 @@ def compare(
 
     if json_output:
         typer.echo(json.dumps(dataclasses.asdict(result), indent=2))
+        _check_fail_over(result.pixel_diff, fail_over)
         return
 
     console.print(Panel(
@@ -46,6 +54,9 @@ def compare(
             return f"[yellow]{v}[/yellow]"
         return f"[red]{v}[/red]"
 
+    table.add_row("Pixel diff",        drift_color(result.pixel_diff))
+    if result.size_changed:
+        table.add_row("Size",          "[yellow]changed[/yellow]")
     table.add_row("Palette drift",     drift_color(result.palette_drift))
     table.add_row("Style drift",       drift_color(result.style_drift))
     table.add_row("Brightness",        "[yellow]changed[/yellow]" if result.brightness_changed else "[green]same[/green]")
@@ -70,3 +81,10 @@ def compare(
     console.print(f"  [italic]{result.before_result['prompt']}[/italic]")
     console.print("[bold]After prompt:[/bold]")
     console.print(f"  [italic]{result.after_result['prompt']}[/italic]")
+    _check_fail_over(result.pixel_diff, fail_over)
+
+
+def _check_fail_over(pixel_diff: float, fail_over: Optional[float]) -> None:
+    if fail_over is not None and pixel_diff > fail_over:
+        typer.echo(f"FAIL: pixel_diff {pixel_diff} exceeds --fail-over {fail_over}", err=True)
+        raise typer.Exit(1)

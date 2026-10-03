@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import os
+import tempfile
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -16,6 +18,13 @@ from mq_image_analyze.vision.composition.analyzer import (
     symmetry_score,
     visual_weight,
 )
+from mq_image_analyze.vision import redaction
+from mq_image_analyze.vision.semantic.provider import (
+    default_model_for_mode,
+    normalize_vision_mode,
+)
+from mq_image_analyze.vision.semantic import cache as caption_cache
+from mq_image_analyze.vision.semantic.ollama_vision import build_prompt
 from mq_image_analyze.vision.semantic.provider import describe as semantic_describe
 
 _SUMMARY_LIMITATIONS = [
@@ -82,8 +91,11 @@ def build(
     conf: float | None = None,
     vision_mode: str = "local-fast",
     vision_model: str | None = None,
+    redact: bool = False,
+    cache: bool = False,
 ) -> ReversePromptResult:
     path = Path(image_path)
+    redact = redact or os.environ.get("MQ_IMAGE_REDACT_CLOUD") == "1"
 
     effective_conf = conf if conf is not None else (0.05 if mode == "exhaustive" else 0.25)
 
@@ -126,12 +138,45 @@ def build(
         composition_desc += ", strong symmetry"
 
     content_flags = classify_content(path)
-    semantic_caption, effective_vision_mode, effective_vision_model = semantic_describe(
-        path,
-        vision_mode=vision_mode,
-        vision_model=vision_model,
-        nudenet_context=content_flags,
-    )
+    redacting = redact and normalize_vision_mode(vision_mode) == "cloud-verify"
+
+    def _caption(send_path: Path) -> tuple[str | None, str, str]:
+        if not cache:
+            return semantic_describe(
+                send_path, vision_mode=vision_mode, vision_model=vision_model, nudenet_context=content_flags
+            )
+        cache_mode = normalize_vision_mode(vision_mode)
+        cache_model = vision_model or default_model_for_mode(cache_mode)
+        cache_key = caption_cache.key(
+            path,
+            vision_mode=cache_mode,
+            vision_model=cache_model,
+            redacted=redacting,
+            prompt=build_prompt(content_flags),
+        )
+        cached = caption_cache.get(cache_key)
+        if cached is not None:
+            limitations.append("Semantic caption served from local cache (--cache).")
+            return cached, cache_mode, cache_model
+        result = semantic_describe(
+            send_path, vision_mode=vision_mode, vision_model=vision_model, nudenet_context=content_flags
+        )
+        if result[0]:
+            caption_cache.put(cache_key, result[0])
+        return result
+
+    if redacting:
+        with tempfile.TemporaryDirectory() as tmp:
+            redacted = redaction.redact_for_cloud(path, Path(tmp))
+            limitations.extend(redacted.notes)
+            if redacted.path is None:
+                semantic_caption = None
+                effective_vision_mode = "cloud-verify"
+                effective_vision_model = vision_model or default_model_for_mode("cloud-verify")
+            else:
+                semantic_caption, effective_vision_mode, effective_vision_model = _caption(redacted.path)
+    else:
+        semantic_caption, effective_vision_mode, effective_vision_model = _caption(path)
     if not semantic_caption:
         limitations.append(
             f"Semantic caption unavailable from {effective_vision_mode} ({effective_vision_model})."
