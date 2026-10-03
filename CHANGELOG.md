@@ -1,5 +1,17 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- `mq-image mcp --transport http [--port 8766]`: a loopback HTTP bridge for
+  mq-agent with `GET /health`, `GET /tools` and `POST /tools/{name}`. It calls
+  the same registered MCP tools as stdio, so `MQ_IMAGE_ALLOWED_ROOTS` applies.
+  It binds to 127.0.0.1, rejects non-loopback `Host` headers (400) and any
+  request carrying a non-loopback `Origin` (403), so a web page cannot make it
+  run a tool. stdio stays the default.
+- The `mcp` extra now includes `fastapi` and `uvicorn` for the bridge.
+
 ## 1.8.0 — 2026-10-03
 
 ### Added
