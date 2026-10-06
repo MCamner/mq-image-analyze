@@ -19,6 +19,8 @@
     "after": 0.6695,
     "note": "Score 0\u20131: higher = more AI-generated characteristics (heuristic baseline)."
   },
+  "pixel_diff": 0.0,
+  "size_changed": false,
   "before_result": {
     "prompt": "frisbee, mid-tone scene, low contrast, shallow depth of field, color palette: #4682b3, #fec732, #db504f, left-heavy, strong symmetry",
     "objects": [
