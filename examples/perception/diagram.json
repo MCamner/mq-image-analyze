@@ -1,5 +1,6 @@
 {
   "schema_version": "perception.v1",
+  "evidence_id": "sha256:bf02c0ce9a718c366013e8a1cd0c4e105bd1b0047bbb07a3f9bfb2570df4c5e5",
   "source_type": "diagram",
   "source_path": "diagram.png",
   "ocr_text": "",
@@ -8,10 +9,10 @@
     {
       "id": "box_0",
       "bbox": [
-        28.0,
-        58.0,
-        133.0,
-        123.0
+        28,
+        58,
+        133,
+        123
       ],
       "area_percent": 7.56,
       "label": null,
@@ -22,7 +23,7 @@
   "risk_signals": [],
   "confidence": "medium",
   "limitations": [
-    "OCR not available \u2014 install pytesseract for text extraction from boxes. Component labels and text fields will be null.",
-    "Semantic labels and semantic topology (what each component represents) are not inferred \u2014 this requires an LLM call via mq-mcp review tools."
+    "OCR not available — install pytesseract for text extraction from boxes. Component labels and text fields will be null.",
+    "Semantic labels and semantic topology (what each component represents) are not inferred — this requires an LLM call via mq-mcp review tools."
   ]
 }
