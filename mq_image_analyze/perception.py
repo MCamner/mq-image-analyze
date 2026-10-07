@@ -24,6 +24,8 @@ the consumer's, this refuses rather than picking the closest one.
 from __future__ import annotations
 
 import dataclasses
+import hashlib
+import json
 from pathlib import Path
 from typing import Any
 
@@ -96,6 +98,29 @@ def derive_confidence(
     return "medium"
 
 
+def canonical_evidence_id(record: dict[str, Any]) -> str:
+    """Return the content address for one perception.v1 record.
+
+    evidence_id is excluded from its own digest so consumers can re-verify
+    producer evidence without reading the source image.
+    """
+    core = {key: value for key, value in record.items() if key != "evidence_id"}
+    raw = json.dumps(
+        core,
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=False,
+        default=str,
+    ).encode("utf-8")
+    return "sha256:" + hashlib.sha256(raw).hexdigest()
+
+
+def verify_evidence_id(record: dict[str, Any]) -> bool:
+    """Return whether a perception record still matches its producer digest."""
+    evidence_id = record.get("evidence_id")
+    return isinstance(evidence_id, str) and evidence_id == canonical_evidence_id(record)
+
+
 def _record(
     *,
     source_type: str,
@@ -107,7 +132,7 @@ def _record(
     limitations: list,
     capabilities_available: bool,
 ) -> dict[str, Any]:
-    return {
+    record: dict[str, Any] = {
         "schema_version": SCHEMA_VERSION,
         "source_type": source_type,
         "source_path": source_path,
@@ -123,6 +148,8 @@ def _record(
         ),
         "limitations": list(limitations),
     }
+    record["evidence_id"] = canonical_evidence_id(record)
+    return record
 
 
 def from_ocr(payload: dict[str, Any], *, source_type: str, source_path: str) -> dict[str, Any]:
