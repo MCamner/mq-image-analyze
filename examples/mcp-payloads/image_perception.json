@@ -1,5 +1,6 @@
 {
   "schema_version": "perception.v1",
+  "evidence_id": "sha256:3badfd6a5791a34ebd055366c9cabf4e4dc8405f33dd4e941cfc427b2b9e5b53",
   "source_type": "diagram",
   "source_path": "diagram.png",
   "ocr_text": "",
@@ -8,10 +9,10 @@
     {
       "id": "box_0",
       "bbox": [
-        28.0,
-        58.0,
-        133.0,
-        123.0
+        28,
+        58,
+        133,
+        123
       ],
       "area_percent": 7.56,
       "label": null,
@@ -21,10 +22,10 @@
     {
       "id": "box_1",
       "bbox": [
-        248.0,
-        58.0,
-        353.0,
-        123.0
+        248,
+        58,
+        353,
+        123
       ],
       "area_percent": 7.56,
       "label": null,
@@ -34,10 +35,10 @@
     {
       "id": "box_2",
       "bbox": [
-        138.0,
-        148.0,
-        243.0,
-        203.0
+        138,
+        148,
+        243,
+        203
       ],
       "area_percent": 6.38,
       "label": null,
