@@ -257,6 +257,29 @@ def test_every_record_declares_its_schema():
         assert record["schema_version"] == perception.SCHEMA_VERSION
 
 
+def test_every_record_is_content_addressed():
+    for record in (
+        perception.from_ocr(payload("image_ocr.json"), source_type="screenshot", source_path="a.png"),
+        perception.from_ui(payload("analyze_ui.json"), source_path="ui.png"),
+        perception.from_architecture(payload("observe_architecture.json")),
+    ):
+        assert record["evidence_id"].startswith("sha256:")
+        assert perception.verify_evidence_id(record)
+
+
+def test_perception_evidence_fails_verification_after_tamper():
+    record = perception.from_ui(payload("analyze_ui.json"), source_path="ui.png")
+    record["visual_summary"] = "tampered"
+    assert not perception.verify_evidence_id(record)
+
+
+def test_owner_schema_requires_the_evidence_id():
+    schema = json.loads((ROOT / "schemas" / "perception.v1.schema.json").read_text(encoding="utf-8"))
+    assert schema["title"] == "perception.v1"
+    assert "evidence_id" in schema["required"]
+    assert schema["properties"]["evidence_id"]["pattern"] == "^sha256:[0-9a-f]{64}$"
+
+
 def test_the_added_fields_do_not_disturb_the_consumer(tmp_path):
     """schema_version and limitations are this repo's additions on top of a
     contract someone else froze. The consumer checks required keys and does not
