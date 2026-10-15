@@ -1,5 +1,25 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- `contracts/tool_surface.v1.json` publishes every registered MCP tool with its
+  ADR-003 class and the parameters it accepts, in mq-mcp's
+  `mq-mcp.tool-surface.v1` format (`producer: mq-image-analyze`). mq-agent's
+  stack compatibility gate checks its `image_perception` and
+  `observe_architecture` calls against it without a running server; until now
+  both were `SKIPPED`. `scripts/export_tool_surface.py` generates it from the
+  in-process FastMCP registry, and `tests/test_tool_surface.py` fails when the
+  committed file is stale. Declared in `.mq/repo-contract.json`.
+
+### Changed
+
+- Tool classes live in one table, `TOOL_CLASSES` in `mq_image_analyze/mcp/server.py`.
+  `GET /tools` and the published surface both read it, so they cannot
+  disagree. A registered tool without a class fails the export. All eight
+  tools stay class A.
+
 ## 1.9.0 — 2026-10-03
 
 ### Added

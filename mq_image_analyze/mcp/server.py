@@ -17,6 +17,20 @@ mcp = FastMCP("mq-image-analyze")
 # safety: "safe" = read-only, deterministic, no side-effects
 _SAFETY = "safe"
 
+# ADR-003 class per registered tool: the one table /tools serves and
+# scripts/export_tool_surface.py publishes in contracts/tool_surface.v1.json.
+# A tool registered without an entry fails the export.
+TOOL_CLASSES: dict[str, str] = {
+    "analyze_image": "A",
+    "extract_palette": "A",
+    "reverse_prompt": "A",
+    "compare_images": "A",
+    "analyze_ui": "A",
+    "observe_architecture": "A",
+    "image_ocr": "A",
+    "image_perception": "A",
+}
+
 _ALLOWED_EXTENSIONS = IMAGE_EXTENSIONS
 
 
