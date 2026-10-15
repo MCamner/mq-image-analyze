@@ -13,7 +13,8 @@ mcp = FastMCP("mq-image-analyze")
 
 # ── safety classification ──────────────────────────────────────────────────────
 # All tools are read-only: they read image files and return analysis.
-# No tool writes, deletes, or sends data externally.
+# No tool writes or deletes files. analyze_image and reverse_prompt may send
+# images externally only when cloud-verify is explicitly selected.
 # safety: "safe" = read-only, deterministic, no side-effects
 _SAFETY = "safe"
 
@@ -21,10 +22,10 @@ _SAFETY = "safe"
 # scripts/export_tool_surface.py publishes in contracts/tool_surface.v1.json.
 # A tool registered without an entry fails the export.
 TOOL_CLASSES: dict[str, str] = {
-    "analyze_image": "A",
+    "analyze_image": "B",
     "extract_palette": "A",
-    "reverse_prompt": "A",
-    "compare_images": "A",
+    "reverse_prompt": "B",
+    "compare_images": "B",
     "analyze_ui": "A",
     "observe_architecture": "A",
     "image_ocr": "A",
