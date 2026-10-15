@@ -80,3 +80,10 @@ def test_parameters_and_signature_follow_the_input_schema() -> None:
         {"name": "b", "type": ["null", "string"], "required": False},
     ]
     assert export.signature(params) == export.signature(json.loads(json.dumps(params)))
+
+
+def test_operator_class_b_decision() -> None:
+    expected_b = {"analyze_image", "reverse_prompt", "compare_images"}
+    assert {name for name, cls in TOOL_CLASSES.items() if cls == "B"} == expected_b
+    surface = json.loads(SURFACE.read_text(encoding="utf-8"))
+    assert {tool["name"] for tool in surface["tools"] if tool["safety_class"] == "B"} == expected_b
