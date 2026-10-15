@@ -5,7 +5,7 @@
   "tools": [
     {
       "name": "analyze_image",
-      "safety_class": "A",
+      "safety_class": "B",
       "write": false,
       "subprocess": false,
       "parameters": [
@@ -74,7 +74,7 @@
     },
     {
       "name": "compare_images",
-      "safety_class": "A",
+      "safety_class": "B",
       "write": false,
       "subprocess": false,
       "parameters": [
@@ -183,7 +183,7 @@
     },
     {
       "name": "reverse_prompt",
-      "safety_class": "A",
+      "safety_class": "B",
       "write": false,
       "subprocess": false,
       "parameters": [
