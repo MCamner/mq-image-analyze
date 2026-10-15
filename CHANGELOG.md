@@ -17,8 +17,9 @@
 
 - Tool classes live in one table, `TOOL_CLASSES` in `mq_image_analyze/mcp/server.py`.
   `GET /tools` and the published surface both read it, so they cannot
-  disagree. A registered tool without a class fails the export. All eight
-  tools stay class A.
+  disagree. A registered tool without a class fails the export. Five tools remain class A; `analyze_image`, `reverse_prompt` and
+  `compare_images` are class B by operator decision. Cloud verification remains
+  explicitly opt-in.
 
 ## 1.9.0 — 2026-10-03
 
