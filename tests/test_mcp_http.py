@@ -1,6 +1,7 @@
 from fastapi.testclient import TestClient
 from PIL import Image
 from mq_image_analyze.mcp.http import app
+from mq_image_analyze.mcp.server import TOOL_CLASSES
 
 
 def test_http_discovery():
@@ -8,7 +9,7 @@ def test_http_discovery():
     assert client.get('/health').json()['status'] == 'ok'
     tools = client.get('/tools').json()['tools']
     assert 'extract_palette' in {tool['name'] for tool in tools}
-    assert all(tool['class'] == 'A' for tool in tools)
+    assert {tool['name']: tool['class'] for tool in tools} == TOOL_CLASSES
 
 
 def test_http_tool_call_and_errors(tmp_path):
