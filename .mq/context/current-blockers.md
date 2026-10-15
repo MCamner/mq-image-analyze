@@ -2,7 +2,7 @@
 
 ## Known Blockers
 
-* No repo-specific blocker exported in this Phase 4 seed.
+* No known blockers as of 2026-06-17.
 
 ## Check Before Acting
 
