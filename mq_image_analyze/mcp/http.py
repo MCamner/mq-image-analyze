@@ -8,7 +8,7 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
-from mq_image_analyze.mcp.server import mcp
+from mq_image_analyze.mcp.server import TOOL_CLASSES, mcp
 
 app = FastAPI(title="mq-image-analyze MCP", docs_url=None, redoc_url=None)
 app.add_middleware(TrustedHostMiddleware, allowed_hosts=["localhost", "127.0.0.1", "[::1]"])
@@ -35,7 +35,8 @@ async def health() -> dict:
 @app.get("/tools")
 async def tools() -> dict:
     return {"tools": [
-        {"name": tool.name, "description": tool.description, "inputSchema": tool.inputSchema, "class": "A"}
+        {"name": tool.name, "description": tool.description, "inputSchema": tool.inputSchema,
+         "class": TOOL_CLASSES[tool.name]}
         for tool in await mcp.list_tools()
     ]}
 

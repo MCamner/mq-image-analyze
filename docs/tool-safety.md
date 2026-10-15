@@ -4,33 +4,34 @@ mq-image-analyze tools are read-first and non-destructive by default.
 
 ---
 
-## Class A — Read-only image analysis
+## Class A — Local read-only image analysis
 
-These tools read local image files and return structured analysis. They do not write, delete, or modify anything.
+These tools read local images and return analysis without file modifications.
 
-- `analyze_image`
 - `extract_palette`
-- `reverse_prompt`
 - `analyze_ui`
 - `observe_architecture`
 - `image_ocr`
+- `image_perception`
 
-Rules:
+## Class B — Read-only external-capable analysis or comparison
 
-- Must not write files
-- Must not delete files
-- Must not commit changes
-- Must not call external APIs without explicit configuration
-
----
-
-## Class B — Read-only comparison
-
-These tools read two or more files and return structured comparison output.
-
+- `analyze_image`
+- `reverse_prompt`
 - `compare_images`
 
-Rules: same as Class A.
+These tools do not write or delete image files. `analyze_image` and
+`reverse_prompt` may send images to OpenAI only when the operator explicitly
+selects `vision_mode=cloud-verify` (the default remains `local-fast`).
+`compare_images` is classified B by the operator's ADR-003 decision;
+this classification alone does not enable a remote call. Class B metadata
+does not authorize implicit uploads or change runtime defaults.
+
+Rules for both A and B:
+
+- Must not write, delete or commit files
+- Must not call external APIs without explicit configuration
+- Keep remote vision opt-in; do not fall back silently to cloud services
 
 ---
 

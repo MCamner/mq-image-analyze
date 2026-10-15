@@ -220,6 +220,21 @@ Fields: `schema_version`, `source_type`, `source_path`, `ocr_text`, `visual_summ
 
 The tool refuses rather than guessing a `source_type`. Normalization adds no perception of its own. Read-only. Safety: `safe`.
 
+## Published tool surface
+
+`contracts/tool_surface.v1.json` lists every registered tool with its ADR-003
+class and the parameters it accepts (name, JSON types, required). It uses
+mq-mcp's `mq-mcp.tool-surface.v1` format, so mq-agent's stack compatibility
+gate checks calls against both producers the same way and without a running
+server. Classes come from `TOOL_CLASSES` in `mq_image_analyze/mcp/server.py`,
+the table `GET /tools` also serves. Regenerate after changing a tool:
+
+```bash
+.venv/bin/python scripts/export_tool_surface.py
+```
+
+`tests/test_tool_surface.py` fails when the committed file is stale.
+
 ## Local mq-agent HTTP bridge
 
 Start with `mq-image mcp --transport http --port 8766`. The bridge binds to

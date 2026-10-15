@@ -1,0 +1,230 @@
+{
+  "schema": "mq-mcp.tool-surface.v1",
+  "producer": "mq-image-analyze",
+  "tool_count": 8,
+  "tools": [
+    {
+      "name": "analyze_image",
+      "safety_class": "B",
+      "write": false,
+      "subprocess": false,
+      "parameters": [
+        {
+          "name": "conf",
+          "type": [
+            "null",
+            "number"
+          ],
+          "required": false
+        },
+        {
+          "name": "image_path",
+          "type": [
+            "string"
+          ],
+          "required": true
+        },
+        {
+          "name": "mode",
+          "type": [
+            "string"
+          ],
+          "required": false
+        },
+        {
+          "name": "redact",
+          "type": [
+            "boolean"
+          ],
+          "required": false
+        },
+        {
+          "name": "vision_mode",
+          "type": [
+            "string"
+          ],
+          "required": false
+        },
+        {
+          "name": "vision_model",
+          "type": [
+            "null",
+            "string"
+          ],
+          "required": false
+        }
+      ],
+      "signature_sha256": "2b0c8bf43af9a21d1566e5d3f54e4b8ed6f64b7451d1060bc49dcf92791e87b3"
+    },
+    {
+      "name": "analyze_ui",
+      "safety_class": "A",
+      "write": false,
+      "subprocess": false,
+      "parameters": [
+        {
+          "name": "image_path",
+          "type": [
+            "string"
+          ],
+          "required": true
+        }
+      ],
+      "signature_sha256": "6ac83f61464a7c616b730175002bdabfe23b33b873053d99608613407a163856"
+    },
+    {
+      "name": "compare_images",
+      "safety_class": "B",
+      "write": false,
+      "subprocess": false,
+      "parameters": [
+        {
+          "name": "after_path",
+          "type": [
+            "string"
+          ],
+          "required": true
+        },
+        {
+          "name": "before_path",
+          "type": [
+            "string"
+          ],
+          "required": true
+        },
+        {
+          "name": "mode",
+          "type": [
+            "string"
+          ],
+          "required": false
+        }
+      ],
+      "signature_sha256": "ffa6ac2c4467f41489a7ccbb2542401e85844ab5e0f2a3da61a85e5e597be8bc"
+    },
+    {
+      "name": "extract_palette",
+      "safety_class": "A",
+      "write": false,
+      "subprocess": false,
+      "parameters": [
+        {
+          "name": "image_path",
+          "type": [
+            "string"
+          ],
+          "required": true
+        }
+      ],
+      "signature_sha256": "6ac83f61464a7c616b730175002bdabfe23b33b873053d99608613407a163856"
+    },
+    {
+      "name": "image_ocr",
+      "safety_class": "A",
+      "write": false,
+      "subprocess": false,
+      "parameters": [
+        {
+          "name": "image_path",
+          "type": [
+            "string"
+          ],
+          "required": true
+        }
+      ],
+      "signature_sha256": "6ac83f61464a7c616b730175002bdabfe23b33b873053d99608613407a163856"
+    },
+    {
+      "name": "image_perception",
+      "safety_class": "A",
+      "write": false,
+      "subprocess": false,
+      "parameters": [
+        {
+          "name": "image_path",
+          "type": [
+            "string"
+          ],
+          "required": true
+        },
+        {
+          "name": "producer",
+          "type": [
+            "string"
+          ],
+          "required": true
+        },
+        {
+          "name": "source_type",
+          "type": [
+            "null",
+            "string"
+          ],
+          "required": false
+        }
+      ],
+      "signature_sha256": "24e07e9222cb855d86b28f456e327edaf67a20c57b4612091ffb2f9be563975c"
+    },
+    {
+      "name": "observe_architecture",
+      "safety_class": "A",
+      "write": false,
+      "subprocess": false,
+      "parameters": [
+        {
+          "name": "image_path",
+          "type": [
+            "string"
+          ],
+          "required": true
+        }
+      ],
+      "signature_sha256": "6ac83f61464a7c616b730175002bdabfe23b33b873053d99608613407a163856"
+    },
+    {
+      "name": "reverse_prompt",
+      "safety_class": "B",
+      "write": false,
+      "subprocess": false,
+      "parameters": [
+        {
+          "name": "image_path",
+          "type": [
+            "string"
+          ],
+          "required": true
+        },
+        {
+          "name": "mode",
+          "type": [
+            "string"
+          ],
+          "required": false
+        },
+        {
+          "name": "redact",
+          "type": [
+            "boolean"
+          ],
+          "required": false
+        },
+        {
+          "name": "vision_mode",
+          "type": [
+            "string"
+          ],
+          "required": false
+        },
+        {
+          "name": "vision_model",
+          "type": [
+            "null",
+            "string"
+          ],
+          "required": false
+        }
+      ],
+      "signature_sha256": "e131c381f16c11a5463eba3c0c76c5348da3750facb95f4c35a1d349d0fdc6af"
+    }
+  ]
+}

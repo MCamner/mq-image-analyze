@@ -7,7 +7,8 @@
     "image_ocr.v1",
     "image_analyze.v1",
     "image_diff.v1",
-    "perception.v1"
+    "perception.v1",
+    "mq-mcp.tool-surface.v1"
   ],
   "compatibility": {
     "protocols": {
@@ -18,7 +19,10 @@
     },
     "import_probes": {
       "mcp": "from mcp.server.fastmcp import FastMCP"
-    }
+    },
+    "produces": [
+      "mq-mcp.tool-surface.v1"
+    ]
   },
   "next_focus": "perception.v1 evidence consumed by mq-mcp Perception Review v2",
   "release_mode": "direct"
