@@ -52,7 +52,7 @@ def build_prompt(nudenet_context: dict | None) -> str:
 
 def describe(
     image_path: str | Path,
-    model: str = "bakllava",
+    model: str = "qwen3.5:9b",
     nudenet_context: dict | None = None,
     timeout: int = 90,
 ) -> str | None:
@@ -66,6 +66,8 @@ def describe(
         "prompt": prompt,
         "images": [b64],
         "stream": False,
+        "think": False,
+        "options": {"temperature": 0.1, "num_ctx": 8192, "num_predict": 700, "seed": 42},
     }).encode("utf-8")
 
     req = urllib.request.Request(
@@ -77,17 +79,19 @@ def describe(
     try:
         with urllib.request.urlopen(req, timeout=timeout) as resp:
             data = json.loads(resp.read())
+            if data.get("done_reason") == "length":
+                return None
             return data.get("response", "").strip() or None
     except (urllib.error.URLError, TimeoutError, json.JSONDecodeError):
         return None
 
 
-def is_available(model: str = "bakllava") -> bool:
+def is_available(model: str = "qwen3.5:9b") -> bool:
     try:
         req = urllib.request.Request("http://localhost:11434/api/tags")
         with urllib.request.urlopen(req, timeout=3) as resp:
             data = json.loads(resp.read())
-            names = [m["name"].split(":")[0] for m in data.get("models", [])]
-            return model.split(":")[0] in names
+            names = [m["name"].removesuffix(":latest") for m in data.get("models", [])]
+            return model.removesuffix(":latest") in names
     except Exception:
         return False

@@ -7,8 +7,8 @@ from mq_image_analyze.vision.semantic.openai_vision import describe as openai_de
 
 VisionMode = str
 
-DEFAULT_LOCAL_FAST_MODEL = "bakllava"
-DEFAULT_LOCAL_DEEP_MODEL = "llama3.2-vision"
+DEFAULT_LOCAL_FAST_MODEL = "qwen3.5:9b"
+DEFAULT_LOCAL_DEEP_MODEL = "qwen3.5:9b"
 DEFAULT_CLOUD_VERIFY_MODEL = "gpt-4.1"
 
 _VALID_VISION_MODES = {"local-fast", "local-deep", "cloud-verify"}

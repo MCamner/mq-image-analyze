@@ -120,8 +120,8 @@ Vision backend modes:
 
 | Mode | Default model | Use |
 | ---- | ------------- | --- |
-| `local-fast` | `bakllava` via Ollama | Fast local captioning and simple object/diagram interpretation |
-| `local-deep` | `llama3.2-vision` via Ollama | Better offline analysis when the machine can run a stronger model |
+| `local-fast` | `qwen3.5:9b` via Ollama | Local captioning, OCR and diagram interpretation |
+| `local-deep` | `qwen3.5:9b` via Ollama | Explicit local analysis mode using the same Qwen model |
 | `cloud-verify` | `gpt-4.1` via OpenAI | Quality gate for critical architecture diagrams, risk review, trust boundaries, and YAML drafts |
 
 Use `--vision-model gpt-4o` when you specifically want GPT-4o. There is no `gpt-4.0` vision model name in the OpenAI API; use `gpt-4o` or `gpt-4.1`.
@@ -162,7 +162,7 @@ mq-image analyze image.jpg --json
   "rule_of_thirds": 0.453,
   "prompt": "person, monitor, dark scene, ...",
   "vision_mode": "local-fast",
-  "vision_model": "bakllava"
+  "vision_model": "qwen3.5:9b"
 }
 ```
 
@@ -298,7 +298,7 @@ mq-agent
 | Situation | Backend |
 | --------- | ------- |
 | Local-only, no API key | `local-fast` (BakLLaVA via Ollama) |
-| Higher accuracy needed | `local-deep` (llama3.2-vision) |
+| Higher accuracy needed | `local-deep` (qwen3.5:9b) |
 | Critical diagram or trust boundary | `cloud-verify` (`gpt-4.1` via OpenAI) |
 
 mq-image-analyze does not make review decisions. It extracts visual structure.
@@ -354,3 +354,9 @@ schema and docs surfaces together. Before opening a PR, run:
 bash scripts/validate.sh
 bash release-check.sh
 ```
+
+Local model consolidation: both local modes default to Qwen3.5:9b. Thinking is
+disabled for bounded image descriptions. A local failure is reported without
+calling OpenAI; cloud analysis requires an explicit `cloud-verify` mode. The
+local-fast/local-deep names are retained for compatibility and currently select
+the same model. An explicit `--vision-model` can still override that choice.
