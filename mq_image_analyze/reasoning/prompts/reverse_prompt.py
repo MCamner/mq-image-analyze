@@ -82,7 +82,7 @@ class ReversePromptResult:
     content_flags: dict = field(default_factory=lambda: dict(_DEFAULT_CONTENT_FLAGS))
     semantic_caption: str | None = None
     vision_mode: str = "local-fast"
-    vision_model: str = "bakllava"
+    vision_model: str = "qwen3.5:9b"
 
 
 def build(

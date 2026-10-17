@@ -606,12 +606,12 @@ exhaustive.addEventListener('change', () => {
 
 visionMode.addEventListener('change', () => {
   const defaults = {
-    'local-fast': '',
-    'local-deep': 'llama3.2-vision',
+    'local-fast': 'qwen3.5:9b',
+    'local-deep': 'qwen3.5:9b',
     'cloud-verify': 'gpt-4.1',
   };
   visionModel.placeholder = defaults[visionMode.value] || 'auto';
-  if (!visionModel.value || ['bakllava', 'llama3.2-vision', 'gpt-4.1'].includes(visionModel.value)) {
+  if (!visionModel.value || ['qwen3.5:9b', 'bakllava', 'llama3.2-vision', 'gpt-4.1'].includes(visionModel.value)) {
     visionModel.value = defaults[visionMode.value];
   }
 });

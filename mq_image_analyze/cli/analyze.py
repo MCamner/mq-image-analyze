@@ -28,7 +28,7 @@ def analyze(
     vision_model: Optional[str] = typer.Option(
         None,
         "--vision-model",
-        help="Override backend model, e.g. bakllava, llama3.2-vision, gpt-4o, gpt-4.1",
+        help="Override backend model, e.g. qwen3.5:9b, gpt-4o, gpt-4.1",
     ),
     redact: bool = typer.Option(
         False,
