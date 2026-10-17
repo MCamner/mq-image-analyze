@@ -38,3 +38,8 @@ include = ["mq_image_analyze*"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-v"
+
+[dependency-groups]
+dev = [
+    "pytest>=9,<10",
+]

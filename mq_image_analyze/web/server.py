@@ -41,7 +41,12 @@ def _validated_upload(filename: str, data: bytes) -> str:
             width, height = img.size
     except Image.DecompressionBombError as exc:
         raise HTTPException(status_code=413, detail=f"Image has too many pixels (max {MAX_IMAGE_PIXELS})") from exc
-    except (UnidentifiedImageError, OSError) as exc:
+    except (UnidentifiedImageError, OSError, ModuleNotFoundError) as exc:
+        if isinstance(exc, ModuleNotFoundError) and exc.name not in {
+            "pi_heif",
+            "pi_heif._pi_heif",
+        }:
+            raise
         raise HTTPException(status_code=422, detail="Upload is not a readable image") from exc
     if width * height > MAX_IMAGE_PIXELS:
         raise HTTPException(status_code=413, detail=f"Image has too many pixels (max {MAX_IMAGE_PIXELS})")
