@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import NamedTuple
 
+from PIL import Image
 from ultralytics import YOLO
 
 _MODEL_PATH = Path(__file__).parents[3] / "models" / "yolov8n.pt"
@@ -35,7 +36,20 @@ class Detection(NamedTuple):
 
 
 def detect(image_path: str | Path, conf: float = 0.25) -> list[Detection]:
-    results = _get_model()(str(image_path), conf=conf, verbose=False)[0]
+    # Decode before inference: YOLO's path loader can silently drop unreadable
+    # input and return no predictions, hiding the read failure as an IndexError.
+    try:
+        with Image.open(image_path) as source:
+            image = source.convert("RGB")
+    except (OSError, ValueError, ModuleNotFoundError) as exc:
+        if isinstance(exc, ModuleNotFoundError) and exc.name not in {"pi_heif", "pi_heif._pi_heif"}:
+            raise
+        raise ValueError(f"Cannot decode image: {image_path}") from exc
+
+    predictions = _get_model()(image, conf=conf, verbose=False)
+    if not predictions:
+        raise RuntimeError("Object detector returned no prediction for the decoded image")
+    results = predictions[0]
     h, w = results.orig_shape
     image_area = float(h * w)
     detections = []
