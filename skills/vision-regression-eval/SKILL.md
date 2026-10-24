@@ -46,7 +46,7 @@ Use local authorized inputs by default. Send images to cloud providers only
 within the user's authorized scope. Do not download weights or modify
 production evidence stores to complete an evaluation.
 
-## Routing examples
+## Evals
 
 - "Compare old and new models on these diagrams" → use this skill.
 - "Evaluate a prompt change on the same screenshots" → use this skill.
