@@ -197,7 +197,7 @@ Arguments:
 
 Output schema: `visual_architecture_observation.v1`
 
-Fields include: `image_type` (`architecture-diagram \| dashboard \| terminal \| ui-screenshot \| unknown`), `components`, `connections`, `color_groups`, `ocr_text` (when pytesseract is installed), `limitations`, `safety`.
+Fields include: `image_type` (`architecture-diagram \| dashboard \| terminal \| ui-screenshot \| unknown`), `schema_version`, `image_path`, `components`, `connections`, `groups`, `text_regions` (when pytesseract is installed), `layout`, `limitations`, `ocr_available`. Full shape: [visual-architecture-schema.md](visual-architecture-schema.md).
 
 Designed to be consumed by mq-mcp review tools. OCR-based text extraction from diagram boxes is included when pytesseract is installed. Read-only. Safety: `safe`.
 
