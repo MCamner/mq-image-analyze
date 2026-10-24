@@ -108,3 +108,11 @@ def test_analyze_rejects_unknown_vision_backend(tmp_path: Path) -> None:
 
     assert result.exit_code == 2
     assert "Unsupported vision mode" in result.output
+
+
+def test_mcp_rejects_unknown_transport() -> None:
+    with patch("mq_image_analyze.mcp.server.mcp.run") as run:
+        result = runner.invoke(app, ["mcp", "--transport", "foo"])
+    assert result.exit_code == 2
+    assert "foo" in _ANSI_RE.sub("", result.output)
+    run.assert_not_called()

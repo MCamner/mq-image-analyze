@@ -189,7 +189,7 @@ def compare_images(
     description=(
         "Analyze a UI screenshot: detects screenshot type (terminal/browser/readme/app-ui), "
         "layout regions, WCAG contrast ratio, text density, visual hierarchy depth, grid alignment, "
-        "and accessibility issues. Optionally adds bakllava semantic caption. "
+        "and accessibility issues. Optionally adds a local Ollama semantic caption (qwen3.5:9b). "
         f"Safety: {_SAFETY}. Read-only."
     )
 )

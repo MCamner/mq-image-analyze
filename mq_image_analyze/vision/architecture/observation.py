@@ -20,7 +20,7 @@ class Component:
 @dataclass
 class Connection:
     id: str
-    direction: str             # horizontal | vertical | diagonal | unknown
+    direction: str             # horizontal | vertical | diagonal
     from_component: str | None = None
     to_component: str | None = None
 
