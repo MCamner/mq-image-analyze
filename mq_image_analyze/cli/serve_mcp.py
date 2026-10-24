@@ -13,4 +13,11 @@ def serve_mcp(
         uvicorn.run("mq_image_analyze.mcp.http:app", host="127.0.0.1", port=port)
         return
     from mq_image_analyze.mcp.server import mcp
-    mcp.run(transport=transport)
+    if transport == "stdio":
+        mcp.run(transport="stdio")
+    elif transport == "sse":
+        mcp.run(transport="sse")
+    else:
+        raise typer.BadParameter(
+            f"{transport!r}; use 'stdio', 'sse' or 'http'", param_hint="--transport"
+        )
