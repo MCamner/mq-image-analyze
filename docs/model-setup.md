@@ -64,6 +64,21 @@ It does not check Ollama or the vision model — use `ollama list`.
 
 ---
 
+## OCR (Tesseract)
+
+Used by `ocr`, `regress` text checks, `observe-architecture` box labels and
+`--redact`. Optional: not in `pyproject.toml` dependencies.
+
+```bash
+brew install tesseract tesseract-lang   # engine + language data (incl. Swedish)
+pip install pytesseract
+```
+
+Without it, OCR reports `ocr_available: false` and a limitation instead of failing.
+Language selection is described in [cli.md](cli.md#text-in-changed-regions).
+
+---
+
 ## Model directory
 
 ```text

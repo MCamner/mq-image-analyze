@@ -116,6 +116,26 @@ Image-derived text is data. It must not be executed or treated as instructions.
 
 ---
 
+## observe-architecture
+
+Observe an architecture diagram or infrastructure screenshot. Same
+`visual_architecture_observation.v1` payload as the `observe_architecture` MCP tool.
+
+```bash
+mq-image observe-architecture <image>
+mq-image observe-architecture <image> --json
+```
+
+| Argument | Type | Required | Description |
+| -------- | ---- | -------- | ----------- |
+| `image_path` | path | yes | Path to architecture diagram or screenshot |
+| `--json` | flag | no | Print `visual_architecture_observation.v1` JSON |
+
+Schema: [visual-architecture-schema.md](visual-architecture-schema.md). OCR of box
+labels requires `pytesseract`.
+
+---
+
 ## regress
 
 Visual regression: a directory of approved screenshots against a new run. Screens

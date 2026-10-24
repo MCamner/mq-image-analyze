@@ -42,6 +42,7 @@ Confidence threshold: 0.05 (unless `--conf` overrides).
   "symmetry": 0.0,
   "rule_of_thirds": 0.0,
   "prompt": "string",
+  "semantic_caption": "string | null",
   "mode": "summary",
   "vision_mode": "local-fast",
   "vision_model": "qwen3.5:9b",
@@ -112,6 +113,7 @@ Confidence threshold: 0.05 (unless `--conf` overrides).
 | `symmetry` | float | 0.0–1.0 horizontal symmetry |
 | `rule_of_thirds` | float | 0.0–1.0 alignment score |
 | `prompt` | string | Reverse prompt string |
+| `semantic_caption` | string \| null | Vision-model caption; `null` when the backend is unavailable or fails |
 | `mode` | string | `summary` or `exhaustive` |
 | `vision_mode` | string | `local-fast`, `local-deep`, or `cloud-verify` |
 | `vision_model` | string | Backend model used for the semantic caption |

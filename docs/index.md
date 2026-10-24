@@ -20,7 +20,7 @@ pip install -e ".[web,mcp]"
 mq-image analyze image.png
 mq-image analyze-ui screenshot.png
 mq-image compare before.png after.png
-mq-image serve --port 9999
+mq-image serve --port 8000
 mq-image mcp
 ```
 
@@ -56,7 +56,7 @@ mq-image mcp
 | `image_ocr` | Visible text as `image_ocr.v1` |
 | `image_perception` | Normalized `perception.v1` record from the `ui`, `architecture` or `ocr` producer |
 
-All tools are read-only (safety: safe).
+All tools are read-only. `analyze_image`, `reverse_prompt` and `compare_images` are safety Class B (OpenAI only with explicit `cloud-verify`); the rest are Class A. See [Tool safety](tool-safety.md).
 
 ---
 
