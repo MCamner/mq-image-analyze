@@ -7,7 +7,9 @@ title: mq-image-analyze
 
 Visual reasoning infrastructure for image analysis.
 
-**v1.0.0** — Object detection · Palette extraction · Composition analysis · Content flags · Semantic captions · UI analysis · Image comparison · MCP tools
+**v1.9.0** — Object detection · Palette extraction · Composition analysis · Content flags · Semantic captions · UI analysis · Image comparison · Architecture observation · OCR · Perception records · Screenshot regression · MCP tools
+
+![mq-image-analyze terminal report](screenshots/analysis-report.svg)
 
 ---
 
@@ -31,6 +33,10 @@ mq-image mcp
 | `analyze` | Full image analysis — objects, palette, composition, content flags, reverse prompt |
 | `analyze-ui` | UI screenshot analysis — layout, WCAG contrast, hierarchy, accessibility |
 | `compare` | Compare two images — palette drift, style drift, AI-look score |
+| `observe-architecture` | Architecture diagram → `visual_architecture_observation.v1` JSON |
+| `ocr` | Extract visible text from an image |
+| `perceive` | Run one producer and print a normalized `perception.v1` record |
+| `regress` | Compare a directory of screenshots against a baseline; exit 1 on change |
 | `serve` | Web UI on localhost |
 | `mcp` | Start MCP server for agent tool use |
 | `doctor` | Check model and dependency health |
@@ -46,6 +52,9 @@ mq-image mcp
 | `reverse_prompt` | Prompt for image generators |
 | `compare_images` | Visual drift detection |
 | `analyze_ui` | Screenshot accessibility review |
+| `observe_architecture` | Diagram structure as `visual_architecture_observation.v1` |
+| `image_ocr` | Visible text as `image_ocr.v1` |
+| `image_perception` | Normalized `perception.v1` record from the `ui`, `architecture` or `ocr` producer |
 
 All tools are read-only (safety: safe).
 

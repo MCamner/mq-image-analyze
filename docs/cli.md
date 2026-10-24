@@ -33,7 +33,7 @@ mq-image analyze screenshots/ --json > results.jsonl
 | `--exhaustive` | flag | no | Preserve every raw detection, including duplicates |
 | `--conf` | float | no | Detection confidence threshold |
 | `--mode` | string | no | Vision backend: `local-fast`, `local-deep`, or `cloud-verify` |
-| `--vision-model` | string | no | Override backend model, for example `gpt-4o` or `gpt-4.1` |
+| `--vision-model` | string | no | Override backend model, for example `qwen3.5:9b`, `gpt-4o` or `gpt-4.1` |
 | `--redact` | flag | no | `cloud-verify` only: mask personnummer and email addresses before upload |
 | `--cache` | flag | no | Reuse semantic captions from a local cache |
 
@@ -41,8 +41,8 @@ Backend defaults:
 
 | Mode | Default model | Notes |
 | ---- | ------------- | ----- |
-| `local-fast` | `bakllava` | Default Ollama path |
-| `local-deep` | `llama3.2-vision` | Stronger local Ollama path when available |
+| `local-fast` | `qwen3.5:9b` | Default Ollama path |
+| `local-deep` | `qwen3.5:9b` | Same model as `local-fast`; name kept for compatibility |
 | `cloud-verify` | `gpt-4.1` | OpenAI quality gate; requires `OPENAI_API_KEY` |
 
 For GPT-4o:

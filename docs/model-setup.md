@@ -35,6 +35,35 @@ Doctor will confirm the model file is present and loadable.
 
 ---
 
+## Vision backend (Ollama / OpenAI)
+
+Semantic captions, OCR and diagram interpretation use a vision model selected by `--mode`.
+Defaults live in [mq_image_analyze/vision/semantic/provider.py](../mq_image_analyze/vision/semantic/provider.py).
+
+| Mode | Default model | Requires |
+| ---- | ------------- | -------- |
+| `local-fast` | `qwen3.5:9b` | Ollama on `localhost:11434` |
+| `local-deep` | `qwen3.5:9b` | Ollama on `localhost:11434` |
+| `cloud-verify` | `gpt-4.1` | `OPENAI_API_KEY` |
+
+Both local modes currently select the same model; the names are kept for compatibility.
+`--vision-model` overrides the default.
+
+### Install (local)
+
+```bash
+ollama pull qwen3.5:9b
+ollama list            # confirm qwen3.5:9b is present
+```
+
+A local failure is reported in the result without calling OpenAI.
+Cloud analysis only runs with an explicit `--mode cloud-verify`.
+
+`mq-image doctor` checks Python, imports, the YOLO model file and output permissions.
+It does not check Ollama or the vision model — use `ollama list`.
+
+---
+
 ## Model directory
 
 ```text
@@ -56,9 +85,3 @@ To use a different YOLO variant:
 1. Place the model in `models/`
 2. Update `_MODEL_PATH` in `detector.py`
 3. Run `mq-image doctor` to verify
-
----
-
-## Future model management
-
-v0.1.1 goal: `mq-image models install yolov8n` CLI command.

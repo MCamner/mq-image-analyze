@@ -44,7 +44,7 @@ Confidence threshold: 0.05 (unless `--conf` overrides).
   "prompt": "string",
   "mode": "summary",
   "vision_mode": "local-fast",
-  "vision_model": "bakllava",
+  "vision_model": "qwen3.5:9b",
   "detections": [],
   "limitations": ["string"],
   "text_regions": [],
