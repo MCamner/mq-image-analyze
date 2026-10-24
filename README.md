@@ -297,16 +297,8 @@ mq-agent
 
 | Situation | Backend |
 | --------- | ------- |
-<<<<<<< HEAD
 | Local-only, no API key | `local-fast` (qwen3.5:9b via Ollama) |
 | Explicit local-deep mode | `local-deep` (same qwen3.5:9b model) |
-||||||| ed8dd9c
-| Local-only, no API key | `local-fast` (BakLLaVA via Ollama) |
-| Higher accuracy needed | `local-deep` (llama3.2-vision) |
-=======
-| Local-only, no API key | `local-fast` (BakLLaVA via Ollama) |
-| Higher accuracy needed | `local-deep` (qwen3.5:9b) |
->>>>>>> feat/qwen35-vision-20261017
 | Critical diagram or trust boundary | `cloud-verify` (`gpt-4.1` via OpenAI) |
 
 mq-image-analyze does not make review decisions. It extracts visual structure.
