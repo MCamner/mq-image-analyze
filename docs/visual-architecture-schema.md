@@ -29,7 +29,7 @@ as context into `review_file`, `review_diff`, or `review_repo` calls.
   "connections": [
     {
       "id": "edge_0",
-      "direction": "horizontal | vertical | diagonal | unknown",
+      "direction": "horizontal | vertical | diagonal",
       "from_component": "box_0 or null",
       "to_component": "box_1 or null"
     }
@@ -123,7 +123,7 @@ as context into `review_file`, `review_diff`, or `review_repo` calls.
 | ----- | ---- | ----- |
 | `text` | string | OCR-extracted text string |
 | `bbox` | float[4] | `[x1, y1, x2, y2]` in pixels |
-| `confidence` | float | 0.0–1.0 pytesseract confidence |
+| `confidence` | float | 0.0–1.0 pytesseract confidence; regions below 0.40 are dropped |
 
 ### layout
 

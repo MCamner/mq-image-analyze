@@ -42,9 +42,13 @@ reverse_prompt()         — reverse prompt from image
 compare_images()         — image drift comparison
 analyze_ui()             — UI screenshot critique
 observe_architecture()   — visual_architecture_observation.v1 for mq-mcp review context
+image_ocr()              — image_ocr.v1 visible text with position
+image_perception()       — normalized perception.v1 record
 ```
 
-All tools are read-only. Safety classification: `safe`.
+All tools are read-only. `analyze_image`, `reverse_prompt` and `compare_images`
+are safety Class B (can reach OpenAI only with explicit `vision_mode=cloud-verify`);
+the rest are Class A. See [tool-safety.md](tool-safety.md).
 
 See [mcp-tools.md](mcp-tools.md) for full contracts and argument signatures.
 

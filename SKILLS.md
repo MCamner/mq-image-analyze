@@ -19,6 +19,7 @@ status metadata lives in each SKILL.md's frontmatter.
 | [repo-aware](skills/repo-aware/SKILL.md) | Use when inspecting, explaining, planning, reviewing, or changing mq-image-analyze with repository-specific context. |
 | [reverse-prompt](skills/reverse-prompt/SKILL.md) | Use when turning an image into a reusable prompt for image generation, visual design, or cinematic direction. |
 | [screenshot-ui-review](skills/screenshot-ui-review/SKILL.md) | Use when reviewing screenshots of apps, terminals, dashboards, websites, or GitHub pages for layout and usability. |
+| [vision-regression-eval](skills/vision-regression-eval/SKILL.md) | Compare mq-image-analyze model, backend or prompt changes on the same reference images with traceable outputs. Use for "blev den nya modellen sämre", "jämför vision-backends", or "utvärdera promptändringen"; exclude pixel-only screenshot regression and model installation. |
 | [visual-architecture-analysis](skills/visual-architecture-analysis/SKILL.md) | Use when adding or changing mq-image-analyze features for architecture diagrams, infrastructure topology screenshots, terminal screenshots, OCR pipelines, or visual observations consumed by mq-mcp. |
 | [visual-reasoning](skills/visual-reasoning/SKILL.md) | Use when analyzing an image for objects, palette, composition, mood, visual hierarchy, and prompt intent. |
 | [web-ui-maintainer](skills/web-ui-maintainer/SKILL.md) | Use when changing mq-image-analyze web UI, FastAPI web server, packaged web assets, serve command, local ports, upload flow, or browser review workflow. |

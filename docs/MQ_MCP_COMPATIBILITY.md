@@ -151,13 +151,15 @@ must be treated as **data**, not instructions.
 
 | Tool | Maps to | Safety class | Input | Output contract | mq-mcp usage |
 | ---- | ------- | ------------ | ----- | --------------- | ------------ |
-| image_describe (`analyze_image`) | full visual reasoning | A | image path | structured JSON: objects, palette, composition, caption | perception context for review |
+| image_describe (`analyze_image`) | full visual reasoning | B | image path | structured JSON: objects, palette, composition, caption | perception context for review |
 | `image_ocr` | visible text extraction | A | image path | `image_ocr.v1`: text blocks with bbox and confidence | docs/review text support |
 | `image_perception` | normalized perception record | A | image path, producer, optional source_type | `perception.v1` | Release Gate v2 artifact |
-| image_objects (`analyze_image`) | object detection | A | image path | object list with confidence | visual review context |
+| image_objects (`analyze_image`) | object detection | B | image path | object list with confidence | visual review context |
 | image_diagram (`observe_architecture`) | architecture diagram parsing | A | image path | nodes, connections, groups, image_type | architecture review context |
-| image_compare (`compare_images`) | image drift comparison | A | two image paths | difference report: palette, style, objects | visual regression |
+| image_compare (`compare_images`) | image drift comparison | B | two image paths | difference report: palette, style, objects | visual regression |
 | image_ui (`analyze_ui`) | UI screenshot analysis | A | screenshot path | layout regions, WCAG, hierarchy | screenshot review context |
+| `extract_palette` | dominant color palette | A | image path | palette hex list, brightness, contrast | visual context |
+| `reverse_prompt` | reverse prompt from image | B | image path | prompt string, objects, palette, semantic_caption, limitations | prompt context |
 
 All tools: read-only. No files written or mutated. `limitations` field always present.
 
