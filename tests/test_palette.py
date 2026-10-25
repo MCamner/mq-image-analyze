@@ -34,3 +34,14 @@ def test_brightness_bright(bright_image: Path) -> None:
 
 def test_contrast_low(dark_image: Path) -> None:
     assert contrast_label(dark_image) == "low contrast"
+
+
+def test_extract_is_deterministic(tmp_path: Path) -> None:
+    from PIL import Image, ImageDraw
+    img = Image.new("RGB", (640, 480), color=(70, 130, 180))
+    draw = ImageDraw.Draw(img)
+    draw.rectangle([100, 100, 300, 300], fill=(255, 200, 50))
+    draw.ellipse([350, 150, 550, 350], fill=(220, 80, 80))
+    sample = tmp_path / "sample.jpg"
+    img.save(sample)
+    assert len({tuple(extract(sample)) for _ in range(8)}) == 1

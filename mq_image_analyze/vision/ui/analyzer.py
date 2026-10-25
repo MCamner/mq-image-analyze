@@ -22,11 +22,16 @@ def _avg_brightness(gray: np.ndarray) -> float:
 
 
 def _dominant_colors(bgr: np.ndarray, k: int = 3) -> list[tuple[int, int, int]]:
-    """K-means dominant colors in RGB."""
+    """K-means dominant colors in RGB.
+
+    Seeded, so the same image always gives the same colors: the sample and the
+    k-means initialisation were both random, and contrast_ratio drifted per run.
+    """
     pixels = bgr.reshape(-1, 3).astype(np.float32)
     if len(pixels) > 5000:
-        idx = np.random.choice(len(pixels), 5000, replace=False)
+        idx = np.random.default_rng(0).choice(len(pixels), 5000, replace=False)
         pixels = pixels[idx]
+    cv2.setRNGSeed(0)
     _, labels, centers = cv2.kmeans(
         pixels, k, None,
         (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0),

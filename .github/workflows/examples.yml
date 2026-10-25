@@ -3,6 +3,8 @@ name: Generate Examples
 on:
   push:
     branches: [main]
+  # Also on PRs, so stale examples show up before merge instead of on main.
+  pull_request:
 
 permissions:
   contents: read
