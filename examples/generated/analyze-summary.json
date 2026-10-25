@@ -26,7 +26,7 @@
     "OCR not active \u2014 visible text not analyzed.",
     "Semantic meaning and emotional context not inferred.",
     "content_flags require a specialized model \u2014 not active with YOLOv8n.",
-    "Semantic caption unavailable from local-fast (bakllava)."
+    "Semantic caption unavailable from local-fast (qwen3.5:9b)."
   ],
   "text_regions": [],
   "unclassified_regions": [],
@@ -54,10 +54,11 @@
       }
     },
     "covered_parts": [],
-    "source": "not_implemented",
-    "note": "nudenet not installed \u2014 run: pip install nudenet"
+    "source": "nudenet",
+    "raw_classes": [],
+    "note": "sexual_activity detection not available in NudeNet \u2014 requires additional classifier."
   },
   "semantic_caption": null,
   "vision_mode": "local-fast",
-  "vision_model": "bakllava"
+  "vision_model": "qwen3.5:9b"
 }
