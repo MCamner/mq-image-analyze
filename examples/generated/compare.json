@@ -1,8 +1,8 @@
 {
   "before": "examples/generated/sample.jpg",
   "after": "examples/generated/sample.jpg",
-  "palette_drift": 0.013,
-  "style_drift": 0.0043,
+  "palette_drift": 0.0,
+  "style_drift": 0.0,
   "objects_added": [],
   "objects_removed": [],
   "brightness_changed": false,
@@ -49,9 +49,9 @@
       "#4682b3",
       "#fec732",
       "#db504f",
-      "#6b787e",
-      "#e6ca6c",
-      "#ab6072"
+      "#76747c",
+      "#e34c53",
+      "#e2cc78"
     ],
     "brightness": "mid-tone",
     "contrast": "low contrast",
