@@ -2,7 +2,7 @@
 
 All MCP tools are read-only. They inspect image files and return structured analysis; they do not write, delete, mutate, or suppress detector output.
 
-Safety classes follow ADR-003 (`TOOL_CLASSES` in [server.py](../mq_image_analyze/mcp/server.py)). `analyze_image`, `reverse_prompt` and `compare_images` are Class B; the other tools are Class A. Class B can send an image to OpenAI only with an explicit `vision_mode=cloud-verify`. See [tool-safety.md](tool-safety.md).
+Safety classes follow ADR-003 (`TOOL_CLASSES` in [server.py](https://github.com/MCamner/mq-image-analyze/blob/main/mq_image_analyze/mcp/server.py)). `analyze_image`, `reverse_prompt` and `compare_images` are Class B; the other tools are Class A. Class B can send an image to OpenAI only with an explicit `vision_mode=cloud-verify`. See [tool-safety.md](tool-safety.md).
 
 See [MQ_MCP_COMPATIBILITY.md](MQ_MCP_COMPATIBILITY.md) for the full role boundary and integration contract with mq-mcp.
 
@@ -26,7 +26,7 @@ See [MQ_MCP_COMPATIBILITY.md](MQ_MCP_COMPATIBILITY.md) for the full role boundar
 ## Stable sample payloads
 
 Every MCP tool has a stable sample payload under
-[`examples/mcp-payloads/`](../examples/mcp-payloads/). Release checks validate
+[`examples/mcp-payloads/`](https://github.com/MCamner/mq-image-analyze/tree/main/examples/mcp-payloads). Release checks validate
 that each sample's top-level contract keys still match live tool output:
 
 ```bash

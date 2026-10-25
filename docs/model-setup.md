@@ -38,7 +38,7 @@ Doctor will confirm the model file is present and loadable.
 ## Vision backend (Ollama / OpenAI)
 
 Semantic captions, OCR and diagram interpretation use a vision model selected by `--mode`.
-Defaults live in [mq_image_analyze/vision/semantic/provider.py](../mq_image_analyze/vision/semantic/provider.py).
+Defaults live in [mq_image_analyze/vision/semantic/provider.py](https://github.com/MCamner/mq-image-analyze/blob/main/mq_image_analyze/vision/semantic/provider.py).
 
 | Mode | Default model | Requires |
 | ---- | ------------- | -------- |
@@ -93,7 +93,7 @@ Never commit `.pt`, `.ckpt`, `.safetensors`, `.bin`, `.gguf`, or `.onnx` files.
 
 ## Replacing the model
 
-The detector is loaded from a single path in [mq_image_analyze/vision/detection/detector.py](../mq_image_analyze/vision/detection/detector.py).
+The detector is loaded from a single path in [mq_image_analyze/vision/detection/detector.py](https://github.com/MCamner/mq-image-analyze/blob/main/mq_image_analyze/vision/detection/detector.py).
 
 To use a different YOLO variant:
 
