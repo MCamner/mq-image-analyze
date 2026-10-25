@@ -13,6 +13,8 @@ def extract(image_path: str | Path, n_colors: int = 6) -> list[str]:
 
     pixels = img.reshape(-1, 3).astype(np.float32)
 
+    # Seeded so the same image always yields the same palette.
+    cv2.setRNGSeed(0)
     _, labels, centers = cv2.kmeans(
         pixels,
         n_colors,

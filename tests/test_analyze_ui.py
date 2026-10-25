@@ -95,3 +95,28 @@ def test_analyze_ui_limitations_present(tmp_path: Path):
     p = _make_screenshot(tmp_path, (200, 200, 200))
     result = analyze_ui(p)
     assert len(result.limitations) > 0
+
+
+def _make_examples_sample(tmp_path: Path) -> Path:
+    # The image the Generate Examples workflow analyzes. JPEG noise gives
+    # k-means enough near-identical colors to land differently per seed.
+    from PIL import Image, ImageDraw
+    img = Image.new("RGB", (640, 480), color=(70, 130, 180))
+    draw = ImageDraw.Draw(img)
+    draw.rectangle([100, 100, 300, 300], fill=(255, 200, 50))
+    draw.ellipse([350, 150, 550, 350], fill=(220, 80, 80))
+    p = tmp_path / "sample.jpg"
+    img.save(p)
+    return p
+
+
+def test_analyze_ui_is_deterministic(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    import json
+
+    def no_caption(*_args, **_kwargs):
+        raise RuntimeError("no vision backend in this test")
+
+    monkeypatch.setattr("mq_image_analyze.vision.semantic.ollama_vision.describe", no_caption)
+    sample = _make_examples_sample(tmp_path)
+    results = {json.dumps(dataclasses.asdict(analyze_ui(sample)), sort_keys=True) for _ in range(8)}
+    assert len(results) == 1
