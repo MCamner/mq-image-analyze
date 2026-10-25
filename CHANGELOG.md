@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+### Fixed
+
+- HTTP discovery now includes `input_schema` alongside `inputSchema`, so
+  mq-agent retains the tool's parameter schema. An opt-in cross-repo test
+  exercises the real agent bridge, image pipelines, and mq-mcp Release Gate
+  validator without model or cloud calls.
+
 ### Added
 
 - `contracts/tool_surface.v1.json` publishes every registered MCP tool with its

@@ -36,6 +36,7 @@ async def health() -> dict:
 async def tools() -> dict:
     return {"tools": [
         {"name": tool.name, "description": tool.description, "inputSchema": tool.inputSchema,
+         "input_schema": tool.inputSchema,
          "class": TOOL_CLASSES[tool.name]}
         for tool in await mcp.list_tools()
     ]}
