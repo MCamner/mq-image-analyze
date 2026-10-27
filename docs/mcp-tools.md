@@ -265,3 +265,7 @@ Start with `mq-image mcp --transport http --port 8766`. The bridge binds to
 `POST /tools/{name}` with a JSON argument object. It uses the same registered
 MCP tools and image path restrictions as stdio. stdio remains the default.
 The web UI (`mq-image serve`) is a separate surface.
+
+`GET /tools` includes both MCP's `inputSchema` and mq-agent's `input_schema`
+for each tool, with identical contents. This lets mq-agent retain parameter
+metadata during discovery instead of treating the input schema as empty.

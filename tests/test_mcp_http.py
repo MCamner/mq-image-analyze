@@ -12,6 +12,14 @@ def test_http_discovery():
     assert {tool['name']: tool['class'] for tool in tools} == TOOL_CLASSES
 
 
+def test_http_discovery_preserves_mq_agent_input_schema():
+    tools = TestClient(app, base_url="http://localhost").get("/tools").json()["tools"]
+    tool = next(t for t in tools if t["name"] == "image_perception")
+    assert tool["input_schema"] == tool["inputSchema"]
+    assert {"image_path", "producer"} <= set(tool["input_schema"]["properties"])
+    assert set(tool["input_schema"]["required"]) == {"image_path", "producer"}
+
+
 def test_http_tool_call_and_errors(tmp_path):
     client = TestClient(app, base_url="http://localhost")
     path = tmp_path / 'test.png'

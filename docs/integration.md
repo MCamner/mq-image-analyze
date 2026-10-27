@@ -80,3 +80,25 @@ mq-image analyze image.jpg --json | jq '.objects'
 ```
 
 All `--json` output follows the v1 schema contract.
+
+## Cross-repo integration check
+
+`tests/test_stack_perception_integration.py` uses the real mq-agent HTTP
+bridge, the in-process mq-image HTTP app, and mq-mcp's Release Gate validator.
+It checks the published tool contract, discovery metadata, all three
+`image_perception` producers, architecture observation normalization, and
+path confinement. A malformed artifact must also be rejected by the consumer.
+
+Use a Python environment containing this project's test/MCP dependencies and
+mq-agent's dependencies, with both consumer checkouts available:
+
+```bash
+MQ_AGENT_DIR=../mq-agent MQ_MCP_DIR=../mq-mcp MQ_IMAGE_STACK_TESTS=1 \
+  python -m pytest tests/test_stack_perception_integration.py -q
+```
+
+Without `MQ_IMAGE_STACK_TESTS=1`, these tests are explicitly skipped. With it,
+missing checkouts or dependencies fail the check. HTTP is transported in
+process; no running server, vision model, or cloud API is used. OCR uses the
+installed engine when available and otherwise exercises the existing fallback.
+This verifies integration and schema acceptance, not semantic model accuracy.
