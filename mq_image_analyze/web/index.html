@@ -8,541 +8,419 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --bg:       #0d1117;
-    --surface:  #161b22;
-    --border:   #30363d;
-    --text:     #e6edf3;
-    --muted:    #8b949e;
-    --accent:   #58a6ff;
-    --green:    #3fb950;
-    --yellow:   #d29922;
-    --red:      #f85149;
-    --radius:   8px;
+    --ground:   #16110a;
+    --panel:    #201810;
+    --rule:     #3d301d;
+    --phosphor: #ffb238;
+    --dim:      #a88a58;
+    --signal:   #e5422c;
+    --ink:      #f3e3c3;
+    --mono: "JetBrains Mono", "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
   }
 
+  html { color-scheme: dark; }
+
   body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", monospace;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--mono);
     font-size: 14px;
-    min-height: 100vh;
+    line-height: 1.5;
+    height: 100vh;
     display: flex;
     flex-direction: column;
   }
 
+  :focus-visible { outline: 2px solid var(--phosphor); outline-offset: 2px; }
+
   header {
-    border-bottom: 1px solid var(--border);
-    padding: 14px 24px;
     display: flex;
-    align-items: center;
-    gap: 12px;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 24px;
+    border-bottom: 1px solid var(--rule);
   }
-  header h1 { font-size: 15px; font-weight: 600; letter-spacing: -0.3px; }
-  header .tag {
-    font-size: 11px;
-    color: var(--muted);
-    background: var(--surface);
-    border: 1px solid var(--border);
-    padding: 2px 8px;
-    border-radius: 20px;
-  }
+  header h1 { font-size: 14px; font-weight: 700; color: var(--phosphor); }
+  header p  { font-size: 12px; color: var(--dim); }
 
   main {
     flex: 1;
     display: grid;
-    grid-template-columns: 380px 1fr;
-    gap: 0;
-    overflow: hidden;
-    height: calc(100vh - 49px);
+    grid-template-columns: minmax(0, 1fr) 420px;
+    min-height: 0;
   }
 
-  /* LEFT PANEL */
-  .left {
-    border-right: 1px solid var(--border);
+  /* VIEWPORT: the image is the drop target */
+  .stage {
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    border-right: 1px solid var(--rule);
+    min-width: 0;
   }
 
-  .drop-zone {
-    margin: 20px;
-    border: 2px dashed var(--border);
-    border-radius: var(--radius);
-    padding: 40px 20px;
-    text-align: center;
+  .viewport {
+    flex: 1;
+    min-height: 360px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 28px;
     cursor: pointer;
-    transition: border-color 0.15s, background 0.15s;
-    flex-shrink: 0;
+    position: relative;
+    /* faint scanlines */
+    background: repeating-linear-gradient(to bottom, rgba(255,178,56,0.035) 0 1px, transparent 1px 4px), var(--ground);
   }
-  .drop-zone:hover, .drop-zone.drag-over {
-    border-color: var(--accent);
-    background: rgba(88,166,255,0.04);
-  }
-  .drop-zone input { display: none; }
-  .drop-icon { font-size: 32px; margin-bottom: 10px; }
-  .drop-label { color: var(--muted); font-size: 13px; line-height: 1.6; }
-  .drop-label strong { color: var(--accent); }
+  .viewport.drag-over { outline: 2px solid var(--phosphor); outline-offset: -10px; background-color: var(--panel); }
+  .viewport input { display: none; }
 
-  .preview {
-    margin: 0 20px 16px;
+  .drop-hint {
+    position: relative;
+    text-align: center;
+    color: var(--dim);
+    max-width: 34ch;
+  }
+  .drop-hint strong {
+    display: block;
+    font-size: 26px;
+    line-height: 1.2;
+    font-weight: 400;
+    color: var(--phosphor);
+    margin-bottom: 10px;
+  }
+  .drop-hint span { font-size: 12px; }
+
+  .frame {
+    position: relative;
     display: none;
-    flex-direction: column;
-    gap: 10px;
-    flex-shrink: 0;
+    line-height: 0;
   }
-  .preview.visible { display: flex; }
-  .preview img {
-    width: 100%;
-    max-height: 220px;
-    object-fit: contain;
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-    background: #000;
+  .frame.visible { display: inline-block; }
+  .frame img {
+    display: block;
+    max-width: 100%;
+    max-height: calc(100vh - 260px);
+    min-height: 120px;
+    border: 1px solid var(--rule);
   }
+  .overlay {
+    position: absolute;
+    inset: 1px;
+    width: calc(100% - 2px);
+    height: calc(100% - 2px);
+    pointer-events: none;
+  }
+  .overlay .thirds line { stroke: var(--phosphor); stroke-opacity: 0.55; stroke-dasharray: 6 6; }
+  .overlay .box rect { fill: none; stroke: var(--phosphor); stroke-width: 2; }
+  .overlay .box text { fill: var(--ground); font-family: var(--mono); font-weight: 700; }
+  .overlay .box .tag { fill: var(--phosphor); stroke: none; }
+  .overlay.no-thirds .thirds { display: none; }
+
+  .filmstrip {
+    display: flex;
+    height: 14px;
+    border-top: 1px solid var(--rule);
+  }
+  .filmstrip div { flex: 1; }
 
   .controls {
-    padding: 0 20px 16px;
     display: flex;
-    flex-direction: column;
-    gap: 10px;
-    flex-shrink: 0;
-  }
-  .toggle-row {
-    display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 10px;
-    color: var(--muted);
-    font-size: 13px;
+    gap: 14px 22px;
+    padding: 14px 24px;
+    border-top: 1px solid var(--rule);
+    background: var(--panel);
+    font-size: 12px;
+    color: var(--dim);
   }
-  .toggle {
-    position: relative;
-    width: 36px;
-    height: 20px;
-    flex-shrink: 0;
-  }
-  .toggle input { opacity: 0; width: 0; height: 0; }
-  .toggle-slider {
-    position: absolute;
-    inset: 0;
-    background: var(--border);
-    border-radius: 20px;
-    transition: 0.2s;
-    cursor: pointer;
-  }
-  .toggle-slider::before {
-    content: "";
-    position: absolute;
-    width: 14px; height: 14px;
-    left: 3px; top: 3px;
-    background: var(--text);
-    border-radius: 50%;
-    transition: 0.2s;
-  }
-  .toggle input:checked + .toggle-slider { background: var(--accent); }
-  .toggle input:checked + .toggle-slider::before { transform: translateX(16px); }
-
-  .conf-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: var(--muted);
-    font-size: 13px;
-  }
-  .conf-row input[type=range] {
-    flex: 1;
-    accent-color: var(--accent);
-    cursor: pointer;
-  }
-  .conf-val { color: var(--text); font-family: monospace; width: 36px; }
-
-  .select-row {
-    display: grid;
-    grid-template-columns: 92px 1fr;
-    align-items: center;
-    gap: 10px;
-    color: var(--muted);
-    font-size: 13px;
-  }
-  .select-row select,
-  .select-row input {
-    width: 100%;
-    min-width: 0;
-    background: var(--surface);
-    color: var(--text);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 8px 9px;
+  .controls label { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+  .controls input[type=checkbox] { accent-color: var(--phosphor); width: 14px; height: 14px; }
+  .controls input[type=range]    { accent-color: var(--phosphor); width: 110px; }
+  .conf-val { color: var(--ink); min-width: 4ch; }
+  .controls select,
+  .controls input[type=text] {
+    background: var(--ground);
+    color: var(--ink);
+    border: 1px solid var(--rule);
+    padding: 6px 8px;
     font: inherit;
+    min-width: 0;
   }
+  .controls input[type=text] { width: 13ch; }
 
   .analyze-btn {
-    background: var(--accent);
-    color: #000;
+    margin-left: auto;
+    background: var(--phosphor);
+    color: var(--ground);
     border: none;
-    border-radius: var(--radius);
-    padding: 10px;
+    padding: 9px 22px;
+    font: inherit;
     font-size: 14px;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
-    transition: opacity 0.15s;
-    width: 100%;
   }
-  .analyze-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-  .analyze-btn:hover:not(:disabled) { opacity: 0.88; }
+  .analyze-btn:disabled { background: var(--rule); color: var(--dim); cursor: not-allowed; }
+  .analyze-btn:hover:not(:disabled) { background: var(--ink); }
 
-  /* RIGHT PANEL */
+  /* READOUT */
   .right {
     overflow-y: auto;
     padding: 24px;
+    min-width: 0;
   }
 
   .empty-state {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    color: var(--muted);
-    gap: 8px;
-    text-align: center;
+    color: var(--dim);
+    font-size: 12px;
+    max-width: 38ch;
   }
-  .empty-state .hint { font-size: 22px; }
+  .empty-state p + p { margin-top: 10px; }
 
   .loading {
     display: none;
-    height: 100%;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    color: var(--muted);
-    gap: 14px;
+    align-items: flex-start;
+    gap: 16px;
+    color: var(--dim);
   }
   .loading.active { display: flex; }
-  .spinner {
-    width: 32px; height: 32px;
-    border: 3px solid var(--border);
-    border-top-color: var(--accent);
+  .eye {
+    width: 44px; height: 44px;
     border-radius: 50%;
-    animation: spin 0.8s linear infinite;
+    border: 3px solid #4a3a26;
+    background: radial-gradient(circle, #ffd27a 0 8%, var(--signal) 22%, #6e1508 58%, #1a0703 72%);
+    animation: watch 1.6s ease-in-out infinite;
   }
-  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes watch {
+    50% { filter: brightness(1.45); box-shadow: 0 0 22px rgba(229,66,44,0.55); }
+  }
+  @media (prefers-reduced-motion: reduce) { .eye { animation: none; } }
+
+  .error-box {
+    display: none;
+    border-left: 3px solid var(--signal);
+    padding: 10px 14px;
+    margin-bottom: 20px;
+    background: rgba(229,66,44,0.08);
+    color: var(--ink);
+    font-size: 13px;
+  }
+  .error-box.visible { display: block; }
 
   .results { display: none; }
   .results.visible { display: block; }
 
-  .result-header {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    margin-bottom: 20px;
+  .result-header { margin-bottom: 22px; }
+  .result-header h2 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--phosphor);
+    word-break: break-all;
+    line-height: 1.3;
   }
-  .result-header h2 { font-size: 16px; font-weight: 600; }
-  .mode-badge {
-    font-size: 11px;
-    padding: 2px 8px;
-    border-radius: 20px;
-    border: 1px solid var(--border);
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-  .mode-badge.exhaustive { border-color: var(--yellow); color: var(--yellow); }
-  .backend-badge {
-    font-size: 11px;
-    padding: 2px 8px;
-    border-radius: 20px;
-    border: 1px solid var(--border);
-    color: var(--accent);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
+  .result-header p { font-size: 12px; color: var(--dim); margin-top: 4px; }
+  .result-header .exhaustive { color: var(--phosphor); }
 
-  .section { margin-bottom: 20px; }
+  .section {
+    padding: 14px 0;
+    border-top: 1px solid var(--rule);
+  }
   .section-title {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    color: var(--muted);
+    font-size: 12px;
+    color: var(--dim);
     margin-bottom: 8px;
   }
 
-  .tags { display: flex; flex-wrap: wrap; gap: 6px; }
-  .tag-item {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 3px 10px;
-    font-size: 13px;
-  }
-  .tag-item.conf {
-    font-size: 12px;
-    color: var(--muted);
-  }
+  .objects { font-size: 14px; color: var(--ink); }
+  .objects .none { color: var(--dim); }
 
-  .palette-row { display: flex; gap: 6px; flex-wrap: wrap; }
+  .palette-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 6px 12px; }
   .swatch {
-    width: 36px; height: 36px;
-    border-radius: 4px;
-    border: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    border: none;
+    color: var(--ink);
+    font: inherit;
+    font-size: 12px;
     cursor: pointer;
-    position: relative;
-    flex-shrink: 0;
+    padding: 2px 0;
+    text-align: left;
   }
-  .swatch:hover::after {
-    content: attr(data-hex);
-    position: absolute;
-    bottom: 42px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--surface);
-    border: 1px solid var(--border);
-    color: var(--text);
-    font-size: 11px;
-    padding: 2px 6px;
-    border-radius: 4px;
-    white-space: nowrap;
-    pointer-events: none;
-  }
+  .swatch i { width: 18px; height: 18px; flex-shrink: 0; border: 1px solid rgba(243,227,195,0.15); }
+  .swatch:hover span { color: var(--phosphor); }
 
   .kv-grid {
     display: grid;
-    grid-template-columns: 120px 1fr;
-    gap: 6px 16px;
+    grid-template-columns: 15ch 1fr;
+    gap: 6px 14px;
     font-size: 13px;
+    align-items: center;
   }
-  .kv-key { color: var(--muted); }
-  .kv-val { color: var(--text); }
+  .kv-key { color: var(--dim); }
+  .kv-val { color: var(--ink); display: flex; align-items: center; gap: 10px; }
+  .meter { flex: 1; max-width: 140px; height: 6px; background: var(--rule); }
+  .meter b { display: block; height: 100%; background: var(--phosphor); }
 
   .prompt-box {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 12px 14px;
     font-size: 13px;
-    line-height: 1.6;
-    color: var(--text);
-    position: relative;
+    line-height: 1.65;
+    color: var(--ink);
     word-break: break-word;
+    max-width: 68ch;
   }
   .copy-btn {
-    position: absolute;
-    top: 8px; right: 8px;
-    background: var(--border);
-    border: none;
-    border-radius: 4px;
-    color: var(--muted);
-    font-size: 11px;
-    padding: 3px 8px;
+    margin-top: 8px;
+    background: none;
+    border: 1px solid var(--rule);
+    color: var(--dim);
+    font: inherit;
+    font-size: 12px;
+    padding: 3px 10px;
     cursor: pointer;
-    transition: background 0.15s, color 0.15s;
   }
-  .copy-btn:hover { background: var(--accent); color: #000; }
-  .copy-btn.copied { background: var(--green); color: #000; }
+  .copy-btn:hover { border-color: var(--phosphor); color: var(--phosphor); }
+  .copy-btn.copied { border-color: var(--phosphor); color: var(--phosphor); }
 
-  .detections-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-  }
+  .detections-table { width: 100%; border-collapse: collapse; font-size: 13px; }
   .detections-table th {
     text-align: left;
-    color: var(--muted);
-    font-weight: 500;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    color: var(--dim);
+    font-weight: 400;
+    font-size: 12px;
     padding: 0 8px 6px 0;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid var(--rule);
   }
-  .detections-table td {
-    padding: 5px 8px 5px 0;
-    border-bottom: 1px solid rgba(48,54,61,0.5);
-  }
-  .conf-bar-wrap { display: flex; align-items: center; gap: 8px; }
-  .conf-bar {
-    height: 4px;
-    background: var(--border);
-    border-radius: 2px;
-    width: 60px;
-    flex-shrink: 0;
-  }
-  .conf-bar-fill {
-    height: 100%;
-    border-radius: 2px;
-    background: var(--accent);
-  }
+  .detections-table td { padding: 5px 8px 5px 0; border-bottom: 1px solid rgba(61,48,29,0.5); }
+  .detections-table td:not(:first-child), .detections-table th:not(:first-child) { text-align: right; }
 
-  .limitations {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    overflow: hidden;
-  }
-  .lim-toggle {
-    padding: 10px 14px;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 12px;
-    color: var(--muted);
-    user-select: none;
-  }
-  .lim-toggle:hover { color: var(--text); }
-  .lim-body { display: none; padding: 0 14px 10px; }
-  .lim-body.open { display: block; }
-  .lim-body li {
-    color: var(--muted);
-    font-size: 12px;
-    line-height: 1.7;
-    list-style: none;
-    padding-left: 12px;
-    position: relative;
-  }
-  .lim-body li::before { content: "·"; position: absolute; left: 0; }
+  .content-flags { display: grid; grid-template-columns: 15ch 1fr; gap: 4px 14px; font-size: 13px; }
+  .flag-label { color: var(--dim); }
+  .flag-status.na { color: var(--dim); }
+  .flag-status.clear { color: var(--ink); }
+  .flag-status.detected { color: var(--signal); font-weight: 700; }
+  .flag-extra { grid-column: 1 / -1; margin-top: 8px; font-size: 12px; color: var(--dim); }
+  .flag-extra.signal span { color: var(--signal); }
 
-  .content-flags {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-  }
-  .flag-item {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 10px 12px;
-    text-align: center;
-  }
-  .flag-label { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
-  .flag-status { font-size: 13px; font-weight: 600; }
-  .flag-status.na { color: var(--muted); }
-  .flag-status.clear { color: var(--green); }
-  .flag-status.detected { color: var(--red); }
+  .limitations summary { cursor: pointer; font-size: 12px; color: var(--dim); }
+  .limitations summary:hover { color: var(--ink); }
+  .limitations ul { margin-top: 8px; padding-left: 2ch; }
+  .limitations li { color: var(--dim); font-size: 12px; line-height: 1.7; }
 
-  .error-box {
-    background: rgba(248,81,73,0.08);
-    border: 1px solid rgba(248,81,73,0.3);
-    border-radius: var(--radius);
-    padding: 14px;
-    color: var(--red);
-    font-size: 13px;
-    display: none;
+  @media (max-width: 900px) {
+    body { height: auto; min-height: 100vh; }
+    main { grid-template-columns: 1fr; }
+    .right { overflow-y: visible; }
+    .stage { border-right: none; border-bottom: 1px solid var(--rule); }
+    .viewport { min-height: 280px; padding: 16px; }
+    .frame img { max-height: 60vh; }
+    .controls, header, .right { padding-left: 16px; padding-right: 16px; }
+    .analyze-btn { margin-left: 0; width: 100%; }
+    header p { display: none; }
   }
-  .error-box.visible { display: block; }
 </style>
 </head>
 <body>
 
 <header>
   <h1>mq-image-analyze</h1>
-  <span class="tag">visual reasoning</span>
+  <p>Runs on this machine. Images are not stored.</p>
 </header>
 
 <main>
-  <div class="left">
-    <div class="drop-zone" id="dropZone">
+  <div class="stage">
+    <div class="viewport" id="dropZone" tabindex="0" role="button" aria-label="Choose an image to analyze">
       <input type="file" id="fileInput" accept="image/*">
-      <div class="drop-icon">⬡</div>
-      <div class="drop-label">
-        <strong>Click to select</strong> or drag an image here<br>
-        jpg, png, webp
+      <div class="drop-hint" id="dropHint">
+        <strong>Drop an image here</strong>
+        <span>or click to choose one. jpg, png, webp</span>
+      </div>
+      <div class="frame" id="preview">
+        <img id="previewImg" src="" alt="Image to analyze">
+        <svg class="overlay" id="overlay" aria-hidden="true"></svg>
       </div>
     </div>
-
-    <div class="preview" id="preview">
-      <img id="previewImg" src="" alt="preview">
-    </div>
+    <div class="filmstrip" id="filmstrip" aria-hidden="true"></div>
 
     <div class="controls">
-      <div class="toggle-row">
-        <label class="toggle">
-          <input type="checkbox" id="exhaustiveToggle">
-          <span class="toggle-slider"></span>
-        </label>
-        Exhaustive mode
-      </div>
-      <div class="conf-row">
-        <span>Conf</span>
+      <label><input type="checkbox" id="exhaustiveToggle"> Exhaustive</label>
+      <label>Confidence
         <input type="range" id="confSlider" min="1" max="95" value="25" step="1">
         <span class="conf-val" id="confVal">0.25</span>
-      </div>
-      <div class="select-row">
-        <span>Backend</span>
+      </label>
+      <label>Backend
         <select id="visionMode">
-          <option value="local-fast">local-fast · Ollama</option>
-          <option value="local-deep">local-deep · Ollama</option>
-          <option value="cloud-verify">cloud-verify · GPT</option>
+          <option value="local-fast">local-fast (Ollama)</option>
+          <option value="local-deep">local-deep (Ollama)</option>
+          <option value="cloud-verify">cloud-verify (OpenAI)</option>
         </select>
-      </div>
-      <div class="select-row">
-        <span>Model</span>
-        <input type="text" id="visionModel" placeholder="auto">
-      </div>
+      </label>
+      <label>Model <input type="text" id="visionModel" placeholder="auto"></label>
+      <label><input type="checkbox" id="thirdsToggle" checked> Thirds grid</label>
       <button class="analyze-btn" id="analyzeBtn" disabled>Analyze</button>
     </div>
   </div>
 
   <div class="right" id="right">
+    <div class="error-box" id="errorBox" role="alert"></div>
+
     <div class="empty-state" id="emptyState">
-      <div class="hint">◻</div>
-      <div>Drop an image to begin</div>
+      <p>Objects, palette, composition and a reverse prompt appear here after you analyze an image.</p>
+      <p>Exhaustive mode adds every detection with its box drawn on the image.</p>
     </div>
 
-    <div class="loading" id="loading">
-      <div class="spinner"></div>
-      <div>Analyzing…</div>
+    <div class="loading" id="loading" role="status">
+      <div class="eye"></div>
+      <div>Analyzing image…</div>
     </div>
-
-    <div class="error-box" id="errorBox"></div>
 
     <div class="results" id="results">
       <div class="result-header">
         <h2 id="filename">—</h2>
-        <div class="tags">
-          <span class="mode-badge" id="modeBadge">summary</span>
-          <span class="backend-badge" id="backendBadge">local-fast</span>
-        </div>
+        <p><span id="modeBadge">summary</span>, <span id="backendBadge">local-fast</span></p>
       </div>
 
       <div class="section" id="secObjects">
         <div class="section-title">Objects</div>
-        <div class="tags" id="objectTags"></div>
+        <div class="objects" id="objectTags"></div>
       </div>
 
       <div class="section">
-        <div class="section-title">Palette</div>
-        <div class="palette-row" id="paletteRow"></div>
+        <div class="section-title">Palette, click to copy</div>
+        <div class="palette-list" id="paletteRow"></div>
       </div>
 
       <div class="section">
-        <div class="section-title">Visual</div>
+        <div class="section-title">Composition</div>
         <div class="kv-grid" id="visualGrid"></div>
       </div>
 
       <div class="section">
         <div class="section-title">Reverse prompt</div>
         <div class="prompt-box" id="promptBox">
-          <button class="copy-btn" id="copyBtn">copy</button>
-          <span id="promptText"></span>
+          <span id="promptText"></span><br>
+          <button class="copy-btn" id="copyBtn">Copy prompt</button>
         </div>
       </div>
 
       <div class="section" id="secSemantic" style="display:none">
-        <div class="section-title">Semantic caption <span id="semanticModelLabel" style="color:var(--muted);font-size:0.75rem"></span></div>
+        <div class="section-title">Caption from <span id="semanticModelLabel"></span></div>
         <div class="prompt-box" id="semanticBox">
-          <button class="copy-btn" id="copySemanticBtn">copy</button>
-          <span id="semanticText"></span>
+          <span id="semanticText"></span><br>
+          <button class="copy-btn" id="copySemanticBtn">Copy caption</button>
         </div>
       </div>
 
       <div class="section" id="secDetections" style="display:none">
-        <div class="section-title">Detections <span id="detCount" style="color:var(--muted)"></span></div>
+        <div class="section-title">Detections <span id="detCount"></span></div>
         <table class="detections-table">
           <thead>
             <tr>
               <th>Label</th>
               <th>Confidence</th>
-              <th>Area %</th>
+              <th>Area</th>
             </tr>
           </thead>
           <tbody id="detBody"></tbody>
@@ -555,13 +433,10 @@
       </div>
 
       <div class="section">
-        <div class="limitations">
-          <div class="lim-toggle" id="limToggle">
-            <span>Limitations</span>
-            <span id="limArrow">▸</span>
-          </div>
-          <ul class="lim-body" id="limBody"></ul>
-        </div>
+        <details class="limitations">
+          <summary>Limitations</summary>
+          <ul id="limBody"></ul>
+        </details>
       </div>
     </div>
   </div>
@@ -569,24 +444,27 @@
 
 <script>
 const dropZone    = document.getElementById('dropZone');
+const dropHint    = document.getElementById('dropHint');
 const fileInput   = document.getElementById('fileInput');
 const preview     = document.getElementById('preview');
 const previewImg  = document.getElementById('previewImg');
+const overlay     = document.getElementById('overlay');
+const filmstrip   = document.getElementById('filmstrip');
 const analyzeBtn  = document.getElementById('analyzeBtn');
 const confSlider  = document.getElementById('confSlider');
 const confVal     = document.getElementById('confVal');
 const exhaustive  = document.getElementById('exhaustiveToggle');
+const thirds      = document.getElementById('thirdsToggle');
 const visionMode  = document.getElementById('visionMode');
 const visionModel = document.getElementById('visionModel');
 const emptyState  = document.getElementById('emptyState');
 const loading     = document.getElementById('loading');
 const results     = document.getElementById('results');
 const errorBox    = document.getElementById('errorBox');
-const limToggle   = document.getElementById('limToggle');
-const limBody     = document.getElementById('limBody');
-const limArrow    = document.getElementById('limArrow');
 
 let selectedFile = null;
+
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 // Conf slider
 confSlider.addEventListener('input', () => {
@@ -616,8 +494,15 @@ visionMode.addEventListener('change', () => {
   }
 });
 
+thirds.addEventListener('change', () => {
+  overlay.classList.toggle('no-thirds', !thirds.checked);
+});
+
 // Drop zone
 dropZone.addEventListener('click', () => fileInput.click());
+dropZone.addEventListener('keydown', e => {
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); }
+});
 dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
 dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
 dropZone.addEventListener('drop', e => {
@@ -632,9 +517,38 @@ fileInput.addEventListener('change', () => {
 
 function setFile(f) {
   selectedFile = f;
+  previewImg.onload = () => drawOverlay([]);
   previewImg.src = URL.createObjectURL(f);
   preview.classList.add('visible');
+  dropHint.style.display = 'none';
+  filmstrip.innerHTML = '';
+  dropZone.setAttribute('aria-label', `Replace ${f.name}`);
   analyzeBtn.disabled = false;
+}
+
+// Thirds grid and detection boxes, in the image's own pixel space
+function drawOverlay(detections) {
+  const w = previewImg.naturalWidth, h = previewImg.naturalHeight;
+  if (!w || !h) return;
+  overlay.setAttribute('viewBox', `0 0 ${w} ${h}`);
+  overlay.setAttribute('preserveAspectRatio', 'none');
+  const fs = Math.max(10, Math.round(w / 55));
+  const grid = [1, 2].map(i =>
+    `<line x1="${w*i/3}" y1="0" x2="${w*i/3}" y2="${h}" vector-effect="non-scaling-stroke"/>` +
+    `<line x1="0" y1="${h*i/3}" x2="${w}" y2="${h*i/3}" vector-effect="non-scaling-stroke"/>`
+  ).join('');
+  const boxes = detections.map(d => {
+    const [x1, y1, x2, y2] = d.bbox;
+    const label = `${d.label} ${Math.round(d.confidence * 100)}%`;
+    const tw = label.length * fs * 0.62 + fs * 0.8;
+    const ty = y1 > fs * 1.6 ? y1 - fs * 1.5 : y1;
+    return `<g class="box">
+      <rect x="${x1}" y="${y1}" width="${x2 - x1}" height="${y2 - y1}" vector-effect="non-scaling-stroke"/>
+      <rect class="tag" x="${x1}" y="${ty}" width="${tw}" height="${fs * 1.5}"/>
+      <text x="${x1 + fs * 0.4}" y="${ty + fs * 1.1}" font-size="${fs}">${esc(label)}</text>
+    </g>`;
+  }).join('');
+  overlay.innerHTML = `<g class="thirds">${grid}</g>${boxes}`;
 }
 
 // Analyze
@@ -645,6 +559,7 @@ async function analyze() {
 
   setView('loading');
   errorBox.classList.remove('visible');
+  analyzeBtn.disabled = true;
 
   const fd = new FormData();
   fd.append('file', selectedFile);
@@ -655,7 +570,11 @@ async function analyze() {
 
   try {
     const res = await fetch('/analyze', { method: 'POST', body: fd });
-    if (!res.ok) throw new Error(`Server error ${res.status}`);
+    if (!res.ok) {
+      let detail = '';
+      try { detail = (await res.json()).detail; } catch (_) {}
+      throw new Error(detail ? `Analysis failed: ${detail}` : `Analysis failed with server error ${res.status}. Check the terminal running mq-image serve.`);
+    }
     const data = await res.json();
     render(data, selectedFile.name);
     setView('results');
@@ -663,6 +582,8 @@ async function analyze() {
     errorBox.textContent = err.message;
     errorBox.classList.add('visible');
     setView('empty');
+  } finally {
+    analyzeBtn.disabled = false;
   }
 }
 
@@ -672,35 +593,44 @@ function setView(v) {
   results.classList.toggle('visible', v === 'results');
 }
 
+function meter(v) {
+  const n = Number(v);
+  if (!Number.isFinite(n)) return esc(v);
+  const pct = Math.max(0, Math.min(1, n)) * 100;
+  return `${n.toFixed(2)}<span class="meter"><b style="width:${pct}%"></b></span>`;
+}
+
 // Render
 function render(d, fname) {
   document.getElementById('filename').textContent = fname;
   const badge = document.getElementById('modeBadge');
-  badge.textContent = d.mode;
-  badge.className = 'mode-badge' + (d.mode === 'exhaustive' ? ' exhaustive' : '');
-  document.getElementById('backendBadge').textContent = `${d.vision_mode} · ${d.vision_model}`;
+  badge.textContent = d.mode === 'exhaustive' ? 'exhaustive' : 'summary';
+  badge.className = d.mode === 'exhaustive' ? 'exhaustive' : '';
+  document.getElementById('backendBadge').textContent = `${d.vision_model} via ${d.vision_mode}`;
 
   // Objects
   const ot = document.getElementById('objectTags');
   ot.innerHTML = d.objects.length
-    ? d.objects.map(o => `<span class="tag-item">${o}</span>`).join('')
-    : '<span style="color:var(--muted)">none detected</span>';
+    ? d.objects.map(esc).join(', ')
+    : '<span class="none">No objects detected. Try exhaustive mode or a lower confidence.</span>';
 
   // Palette
   const pr = document.getElementById('paletteRow');
   pr.innerHTML = d.palette.map(hex =>
-    `<div class="swatch" style="background:${hex}" data-hex="${hex}" title="${hex}" onclick="copyText('${hex}', this)"></div>`
+    `<button class="swatch" data-hex="${esc(hex)}" title="Copy ${esc(hex)}"><i style="background:${esc(hex)}"></i><span>${esc(hex)}</span></button>`
   ).join('');
+  pr.querySelectorAll('.swatch').forEach(b => b.addEventListener('click', () => copyText(b.dataset.hex, b.querySelector('span'))));
+  filmstrip.innerHTML = d.palette.map(hex => `<div style="background:${esc(hex)}"></div>`).join('');
 
   // Visual
   const vg = document.getElementById('visualGrid');
   vg.innerHTML = [
-    ['Brightness',     d.brightness],
-    ['Contrast',       d.contrast],
-    ['Depth',          d.depth],
-    ['Composition',    d.composition],
-    ['Symmetry',       d.symmetry],
-    ['Rule of thirds', d.rule_of_thirds],
+    ['Brightness',     esc(d.brightness)],
+    ['Contrast',       esc(d.contrast)],
+    ['Depth',          esc(d.depth)],
+    ['Layout',         esc(d.composition)],
+    ['Symmetry',       meter(d.symmetry)],
+    ['Rule of thirds', meter(d.rule_of_thirds)],
   ].map(([k,v]) => `<span class="kv-key">${k}</span><span class="kv-val">${v}</span>`).join('');
 
   // Prompt
@@ -708,7 +638,7 @@ function render(d, fname) {
 
   // Semantic caption
   const secSem = document.getElementById('secSemantic');
-  document.getElementById('semanticModelLabel').textContent = d.vision_model || '';
+  document.getElementById('semanticModelLabel').textContent = d.vision_model || 'vision model';
   if (d.semantic_caption) {
     document.getElementById('semanticText').textContent = d.semantic_caption;
     secSem.style.display = '';
@@ -718,20 +648,16 @@ function render(d, fname) {
 
   // Detections (exhaustive only)
   const secDet = document.getElementById('secDetections');
-  if (d.mode === 'exhaustive' && d.detections.length) {
+  const dets = d.mode === 'exhaustive' ? d.detections : [];
+  drawOverlay(dets);
+  if (dets.length) {
     secDet.style.display = '';
-    document.getElementById('detCount').textContent = `(${d.detections.length})`;
-    const tb = document.getElementById('detBody');
-    tb.innerHTML = d.detections.map(det => `
+    document.getElementById('detCount').textContent = `(${dets.length})`;
+    document.getElementById('detBody').innerHTML = dets.map(det => `
       <tr>
-        <td>${det.label}</td>
-        <td>
-          <div class="conf-bar-wrap">
-            <div class="conf-bar"><div class="conf-bar-fill" style="width:${Math.round(det.confidence*100)}%"></div></div>
-            ${(det.confidence * 100).toFixed(0)}%
-          </div>
-        </td>
-        <td>${det.area_percent}%</td>
+        <td>${esc(det.label)}</td>
+        <td>${(det.confidence * 100).toFixed(0)}%</td>
+        <td>${esc(det.area_percent)}%</td>
       </tr>
     `).join('');
   } else {
@@ -745,78 +671,51 @@ function render(d, fname) {
 
   function flagItem(key, f) {
     let cls, label;
-    if (na) { cls = 'na'; label = 'n/a'; }
-    else if (f.detected) { cls = 'detected'; label = f.confidence != null ? `${Math.round(f.confidence * 100)}%` : 'yes'; }
+    if (na) { cls = 'na'; label = 'not checked'; }
+    else if (f.detected) { cls = 'detected'; label = f.confidence != null ? `detected ${Math.round(f.confidence * 100)}%` : 'detected'; }
     else { cls = 'clear'; label = 'clear'; }
-    return `<div class="flag-item"><div class="flag-label">${key.replace(/_/g,' ')}</div><div class="flag-status ${cls}">${label}</div></div>`;
+    return `<span class="flag-label">${esc(key.replace(/_/g,' '))}</span><span class="flag-status ${cls}">${label}</span>`;
   }
 
   let html = ['nudity', 'full_nudity', 'sexual_activity'].map(k => flagItem(k, flags[k])).join('');
 
   // Faces
   if (flags.faces && !na) {
-    const ff = flags.faces;
-    ['female','male'].forEach(g => {
-      const f = ff[g];
-      let cls, label;
-      if (f.detected) { cls = 'detected'; label = f.confidence != null ? `${Math.round(f.confidence * 100)}%` : 'yes'; }
-      else { cls = 'clear'; label = 'clear'; }
-      html += `<div class="flag-item"><div class="flag-label">face ${g}</div><div class="flag-status ${cls}">${label}</div></div>`;
-    });
+    ['female','male'].forEach(g => { html += flagItem(`face ${g}`, flags.faces[g]); });
   }
 
   // Covered parts
   if (flags.covered_parts && flags.covered_parts.length) {
-    html += `<div style="grid-column:1/-1;margin-top:6px">
-      <div class="section-title" style="margin-bottom:4px">Covered parts</div>
-      <div class="tags">${flags.covered_parts.map(c =>
-        `<span class="tag-item" style="font-size:11px;color:#aaa">${c.toLowerCase().replace(/_covered/,'').replace(/_/g,' ')}</span>`
-      ).join('')}</div></div>`;
+    html += `<div class="flag-extra">Covered parts: ${flags.covered_parts.map(c =>
+      esc(c.toLowerCase().replace(/_covered/,'').replace(/_/g,' '))).join(', ')}</div>`;
   }
 
   // Raw classes
   if (flags.raw_classes && flags.raw_classes.length) {
-    html += `<div style="grid-column:1/-1;margin-top:4px">
-      <div class="section-title" style="margin-bottom:4px">All detected classes</div>
-      <div class="tags">${flags.raw_classes.map(c =>
-        `<span class="tag-item" style="font-size:11px;color:var(--red)">${c.toLowerCase().replace(/_/g,' ')}</span>`
-      ).join('')}</div></div>`;
+    html += `<div class="flag-extra signal">All detected classes: <span>${flags.raw_classes.map(c =>
+      esc(c.toLowerCase().replace(/_/g,' '))).join(', ')}</span></div>`;
   }
 
   cf.innerHTML = html;
 
   // Limitations
-  const lb = document.getElementById('limBody');
-  lb.innerHTML = d.limitations.map(l => `<li>${l}</li>`).join('');
+  document.getElementById('limBody').innerHTML = d.limitations.map(l => `<li>${esc(l)}</li>`).join('');
 }
-
-// Copy prompt
-document.getElementById('copyBtn').addEventListener('click', function() {
-  const txt = document.getElementById('promptText').textContent;
-  navigator.clipboard.writeText(txt).then(() => {
-    this.textContent = 'copied';
-    this.classList.add('copied');
-    setTimeout(() => { this.textContent = 'copy'; this.classList.remove('copied'); }, 1500);
-  });
-});
-
-document.getElementById('copySemanticBtn').addEventListener('click', function() {
-  const txt = document.getElementById('semanticText').textContent;
-  navigator.clipboard.writeText(txt).then(() => {
-    this.textContent = 'copied';
-    this.classList.add('copied');
-    setTimeout(() => { this.textContent = 'copy'; this.classList.remove('copied'); }, 1500);
-  });
-});
 
 function copyText(text, el) {
-  navigator.clipboard.writeText(text);
+  navigator.clipboard.writeText(text).then(() => {
+    const prev = el.textContent;
+    el.textContent = 'copied';
+    el.classList.add('copied');
+    setTimeout(() => { el.textContent = prev; el.classList.remove('copied'); }, 1500);
+  });
 }
 
-// Limitations toggle
-limToggle.addEventListener('click', () => {
-  limBody.classList.toggle('open');
-  limArrow.textContent = limBody.classList.contains('open') ? '▾' : '▸';
+document.getElementById('copyBtn').addEventListener('click', function() {
+  copyText(document.getElementById('promptText').textContent, this);
+});
+document.getElementById('copySemanticBtn').addEventListener('click', function() {
+  copyText(document.getElementById('semanticText').textContent, this);
 });
 </script>
 </body>
