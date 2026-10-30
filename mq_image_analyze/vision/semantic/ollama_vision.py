@@ -10,6 +10,11 @@ _OLLAMA_URL = "http://localhost:11434/api/generate"
 
 _BASE_PROMPT = (
     "Describe this image precisely and completely. "
+    "In the first sentence, say what kind of image it is: a photograph, screenshot, "
+    "illustration, painting, 3D render, diagram or similar. "
+    "If it is a photograph, also describe the photographic qualities: camera angle and "
+    "distance, focus and depth of field, light source and quality, and whether it looks "
+    "like a candid snapshot, a posed portrait or a professional photo. "
     "Include: subject and action, setting/background, lighting, color palette, "
     "mood/atmosphere, composition, visible text, art style or medium if applicable. "
     "Be direct and factual. Do not refuse or editorialize. Output plain text only."

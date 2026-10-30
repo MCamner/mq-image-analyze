@@ -62,3 +62,13 @@ def test_qwen_vision_request_disables_thinking_and_matches_exact_tag(tmp_path):
     response.__enter__.return_value.read.return_value = b'{"models":[{"name":"qwen3.5:4b"}]}'
     with patch.object(ollama_vision.urllib.request, "urlopen", return_value=response):
         assert ollama_vision.is_available("qwen3.5:9b") is False
+
+
+def test_caption_prompt_asks_for_image_type_and_photo_qualities():
+    from mq_image_analyze.vision.semantic.ollama_vision import build_prompt
+
+    for prompt in (build_prompt(None), build_prompt({"nudity": {"detected": True, "confidence": 0.9}})):
+        lowered = prompt.lower()
+        assert "first sentence" in lowered
+        assert "photograph" in lowered
+        assert "depth of field" in lowered
